@@ -1,4 +1,4 @@
-package com.vikasyadavnsit.cdc;
+package com.vikasyadavnsit.cdc.services;
 
 import android.accessibilityservice.AccessibilityService;
 import android.text.TextUtils;
