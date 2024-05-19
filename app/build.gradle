@@ -30,6 +30,9 @@ android {
 
 dependencies {
 
+    implementation 'com.google.dagger:hilt-android:2.39.1' // Replace with the latest version
+    annotationProcessor 'com.google.dagger:hilt-android-compiler:2.39.1' // Replace with the latest version
+
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity

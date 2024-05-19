@@ -1,46 +1,96 @@
-# CDC
-Change Data Capture
+# CDC - Change Data Capture
+
+## Overview
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Story Points](###Story)
+- [System Features](###System_Features)
+- [Contributing](#contributing)
+- [License](#license)
 
 
 
-## Story Points
+## Installation
 
-# User
-- Can open an application ( should not be hidden for now)
-- Should use application features ( todo , IFTTT etc )
+Instructions for installing and setting up the project.
 
-# Admin User
-- Can open application hidden and protected features 
-- Can modify application behaviour on runtime or offline through a offline means or remote trigger
+## Usage
 
-# Application 
-- should support all users ( app user / admin user etc)
-- should target larger Android audience  ( platform agnostic feature can be considered )
-- should work with limited system resources (memory/cpu etc)
+Guidelines for using the project, including examples and code snippets.
 
-## System Features
+## Configuration
 
-# Capture all user/ sensor data periodically or at invocation
-- Read SMS ( sent , received , archive , deleted, blocked etc) along with all details like address,time,body etc.
-- Read Contacts
-- Read Call Logs
-- Capture All keystrokes actions on TEXT_CHANGED (text, number , emoji etc) excluding virtual keyboard through a accessibility service.
-- Read All folders structure/files (capture the file content on demand)
-- Read all images/Videos (capture them on demand) for preview in compressed format
-- Capture Screen shots and do Screen Recording on demand
-- Real time Screen mirroring ( triggered by invocation hook)
-- Capture GPS Location ( approximate ( cell tower based ) / detailed ) 
-- Capture All Apps and their usages
-- Capture System lock and unlock count along with timestamp 
-- Capture Device battery and charging events
-- Capture hardware device data ( Wifi / Bluetooth/ NFC/ Gyro )
-- Capture Internet related data (times it turned on/off and connected to WWW)
-- Capture All events ( File upload, Camera , Sound Recording across all apps )
+Information about configuring the project, including environment variables and settings.
 
-# Action triggers through remote systems
-- Block Internet for all or specific application
-- Lock/Unlock device
-- Perform all above operations
 
-# Additional Requirement
-- Collect data (application logs, sensor and user related) in system in encrypted form and upload it on data store at scheduled time or a web hook call
+
+
+## Story
+
+#### User
+- Users can access the application openly without any hidden functionality.
+- They can utilize various application features such as to-do lists, IFTTT integration, etc.
+
+#### Admin User
+- Admin users can access the application with hidden and protected features.
+- They have the authority to modify the application's behavior either in real-time or through offline methods via remote triggers.
+
+#### Application
+- The application aims to cater to a diverse user base, including both regular and admin users.
+- It's designed to appeal to a broad audience of Android users and accommodate various device configurations while maintaining optimal performance.
+
+
+
+
+
+## System_Features
+
+### Data Capture
+- The application captures a range of user and sensor data periodically or upon invocation:
+    - SMS messages, including sent, received, archived, deleted, and blocked messages, along with associated metadata.
+    - Contact information.
+    - Call logs.
+    - Keystrokes, excluding virtual keyboard input, monitored via an accessibility service.
+    - File system structure and contents, including files and folders.
+    - Images and videos, available for on-demand preview in compressed format.
+    - Screenshots and screen recordings, triggered as needed.
+    - Real-time screen mirroring.
+    - GPS location data, offering both approximate and detailed information.
+    - App usage statistics.
+    - System lock and unlock events with timestamps.
+    - Device battery status and charging events.
+    - Hardware device information such as Wi-Fi, Bluetooth, NFC, and gyroscopic data.
+    - Internet-related activities, including connection status and usage patterns.
+    - Events such as file uploads, camera usage, and sound recordings across all apps.
+
+### Remote Action Triggers
+- The application supports remote action triggers, enabling:
+    - Blocking internet access for all or specific applications.
+    - Device locking and unlocking.
+    - Execution of various data capture operations.
+
+### Additional Requirements
+- Data collection, including application logs, sensor data, and user-related information, is encrypted and scheduled for upload to a data store or triggered via a webhook call.
+
+
+
+
+## Contributing
+
+As of now contribution are not allowed, it is a private project.
+
+
+
+## License
+
+This is an open source project with no license, free to use /copy , redistribute.
+
+
+
+## Credits
+
+ChatGPT and the official Android Studio documentation helped a lot.

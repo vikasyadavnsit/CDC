@@ -24,7 +24,7 @@
         android:theme="@style/Theme.CDC"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +35,7 @@
 
         <!-- Declare Accessibility Service -->
         <service
-            android:name=".MyAccessibilityService"
+            android:name=".services.MyAccessibilityService"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

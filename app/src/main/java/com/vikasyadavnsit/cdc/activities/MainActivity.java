@@ -1,4 +1,4 @@
-package com.vikasyadavnsit.cdc;
+package com.vikasyadavnsit.cdc.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -21,12 +21,23 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.vikasyadavnsit.cdc.R;
+import com.vikasyadavnsit.cdc.repositories.MyRepository;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 101;
     private static final int REQUEST_SMS_PERMISSION = 123;
     private static final int REQUEST_ALL_PERMISSIONS = 1000;
+
+    @Inject
+    MyRepository myRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        myRepository.doSomething();
+
+        // Request camera permission
         Button openCameraButton = findViewById(R.id.request_permission_button);
         openCameraButton.setOnClickListener(view -> {
 //            if (checkCameraPermission()) {
@@ -74,9 +88,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
 
         });
-
-
-
 
 
     }
