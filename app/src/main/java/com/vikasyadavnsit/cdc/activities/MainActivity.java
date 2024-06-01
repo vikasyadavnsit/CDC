@@ -41,27 +41,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ActionUtil.handleButtonPress(this, R.id.main_navigation_request_home_button, R.id.main_navigation_request_settings_button);
-        FileUtil.createFile(this, FileMap.SMS, "test");
+       // FileUtil.createFile(this, FileMap.SMS, "test");
 
 //            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
 //            startActivity(intent);
     }
 
 
-    private void readSmsMessages() {
-        Uri uri = Uri.parse("content://sms/inbox");
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                String[] columnNames = cursor.getColumnNames();
-                String sender = cursor.getString(cursor.getColumnIndexOrThrow("address"));
-                String message = cursor.getString(cursor.getColumnIndexOrThrow("body"));
-                // Process the SMS message
-                Log.d("SMS", "Sender: " + sender + ", Message: " + message);
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-    }
+
 
 
     //

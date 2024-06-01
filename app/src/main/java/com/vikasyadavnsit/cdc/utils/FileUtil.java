@@ -6,42 +6,70 @@ import android.os.Environment;
 import com.vikasyadavnsit.cdc.enums.FileMap;
 import com.vikasyadavnsit.cdc.enums.LoggingLevel;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class FileUtil {
 
     public static void createFile(Context context, FileMap fileMap, Object data) {
-        createAndWriteToFile(context, fileMap.getDirectoryPath(), fileMap.getFileName(), data);
+        createAndWriteToFile(context, fileMap, data);
     }
 
 
-    public static void createAndWriteToFile(Context context, String directoryPath, String fileName, Object data) {
+    public static void createAndWriteToFile(Context context, FileMap fileMap, Object data) {
 
         try {
-            File directory = Environment.getExternalStoragePublicDirectory(directoryPath);
-            File file = new File(directory, fileName);
+            File directory = Environment.getExternalStoragePublicDirectory(fileMap.getDirectoryPath());
+            File file = new File(directory, fileMap.getFileName());
 
             if (checkAndCreateDirectory(directory)) return;
             if (checkAndCreateFile(file)) return;
 
 
-            PrintWriter writer = new PrintWriter(new FileWriter(file, true));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true));
 
-//            // Write data rows
-//            for (String[] record : tableData) {
-//                writer.println("Name: " + record[0]);
-//                writer.println("Age: " + record[1]);
-//                writer.println("Country: " + record[2]);
-//                writer.println(); // Add an empty line between records
-//            }
+            if (fileMap.isOrganized()) {
 
-            writer.flush();
-            writer.close();
-            LoggerUtil.log("FileUtil", "Directory : " + directory.getAbsolutePath() + " File : " + fileName + " created or appended successfully", LoggingLevel.DEBUG);
-        } catch (IOException e) {
+                // When DataType is List<Map<String, String>>
+                if (data instanceof List<?>) {
+                    List<?> dataList = (List<?>) data;
+                    if (!dataList.isEmpty() && dataList.get(0) instanceof Map<?, ?>) {
+                        List<Map<String, String>> tableData = (List<Map<String, String>>) data;
+                        StringBuilder buffer = new StringBuilder();
+
+                        buffer.append(IntStream.range(1, 50).mapToObj(i -> "#").collect(Collectors.joining())).append("\n");
+
+                        // Write data rows
+                        for (Map<String, String> record : tableData) {
+                            for (Map.Entry<String, String> entry : record.entrySet()) {
+                                buffer.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+                            }
+                            buffer.append("\n"); // Add an empty line between records
+                        }
+
+                        buffer.append(IntStream.range(1, 50).mapToObj(i -> "#").collect(Collectors.joining())).append("\n");
+
+                        // Write buffer to file
+                        bufferedWriter.write(buffer.toString());
+                    }
+
+                }
+            } else {
+                bufferedWriter.write(data.toString());
+            }
+
+
+            bufferedWriter.flush();
+            bufferedWriter.close();
+            LoggerUtil.log("FileUtil", "Directory : " + directory.getAbsolutePath() + " File : " + fileMap.getFileName() + " created or appended successfully", LoggingLevel.DEBUG);
+        } catch (
+                IOException e) {
             LoggerUtil.log("FileUtil", "Failed to create file" + e.toString(), LoggingLevel.ERROR);
         }
     }

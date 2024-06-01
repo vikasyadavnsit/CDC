@@ -9,10 +9,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum FileMap {
 
-    SMS(Environment.DIRECTORY_DOCUMENTS + "/CDC", "sms.txt"),
-    LOG(Environment.DIRECTORY_DOCUMENTS + "/CDC", "log.txt");
+    SMS(Environment.DIRECTORY_DOCUMENTS + "/CDC", "sms.txt",true),
+    LOG(Environment.DIRECTORY_DOCUMENTS + "/CDC", "log.txt",false);
 
     String directoryPath;
     String fileName;
+    boolean isOrganized;
 
 }
