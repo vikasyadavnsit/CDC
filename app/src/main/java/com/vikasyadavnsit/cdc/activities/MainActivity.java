@@ -1,28 +1,23 @@
 package com.vikasyadavnsit.cdc.activities;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.vikasyadavnsit.cdc.R;
-import com.vikasyadavnsit.cdc.repositories.MyRepository;
+import com.vikasyadavnsit.cdc.fragment.MainFragment;
+import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
+import com.vikasyadavnsit.cdc.utils.CommonUtil;
 
 import javax.inject.Inject;
 
@@ -30,14 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
-
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int CAMERA_PERMISSION_REQUEST_CODE = 101;
-    private static final int REQUEST_SMS_PERMISSION = 123;
-    private static final int REQUEST_ALL_PERMISSIONS = 1000;
-
     @Inject
-    MyRepository myRepository;
+    PermissionHandler permissionHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,99 +39,29 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        myRepository.doSomething();
 
         // Request camera permission
-        Button openCameraButton = findViewById(R.id.request_permission_button);
+        Button openCameraButton = findViewById(R.id.main_navigation_request_permission_button);
         openCameraButton.setOnClickListener(view -> {
-//            if (checkCameraPermission()) {
+            // permissionHandler.requestAllPermissions(this);
+            permissionHandler.resetAllPermissionManually(this);
+        });
+
+
+        //            if (checkCameraPermission()) {
 //                openCamera();
 //            } else {
 //                requestCameraPermission();
 //            }
 
 
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Permission not granted, request it
+//            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+//            startActivity(intent);
 
-                String[] permissions = {
-                        Manifest.permission.READ_SMS,
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_SMS
-                        // Add more permissions as needed
-                };
-                Toast.makeText(this, "Taking all permissions", Toast.LENGTH_SHORT).show();
-
-                ActivityCompat.requestPermissions(this, permissions,
-                        REQUEST_ALL_PERMISSIONS);
-            } else {
-                // Permission already granted, proceed with reading SMS
-                // readSmsMessages();
-                Toast.makeText(this, "All Permission already granted", Toast.LENGTH_SHORT).show();
-            }
-
-
-            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-            startActivity(intent);
-
-        });
-
-
+        //Loading Fragments Dynamically
+        CommonUtil.loadFragment(getSupportFragmentManager(), new MainFragment());
     }
 
-
-    private boolean checkCameraPermission() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
-                PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestCameraPermission() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.CAMERA},
-                CAMERA_PERMISSION_REQUEST_CODE);
-    }
-
-    private void openCamera() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        if (requestCode == REQUEST_SMS_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, proceed with reading SMS
-                readSmsMessages();
-            } else {
-                // Permission denied, show a message or take appropriate action
-                Toast.makeText(this, "SMS permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        if (requestCode == REQUEST_ALL_PERMISSIONS) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, proceed with reading SMS
-                Toast.makeText(this, "All Permission   granted", Toast.LENGTH_SHORT).show();
-            } else {
-                // Permission denied, show a message or take appropriate action
-                Toast.makeText(this, "ALL permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     private void readSmsMessages() {
         Uri uri = Uri.parse("content://sms/inbox");
@@ -159,15 +78,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    //
+//    private void openCamera() {
+//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//        }
+//    }
+//
+
+    // Handle Activity Result
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // Do something with the image captured by the camera (if needed)
-            Bundle extras = data.getExtras();
-            // For example, you can display the captured image in an ImageView
-            // Bitmap imageBitmap = (Bitmap) extras.get("data");
-            // imageView.setImageBitmap(imageBitmap);
-        }
+        CommonUtil.onActivityResult(requestCode, resultCode, data);
     }
+
+    // Handle permission result
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionHandler.handlePermissionResult(this, requestCode, permissions, grantResults);
+    }
+
 }
