@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
+import com.vikasyadavnsit.cdc.dialog.MessageDialog;
 import com.vikasyadavnsit.cdc.enums.LoggingLevel;
 import com.vikasyadavnsit.cdc.enums.PermissionType;
 import com.vikasyadavnsit.cdc.utils.LoggerUtil;
@@ -62,7 +63,8 @@ public class PermissionManager implements PermissionHandler {
                     LoggerUtil.log("PermissionManager", "Permission : " + permissions[i] + " granted", LoggingLevel.DEBUG);
                 } else {
                     LoggerUtil.log("PermissionManager", "Permission : " + permissions[i] + " not granted", LoggingLevel.DEBUG);
-                    Toast.makeText(context, "Permission : " + permissions[i] + " not granted", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Permission : " + permissions[i] + " not granted", Toast.LENGTH_SHORT).show();
+                    MessageDialog.showCustomDialog(context,"Permission Status", "Permission : " + permissions[i] + " not granted");
                 }
             }
         }

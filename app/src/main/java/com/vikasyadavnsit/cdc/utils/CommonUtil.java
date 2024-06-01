@@ -19,7 +19,7 @@ public class CommonUtil {
     public static void loadFragment(int frameLayout, FragmentManager fragmentManager, Fragment fragment) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_frame_layout, fragment);
-        fragmentTransaction.addToBackStack(fragment.getClass().getName());
+        //fragmentTransaction.addToBackStack(fragment.getClass().getName());
         fragmentTransaction.commit();
     }
 
