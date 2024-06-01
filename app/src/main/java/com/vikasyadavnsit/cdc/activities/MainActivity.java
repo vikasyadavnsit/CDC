@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -15,9 +14,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.vikasyadavnsit.cdc.R;
-import com.vikasyadavnsit.cdc.fragment.MainFragment;
+import com.vikasyadavnsit.cdc.enums.FileMap;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
+import com.vikasyadavnsit.cdc.utils.ActionUtil;
 import com.vikasyadavnsit.cdc.utils.CommonUtil;
+import com.vikasyadavnsit.cdc.utils.FileUtil;
 
 import javax.inject.Inject;
 
@@ -39,27 +40,11 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-
-        // Request camera permission
-        Button openCameraButton = findViewById(R.id.main_navigation_request_permission_button);
-        openCameraButton.setOnClickListener(view -> {
-            // permissionHandler.requestAllPermissions(this);
-            permissionHandler.resetAllPermissionManually(this);
-        });
-
-
-        //            if (checkCameraPermission()) {
-//                openCamera();
-//            } else {
-//                requestCameraPermission();
-//            }
-
+        ActionUtil.handleButtonPress(this, R.id.main_navigation_request_home_button, R.id.main_navigation_request_settings_button);
+        FileUtil.createFile(this, FileMap.SMS, "test");
 
 //            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
 //            startActivity(intent);
-
-        //Loading Fragments Dynamically
-        CommonUtil.loadFragment(getSupportFragmentManager(), new MainFragment());
     }
 
 
