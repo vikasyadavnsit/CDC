@@ -45,8 +45,8 @@ public class ActionUtil {
                 //permissionHandler.resetAllPermissionManually(this);
 //                Object messages = readSmsMessages(activity);
 //                FileUtil.appendDataToFile(activity.getApplicationContext(), FileMap.SMS, messages);
-                Object messages = getCallLogs(activity.getApplicationContext());
-                FileUtil.appendDataToFile(activity.getApplicationContext(), FileMap.CALL, messages);
+//                messages = getCallLogs(activity.getApplicationContext());
+//                FileUtil.appendDataToFile(activity.getApplicationContext(), FileMap.CALL, messages);
             });
         }
     }
