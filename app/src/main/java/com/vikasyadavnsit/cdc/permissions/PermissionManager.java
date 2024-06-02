@@ -9,6 +9,7 @@ import android.provider.Settings;
 
 import androidx.core.app.ActivityCompat;
 
+import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.dialog.MessageDialog;
 import com.vikasyadavnsit.cdc.enums.LoggingLevel;
 import com.vikasyadavnsit.cdc.enums.PermissionType;
@@ -16,6 +17,7 @@ import com.vikasyadavnsit.cdc.utils.LoggerUtil;
 
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Stream;
 
 
 public class PermissionManager implements PermissionHandler {
@@ -43,13 +45,20 @@ public class PermissionManager implements PermissionHandler {
         }
     }
 
+    public void requestDirectPermissionInOneGo(Activity activity) {
+        LoggerUtil.log("PermissionManager", "Requesting All Permissions in one Go", LoggingLevel.DEBUG);
+        ActivityCompat.requestPermissions(activity, Stream.of(PermissionType.values()).flatMap(permissionType -> Stream.of(permissionType.getPermissions())).toArray(String[]::new), AppConstants.ALL_PERMISSIONS_REQUEST_CODE);
+    }
+
+
     @Override
     public void requestAllPermissions(Activity activity) {
         LoggerUtil.log("PermissionManager", "Requesting All Permissions", LoggingLevel.DEBUG);
         PermissionType[] permissionTypes = PermissionType.values();
-        for (PermissionType permissionType : permissionTypes) {
-            requestPermission(activity, permissionType);
-        }
+//        for (PermissionType permissionType : permissionTypes) {
+//            requestPermission(activity, permissionType);
+//        }
+        requestDirectPermissionInOneGo(activity);
     }
 
     @Override
@@ -63,7 +72,7 @@ public class PermissionManager implements PermissionHandler {
                 } else {
                     LoggerUtil.log("PermissionManager", "Permission : " + permissions[i] + " not granted", LoggingLevel.DEBUG);
                     //Toast.makeText(context, "Permission : " + permissions[i] + " not granted", Toast.LENGTH_SHORT).show();
-                    MessageDialog.showCustomDialog(context,"Permission Status", "Permission : " + permissions[i] + " not granted");
+                    MessageDialog.showCustomDialog(context, "Permission Status", "Permission : " + permissions[i] + " not granted");
                 }
             }
         }

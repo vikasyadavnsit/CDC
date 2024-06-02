@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
+import com.vikasyadavnsit.cdc.permissions.PermissionManager;
 import com.vikasyadavnsit.cdc.utils.ActionUtil;
 import com.vikasyadavnsit.cdc.utils.CommonUtil;
 
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        permissionHandler.handlePermissionResult(this, requestCode, permissions, grantResults);
+//        permissionHandler.handlePermissionResult(this, requestCode, permissions, grantResults);
     }
 
 }
