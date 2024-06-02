@@ -1,77 +1,102 @@
 package com.vikasyadavnsit.cdc.utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 
 import com.vikasyadavnsit.cdc.enums.FileMap;
 import com.vikasyadavnsit.cdc.enums.LoggingLevel;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Set;
 
 public class FileUtil {
 
-    public static void createFile(Context context, FileMap fileMap, Object data) {
-        createAndWriteToFile(context, fileMap, data);
+    public static void appendDataToFile(Context context, FileMap fileMap, Object data) {
+        checkCreateAndWriteToFileInADirectory(context, fileMap, data);
     }
 
+    public static void checkCreateAndWriteToFileInADirectory(Context context, FileMap fileMap, Object data) {
 
-    public static void createAndWriteToFile(Context context, FileMap fileMap, Object data) {
+        File directory = Environment.getExternalStoragePublicDirectory(fileMap.getDirectoryPath());
+        File file = new File(directory, fileMap.getFileName());
 
-        try {
-            File directory = Environment.getExternalStoragePublicDirectory(fileMap.getDirectoryPath());
-            File file = new File(directory, fileMap.getFileName());
+        try{
 
             if (checkAndCreateDirectory(directory)) return;
             if (checkAndCreateFile(file)) return;
 
+            Set<String> uniqueIds = new HashSet<>();
+            if (fileMap.isCheckForDuplication()) uniqueIds = getAllUniqueIdsInFile(file, fileMap);
 
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true));
-
             if (fileMap.isOrganized()) {
-
-                // When DataType is List<Map<String, String>>
-                if (data instanceof List<?>) {
-                    List<?> dataList = (List<?>) data;
-                    if (!dataList.isEmpty() && dataList.get(0) instanceof Map<?, ?>) {
-                        List<Map<String, String>> tableData = (List<Map<String, String>>) data;
-                        StringBuilder buffer = new StringBuilder();
-
-                        buffer.append(IntStream.range(1, 50).mapToObj(i -> "#").collect(Collectors.joining())).append("\n");
-
-                        // Write data rows
-                        for (Map<String, String> record : tableData) {
-                            for (Map.Entry<String, String> entry : record.entrySet()) {
-                                buffer.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-                            }
-                            buffer.append("\n"); // Add an empty line between records
-                        }
-
-                        buffer.append(IntStream.range(1, 50).mapToObj(i -> "#").collect(Collectors.joining())).append("\n");
-
-                        // Write buffer to file
-                        bufferedWriter.write(buffer.toString());
-                    }
-
-                }
+                checkAndAppendDataInFile(fileMap, data, uniqueIds, bufferedWriter);
             } else {
                 bufferedWriter.write(data.toString());
             }
 
-
             bufferedWriter.flush();
             bufferedWriter.close();
             LoggerUtil.log("FileUtil", "Directory : " + directory.getAbsolutePath() + " File : " + fileMap.getFileName() + " created or appended successfully", LoggingLevel.DEBUG);
-        } catch (
-                IOException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
             LoggerUtil.log("FileUtil", "Failed to create file" + e.toString(), LoggingLevel.ERROR);
         }
+    }
+
+    private static void checkAndAppendDataInFile(FileMap fileMap, Object data, Set<String> uniqueIds, BufferedWriter bufferedWriter) throws IOException {
+        if (CommonUtil.isDataTypeListOfMap(data)) {
+            List<Map<String, String>> tableData = (List<Map<String, String>>) data;
+            StringBuilder buffer = new StringBuilder();
+            int recordCount = 0;
+            //buffer.append(IntStream.range(1, 50).mapToObj(i -> "#").collect(Collectors.joining())).append("\n");
+
+            // Write data rows
+            for (Map<String, String> record : tableData) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    buffer.append("Record:").append(++recordCount).append(" DateTime:")
+                            .append(Instant.now()).append("\n");
+                }
+                if (fileMap.isCheckForDuplication() && uniqueIds.contains(record.get(fileMap.getUniqueIdKey()))) {
+                    break;
+                }
+                for (Map.Entry<String, String> entry : record.entrySet()) {
+                    buffer.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+                }
+                buffer.append("\n"); // Add an empty line between records
+            }
+
+            //buffer.append(IntStream.range(1, 50).mapToObj(i -> "#").collect(Collectors.joining())).append("\n");
+            // Write buffer to file
+            bufferedWriter.write(buffer.toString());
+        }
+    }
+
+    private static Set<String> getAllUniqueIdsInFile(File file, FileMap fileMap) {
+        Set<String> idSet = new HashSet<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith(fileMap.getUniqueIdKey() + ":")) {
+                    String id = line.substring(4).trim(); // Extract the ID value
+                    idSet.add(id);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            LoggerUtil.log("FileUtil", "Failed to read file for duplicate records", LoggingLevel.ERROR);
+        }
+        return idSet;
     }
 
     private static boolean checkAndCreateFile(File file) throws IOException {
