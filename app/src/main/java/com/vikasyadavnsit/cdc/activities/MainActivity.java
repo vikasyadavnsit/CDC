@@ -2,6 +2,7 @@ package com.vikasyadavnsit.cdc.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -12,8 +13,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
-import com.vikasyadavnsit.cdc.permissions.PermissionManager;
 import com.vikasyadavnsit.cdc.utils.ActionUtil;
+import com.vikasyadavnsit.cdc.utils.CallUtils;
 import com.vikasyadavnsit.cdc.utils.CommonUtil;
 
 import javax.inject.Inject;
@@ -36,15 +37,14 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+
+
         ActionUtil.handleButtonPress(this, R.id.main_navigation_request_home_button, R.id.main_navigation_request_settings_button);
-       // FileUtil.createFile(this, FileMap.SMS, "test");
+        // FileUtil.createFile(this, FileMap.SMS, "test");
 
 //            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
 //            startActivity(intent);
     }
-
-
-
 
 
     //
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        permissionHandler.handlePermissionResult(this, requestCode, permissions, grantResults);
+        permissionHandler.handlePermissionResult(this, requestCode, permissions, grantResults);
     }
 
 }
