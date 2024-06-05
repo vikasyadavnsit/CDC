@@ -2,7 +2,7 @@ package com.vikasyadavnsit.cdc.enums;
 
 import android.Manifest;
 
-import com.vikasyadavnsit.cdc.utils.LoggerUtil;
+import com.vikasyadavnsit.cdc.utils.LoggerUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public enum PermissionType {
                 return permissionType;
             }
         }
-        LoggerUtil.log("PermissionTye", "getPermissionTypeByRequestCode: " + requestCode + " not found", LoggingLevel.ERROR);
+        LoggerUtils.log("PermissionTye", "getPermissionTypeByRequestCode: " + requestCode + " not found", LoggingLevel.ERROR);
         return null;
     }
 

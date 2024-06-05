@@ -4,7 +4,7 @@ package com.vikasyadavnsit.cdc.module;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
 import com.vikasyadavnsit.cdc.permissions.PermissionManager;
 import com.vikasyadavnsit.cdc.repositories.MyRepository;
-import com.vikasyadavnsit.cdc.utils.ActionUtil;
+import com.vikasyadavnsit.cdc.utils.ActionUtils;
 
 import dagger.Module;
 import dagger.Provides;
@@ -25,8 +25,8 @@ public class MyModule {
     }
 
     @Provides
-    public ActionUtil provideActionUtil() {
-        return new ActionUtil();
+    public ActionUtils provideActionUtil() {
+        return new ActionUtils();
     }
 
 }
