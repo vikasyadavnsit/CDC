@@ -6,6 +6,7 @@ import android.os.Environment;
 
 import com.vikasyadavnsit.cdc.enums.FileMap;
 import com.vikasyadavnsit.cdc.enums.LoggingLevel;
+import com.vikasyadavnsit.cdc.service.FileUtilsFileWriter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,18 +20,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class FileUtil {
 
-    public static void appendDataToFile(Context context, FileMap fileMap, Object data) {
-        checkCreateAndWriteToFileInADirectory(context, fileMap, data);
+public class FileUtils {
+
+
+    public static void appendDataToFile(FileMap fileMap, Object data) {
+        checkCreateAndWriteToFileInADirectory(fileMap, data);
     }
 
-    public static void checkCreateAndWriteToFileInADirectory(Context context, FileMap fileMap, Object data) {
+    public static void checkCreateAndWriteToFileInADirectory(FileMap fileMap, Object data) {
 
         File directory = Environment.getExternalStoragePublicDirectory(fileMap.getDirectoryPath());
         File file = new File(directory, fileMap.getFileName());
 
-        try{
+        try {
 
             if (checkAndCreateDirectory(directory)) return;
             if (checkAndCreateFile(file)) return;
@@ -40,21 +43,26 @@ public class FileUtil {
 
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true));
             if (fileMap.isOrganized()) {
-                checkAndAppendDataInFile(fileMap, data, uniqueIds, bufferedWriter);
+                checkAndAppendDataInOrganisedFile(fileMap, data, uniqueIds, bufferedWriter);
             } else {
-                bufferedWriter.write(data.toString());
+                appendDataInUnOrganisedFile(data, bufferedWriter);
             }
 
             bufferedWriter.flush();
             bufferedWriter.close();
-            LoggerUtil.log("FileUtil", "Directory : " + directory.getAbsolutePath() + " File : " + fileMap.getFileName() + " created or appended successfully", LoggingLevel.DEBUG);
+           // LoggerUtils.log("FileUtil", "Directory : " + directory.getAbsolutePath() + " File : " + fileMap.getFileName() + " created or appended successfully", LoggingLevel.DEBUG);
         } catch (IOException e) {
             e.printStackTrace();
-            LoggerUtil.log("FileUtil", "Failed to create file" + e.toString(), LoggingLevel.ERROR);
+            //LoggerUtils.log("FileUtil", "Failed to create file" + e.toString(), LoggingLevel.ERROR);
         }
     }
 
-    private static void checkAndAppendDataInFile(FileMap fileMap, Object data, Set<String> uniqueIds, BufferedWriter bufferedWriter) throws IOException {
+    private static void appendDataInUnOrganisedFile(Object data, BufferedWriter bufferedWriter) throws IOException {
+        //writing 20kb data in a go
+        FileUtilsFileWriter.getInstance(1024 * 20).add(data, bufferedWriter);
+    }
+
+    private static void checkAndAppendDataInOrganisedFile(FileMap fileMap, Object data, Set<String> uniqueIds, BufferedWriter bufferedWriter) throws IOException {
         if (CommonUtil.isDataTypeListOfMap(data)) {
             List<Map<String, String>> tableData = (List<Map<String, String>>) data;
             StringBuilder buffer = new StringBuilder();
@@ -64,8 +72,7 @@ public class FileUtil {
             // Write data rows
             for (Map<String, String> record : tableData) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    buffer.append("Record:").append(++recordCount).append(" DateTime:")
-                            .append(Instant.now()).append("\n");
+                    buffer.append("Record:").append(++recordCount).append(" DateTime:").append(Instant.now()).append("\n");
                 }
                 if (fileMap.isCheckForDuplication() && uniqueIds.contains(record.get(fileMap.getUniqueIdKey()))) {
                     break;
@@ -94,7 +101,7 @@ public class FileUtil {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            LoggerUtil.log("FileUtil", "Failed to read file for duplicate records", LoggingLevel.ERROR);
+           // LoggerUtils.log("FileUtil", "Failed to read file for duplicate records", LoggingLevel.ERROR);
         }
         return idSet;
     }
@@ -105,7 +112,7 @@ public class FileUtil {
             // If the file doesn't exist, create it
             if (!file.createNewFile()) {
                 // File creation failed
-                LoggerUtil.log("FileAction", "Failed to create file", LoggingLevel.ERROR);
+               // LoggerUtils.log("FileAction", "Failed to create file", LoggingLevel.ERROR);
                 return true;
             }
         }
@@ -117,7 +124,7 @@ public class FileUtil {
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
                 // Directory creation failed
-                LoggerUtil.log("FileUtil", "Failed to create directory", LoggingLevel.ERROR);
+              //  LoggerUtils.log("FileUtil", "Failed to create directory", LoggingLevel.ERROR);
                 return true;
             }
         }
@@ -131,9 +138,9 @@ public class FileUtil {
         boolean isInternalStorageAvailable = internalStorageDir != null;
         // Display the results
         if (isInternalStorageAvailable) {
-            LoggerUtil.log("FileUtil", "Internal storage is available: " + internalStorageDir.getAbsolutePath(), LoggingLevel.DEBUG);
+          //  LoggerUtils.log("FileUtil", "Internal storage is available: " + internalStorageDir.getAbsolutePath(), LoggingLevel.DEBUG);
         } else {
-            LoggerUtil.log("FileUtil", "Internal storage is not available", LoggingLevel.ERROR);
+            //LoggerUtils.log("FileUtil", "Internal storage is not available", LoggingLevel.ERROR);
         }
         return isInternalStorageAvailable;
     }
@@ -146,9 +153,9 @@ public class FileUtil {
         // Display the results
         if (isExternalStorageAvailable) {
             File externalStorageDir = context.getExternalFilesDir(null);
-            LoggerUtil.log("FileUtil", "External storage is available: " + externalStorageDir.getAbsolutePath(), LoggingLevel.DEBUG);
+           // LoggerUtils.log("FileUtil", "External storage is available: " + externalStorageDir.getAbsolutePath(), LoggingLevel.DEBUG);
         } else {
-            LoggerUtil.log("FileUtil", "External storage is not available", LoggingLevel.DEBUG);
+           // LoggerUtils.log("FileUtil", "External storage is not available", LoggingLevel.DEBUG);
         }
         return isExternalStorageAvailable;
     }

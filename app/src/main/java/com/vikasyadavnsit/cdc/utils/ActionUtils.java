@@ -10,12 +10,12 @@ import com.vikasyadavnsit.cdc.fragment.HomeFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
 import com.vikasyadavnsit.cdc.permissions.PermissionManager;
 
-public class ActionUtil {
+public class ActionUtils {
 
     public static void handleButtonPress(AppCompatActivity activity, int... viewIds) {
-        ActionUtil actionUtil = new ActionUtil();
+        ActionUtils actionUtils = new ActionUtils();
         for (int viewId : viewIds) {
-            actionUtil.handleButtonPress(activity, viewId);
+            actionUtils.handleButtonPress(activity, viewId);
         }
     }
 

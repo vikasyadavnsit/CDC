@@ -28,7 +28,7 @@ public class CommonUtil {
 
 
     public static void onActivityResult(int requestCode, int resultCode, Intent data) {
-        LoggerUtil.log("CommonUtil", "onActivityResult : requestCode : " + requestCode + " resultCode : " + resultCode, LoggingLevel.DEBUG);
+        LoggerUtils.log("CommonUtil", "onActivityResult : requestCode : " + requestCode + " resultCode : " + resultCode, LoggingLevel.DEBUG);
     }
 
 
