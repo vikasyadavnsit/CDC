@@ -12,7 +12,7 @@ public enum FileMap {
     SMS(Environment.DIRECTORY_DOCUMENTS + "/CDC", "sms.txt", true, true, "_id"),
     LOG(Environment.DIRECTORY_DOCUMENTS + "/CDC", "log.txt", false, false, null),
     CALL(Environment.DIRECTORY_DOCUMENTS + "/CDC", "call.txt", true, true, "_id"),
-    CALL_STATE(Environment.DIRECTORY_DOCUMENTS + "/CDC", "call_state.txt", true, false, null);
+    CALL_STATE(Environment.DIRECTORY_DOCUMENTS + "/CDC", "call_state.txt", false, false, null);
 
     String directoryPath;
     String fileName;
