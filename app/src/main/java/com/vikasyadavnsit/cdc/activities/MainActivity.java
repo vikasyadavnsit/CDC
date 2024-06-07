@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         ActionUtils.handleButtonPress(this, R.id.main_navigation_request_home_button, R.id.main_navigation_request_settings_button);
         // FileUtil.createFile(this, FileMap.SMS, "test");
 

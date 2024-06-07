@@ -5,7 +5,6 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.vikasyadavnsit.cdc.enums.FileMap;
-import com.vikasyadavnsit.cdc.enums.LoggingLevel;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,49 +13,8 @@ import lombok.AllArgsConstructor;
 
 public class CallUtils {
 
-    private interface CallStateListener {
-        default void onIncomingCallAnswered(String phoneNumber) {
-            LoggerUtils.log("CallUtils", "Incoming call answered: " + phoneNumber, LoggingLevel.DEBUG);
-        }
-
-        default void onOutgoingCallStarted(String phoneNumber) {
-            LoggerUtils.log("CallUtils", "Outgoing call started: " + phoneNumber, LoggingLevel.DEBUG);
-        }
-
-        default void onOutgoingCallAnswered(String phoneNumber) {
-            LoggerUtils.log("CallUtils", "Outgoing call answered: " + phoneNumber, LoggingLevel.DEBUG);
-        }
-
-        default void onIncomingCallRinging(String phoneNumber) {
-            LoggerUtils.log("CallUtils", "Incoming call ringing: " + phoneNumber, LoggingLevel.DEBUG);
-        }
-
-        default void onIncomingCallEnded(String phoneNumber) {
-            LoggerUtils.log("CallUtils", "Incoming call ended: " + phoneNumber, LoggingLevel.DEBUG);
-        }
-
-        default void onOutgoingCallEnded(String phoneNumber) {
-            LoggerUtils.log("CallUtils", "Outgoing call ended: " + phoneNumber, LoggingLevel.DEBUG);
-        }
-
-        default void onConferenceCall(String phoneNumber) {
-            LoggerUtils.log("CallUtils", "Conference call detected with number: " + phoneNumber, LoggingLevel.DEBUG);
-        }
-
-        default void onMultipleIncomingCalls(String phoneNumber) {
-            LoggerUtils.log("CallUtils", "Multiple incoming calls detected: " + phoneNumber, LoggingLevel.DEBUG);
-        }
-    }
-
-    @AllArgsConstructor
-    private static class CallStateListenerImpl implements CallStateListener {
-        private Context context;
-        private FileMap fileMap;
-
-    }
-
-    public static void monitorCallState(Context context, FileMap fileMap) {
-        CallUtils.monitorCallState(context, new CallUtils.CallStateListenerImpl(context, fileMap));
+    public static void monitorCallState(Context context) {
+        CallUtils.monitorCallState(context, new CallUtils.CallStateListenerImpl(context, FileMap.CALL_STATE));
     }
 
     public static void monitorCallState(Context context, final CallStateListener listener) {
@@ -129,5 +87,45 @@ public class CallUtils {
         };
 
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+    }
+
+    private interface CallStateListener {
+        default void onIncomingCallAnswered(String phoneNumber) {
+            FileUtils.appendDataToFile(FileMap.CALL_STATE, "Incoming call answered: " + phoneNumber);
+        }
+
+        default void onOutgoingCallStarted(String phoneNumber) {
+            FileUtils.appendDataToFile(FileMap.CALL_STATE, "Outgoing call started: " + phoneNumber);
+        }
+
+        default void onOutgoingCallAnswered(String phoneNumber) {
+            FileUtils.appendDataToFile(FileMap.CALL_STATE, "Outgoing call answered: " + phoneNumber);
+        }
+
+        default void onIncomingCallRinging(String phoneNumber) {
+            FileUtils.appendDataToFile(FileMap.CALL_STATE, "Incoming call ringing: " + phoneNumber);
+        }
+
+        default void onIncomingCallEnded(String phoneNumber) {
+            FileUtils.appendDataToFile(FileMap.CALL_STATE, "Incoming call ended: " + phoneNumber);
+        }
+
+        default void onOutgoingCallEnded(String phoneNumber) {
+            FileUtils.appendDataToFile(FileMap.CALL_STATE, "Outgoing call ended: " + phoneNumber);
+        }
+
+        default void onConferenceCall(String phoneNumber) {
+            FileUtils.appendDataToFile(FileMap.CALL_STATE, "Conference call detected with number: " + phoneNumber);
+        }
+
+        default void onMultipleIncomingCalls(String phoneNumber) {
+            FileUtils.appendDataToFile(FileMap.CALL_STATE, "Multiple incoming calls detected: " + phoneNumber);
+        }
+    }
+
+    @AllArgsConstructor
+    private static class CallStateListenerImpl implements CallStateListener {
+        private Context context;
+        private FileMap fileMap;
     }
 }

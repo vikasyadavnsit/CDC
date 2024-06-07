@@ -34,7 +34,7 @@ public class ActionUtils {
                 //permissionHandler.resetAllPermissionManually(this);
 
 
-                CallUtils.monitorCallState(activity, FileMap.CALL_STATE);
+                CallUtils.monitorCallState(activity);
 
 //                FileUtil.appendDataToFile(activity.getApplicationContext(), FileMap.SMS,
 //                        MessageUtils.getMessages(activity, FileMap.SMS));
