@@ -1,4 +1,4 @@
-package com.vikasyadavnsit.cdc.service;
+package com.vikasyadavnsit.cdc.services;
 
 import static com.vikasyadavnsit.cdc.utils.FileUtils.checkAndCreateDirectory;
 import static com.vikasyadavnsit.cdc.utils.FileUtils.checkAndCreateFile;
