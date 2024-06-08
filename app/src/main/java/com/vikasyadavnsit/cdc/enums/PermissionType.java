@@ -19,7 +19,10 @@ public enum PermissionType {
     READ_CALL_LOG(new String[]{Manifest.permission.READ_CALL_LOG}, 1006),
     WRITE_CALL_LOG(new String[]{Manifest.permission.WRITE_CALL_LOG}, 1007),
     READ_PHONE_STATE(new String[]{Manifest.permission.READ_PHONE_STATE}, 1008),
-    MANAGE_EXTERNAL_STORAGE(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 1009);
+    MANAGE_EXTERNAL_STORAGE(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 1009),
+//    FOREGROUND_SERVICE(new String[]{Manifest.permission.FOREGROUND_SERVICE}, 1010),
+//    SYSTEM_ALERT_WINDOW(new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, 1011);
+    POST_NOTIFICATIONS(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1012);
 
     private final String[] permissions;
     private final int requestCode;

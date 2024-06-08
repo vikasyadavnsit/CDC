@@ -8,7 +8,7 @@ import android.os.Environment;
 import android.provider.Settings;
 
 import com.vikasyadavnsit.cdc.enums.FileMap;
-import com.vikasyadavnsit.cdc.service.FileAppender;
+import com.vikasyadavnsit.cdc.services.FileAppender;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
