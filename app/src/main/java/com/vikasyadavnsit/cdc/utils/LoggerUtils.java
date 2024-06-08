@@ -1,5 +1,7 @@
 package com.vikasyadavnsit.cdc.utils;
 
+import android.util.Log;
+
 import com.vikasyadavnsit.cdc.enums.FileMap;
 import com.vikasyadavnsit.cdc.enums.LoggingLevel;
 
@@ -10,24 +12,27 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class LoggerUtils {
 
-    /**
-     * Logs a message with a specific tag and logging level.
-     *
-     * @param tag          The tag for the log message, typically used to indicate the source of the log.
-     * @param message      The message to log.
-     * @param loggingLevel The level of the log (DEBUG, INFO, WARN, ERROR).
-     */
-    public static void log(String tag, String message, LoggingLevel loggingLevel) {
+
+    private static void log(String tag, String message, LoggingLevel loggingLevel) {
         String logTag = StringUtils.isNotBlank(tag) ? tag + ": " : "Logger: ";
         switch (loggingLevel) {
             case DEBUG:
             case INFO:
             case WARN:
             case ERROR:
+                Log.d(logTag, message);
                 FileUtils.appendDataToFile(FileMap.LOG, loggingLevel + " " + logTag + message);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid logging level: " + loggingLevel);
         }
+    }
+
+    public static void d(String tag, String message) {
+        log(tag, message, LoggingLevel.DEBUG);
+    }
+
+    public static void e(String tag, String message) {
+        log(tag, message, LoggingLevel.ERROR);
     }
 }

@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.vikasyadavnsit.cdc.R;
-import com.vikasyadavnsit.cdc.enums.LoggingLevel;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class CommonUtil {
 
 
     public static void onActivityResult(int requestCode, int resultCode, Intent data) {
-        LoggerUtils.log("CommonUtil", "onActivityResult : requestCode : " + requestCode + " resultCode : " + resultCode, LoggingLevel.DEBUG);
+        LoggerUtils.d("CommonUtil", "onActivityResult : requestCode : " + requestCode + " resultCode : " + resultCode);
     }
 
 
