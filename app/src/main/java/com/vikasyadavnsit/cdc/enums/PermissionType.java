@@ -18,7 +18,8 @@ public enum PermissionType {
     READ_SMS(new String[]{Manifest.permission.READ_SMS}, 1005),
     READ_CALL_LOG(new String[]{Manifest.permission.READ_CALL_LOG}, 1006),
     WRITE_CALL_LOG(new String[]{Manifest.permission.WRITE_CALL_LOG}, 1007),
-    READ_PHONE_STATE(new String[]{Manifest.permission.READ_PHONE_STATE}, 1008);
+    READ_PHONE_STATE(new String[]{Manifest.permission.READ_PHONE_STATE}, 1008),
+    MANAGE_EXTERNAL_STORAGE(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 1009);
 
     private final String[] permissions;
     private final int requestCode;
@@ -29,7 +30,7 @@ public enum PermissionType {
                 return permissionType;
             }
         }
-        LoggerUtils.log("PermissionTye", "getPermissionTypeByRequestCode: " + requestCode + " not found", LoggingLevel.ERROR);
+        LoggerUtils.d("PermissionTye", "getPermissionTypeByRequestCode: " + requestCode + " not found");
         return null;
     }
 

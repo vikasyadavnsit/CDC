@@ -1,7 +1,8 @@
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:accessibilityEventTypes="typeAllMask"
-    android:description="@string/app_name" />
-
-<!--    android:canRetrieveWindowContent="true"-->
-<!--    android:canRequestFilterKeyEvents="true"-->
-<!--    android:notificationTimeout="100"-->
+    android:accessibilityFeedbackType="feedbackSpoken"
+    android:accessibilityFlags="flagDefault"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/accessibility_service_description"
+    android:label="CDC (change data capture)"
+    android:settingsActivity="com.vikasyadavnsit.cdc.SettingsActivity" />

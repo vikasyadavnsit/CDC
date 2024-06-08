@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">CDC</string>
     <string name="navigation_settings_button_text">Setting</string>
+    <string name="accessibility_service_description">
+        CDC is a change data capture service for Android. It is designed by Vikas Yadav as a side project to show the relevance of security in our system.
+    </string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

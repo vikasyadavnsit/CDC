@@ -34,13 +34,9 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        //new PermissionManager().requestAllPermissions(this);
 
         ActionUtils.handleButtonPress(this, R.id.main_navigation_request_home_button, R.id.main_navigation_request_settings_button);
-        // FileUtil.createFile(this, FileMap.SMS, "test");
-
-//            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-//            startActivity(intent);
     }
 
 
