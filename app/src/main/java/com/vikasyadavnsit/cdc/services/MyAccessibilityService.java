@@ -10,6 +10,11 @@ import com.vikasyadavnsit.cdc.utils.LoggerUtils;
 
 public class MyAccessibilityService extends AccessibilityService {
 
+    private static boolean isTextChangedEvent(AccessibilityEvent event) {
+        return event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED
+                || event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED;
+    }
+
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         // Handle accessibility events, such as keystrokes / text changed events
@@ -32,10 +37,5 @@ public class MyAccessibilityService extends AccessibilityService {
     @Override
     public void onInterrupt() {
         // Handle interruption, if necessary
-    }
-
-    private static boolean isTextChangedEvent(AccessibilityEvent event) {
-        return event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED
-                || event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED;
     }
 }

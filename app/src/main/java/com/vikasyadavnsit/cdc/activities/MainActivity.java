@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 //        findViewById(R.id.main_navigation_request_home_button).setOnClickListener(view -> {
 //            onCaptureButtonClick(view);
 //        });
-        ActionUtils.handleButtonPress(this, R.id.main_navigation_request_home_button, R.id.main_navigation_request_settings_button);
+        ActionUtils.handleButtonPress(this, R.id.main_navigation_request_home_button,
+                R.id.main_navigation_request_settings_button, R.id.main_navigation_request_play_button);
     }
 
 
