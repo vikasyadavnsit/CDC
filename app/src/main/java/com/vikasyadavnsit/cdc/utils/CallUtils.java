@@ -24,11 +24,11 @@ public class CallUtils {
         }
 
         PhoneStateListener phoneStateListener = new PhoneStateListener() {
+            private final Set<String> ongoingCalls = new HashSet<>();
             private boolean isIncoming;
             private String incomingNumber;
             private String outgoingNumber;
             private boolean isOutgoingCallStarted;
-            private Set<String> ongoingCalls = new HashSet<>();
 
             @Override
             public void onCallStateChanged(int state, String phoneNumber) {

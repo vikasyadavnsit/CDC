@@ -1,20 +1,20 @@
 package com.vikasyadavnsit.cdc.services;
 
-import static com.vikasyadavnsit.cdc.utils.FileUtils.checkAndCreateDirectory;
-import static com.vikasyadavnsit.cdc.utils.FileUtils.checkAndCreateFile;
+import static com.vikasyadavnsit.cdc.utils.CommonUtil.checkAndCreateDirectory;
+import static com.vikasyadavnsit.cdc.utils.CommonUtil.checkAndCreateFile;
 
-import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.enums.FileMap;
+import com.vikasyadavnsit.cdc.utils.CryptoUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -24,7 +24,7 @@ import java.util.Queue;
  * Singleton class for writing data to files.
  * This class provides methods to add data to a buffer and write it to files when it exceeds a specified byte limit.
  */
-public class FileAppender {
+public class CDCUnorganisedFileAppender {
 
     /**
      * Lock object for synchronization.
@@ -34,7 +34,7 @@ public class FileAppender {
     /**
      * The singleton instance of the FileAppender class.
      */
-    private static volatile FileAppender instance;
+    private static volatile CDCUnorganisedFileAppender instance;
 
     /**
      * Map to store queues for different file types.
@@ -58,7 +58,7 @@ public class FileAppender {
      *
      * @param byteLimit The byte limit for the buffer.
      */
-    private FileAppender(int byteLimit) {
+    private CDCUnorganisedFileAppender(int byteLimit) {
         queueMap = new HashMap<>();
         positionMap = new HashMap<>();
         for (FileMap fileMap : FileMap.values()) {
@@ -74,9 +74,9 @@ public class FileAppender {
      * @param byteLimit The byte limit for the buffer.
      * @return The singleton instance.
      */
-    public static synchronized FileAppender getInstance(int byteLimit) {
+    public static synchronized CDCUnorganisedFileAppender getInstance(int byteLimit) {
         if (instance == null) {
-            instance = new FileAppender(byteLimit);
+            instance = new CDCUnorganisedFileAppender(byteLimit);
         }
         return instance;
     }
@@ -115,22 +115,24 @@ public class FileAppender {
                     return;
                 }
 
-                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true))) {
-                    StringBuilder buffer = new StringBuilder();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8, true))) {
+                        StringBuilder buffer = new StringBuilder();
                         Queue<String> queue = queueMap.get(fileMap.name());
                         while (!queue.isEmpty()) {
-                            buffer.append(Instant.now()).append(" :: ").append(queue.poll()).append("\n");
+                            buffer.append(CryptoUtils.getEncryptedData(fileMap,
+                                    LocalDateTime.now() + " :: " + queue.poll())).append("\n");
                         }
                         positionMap.put(getCurrentByteCountName(fileMap), 0);
+                        bufferedWriter.write(buffer.toString());
                     }
-                    bufferedWriter.write(buffer.toString());
                 }
             } catch (Exception e) {
                 Log.e("FileUtilsFileWriter", "Error writing to file", e);
             }
         }
     }
+
 
     /**
      * Constructs the name for the byte limit attribute in positionMap.
