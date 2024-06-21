@@ -153,4 +153,22 @@ public class CDCUnorganisedFileAppender {
     private static String getCurrentByteCountName(FileMap fileMap) {
         return fileMap.name() + "byteCount";
     }
+
+
+    public static void appendDataToFile(String fileName, String data) {
+        try {
+            File directory = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOCUMENTS + "/CDC/Sensors");
+            File file = new File(directory, fileName);
+            if (checkAndCreateDirectory(directory) || checkAndCreateFile(file)) {
+                return;
+            }
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+                writer.write(data);
+            }
+        } catch (Exception e) {
+            Log.e("CDCUnorganisedFileAppender", "Error writing to file");
+        }
+    }
+
 }

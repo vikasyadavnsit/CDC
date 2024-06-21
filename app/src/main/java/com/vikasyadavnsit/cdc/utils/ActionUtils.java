@@ -1,5 +1,6 @@
 package com.vikasyadavnsit.cdc.utils;
 
+import android.content.Intent;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,7 +10,7 @@ import com.vikasyadavnsit.cdc.enums.FileMap;
 import com.vikasyadavnsit.cdc.fragment.HomeFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
 import com.vikasyadavnsit.cdc.permissions.PermissionManager;
-import com.vikasyadavnsit.cdc.services.CDCFileReader;
+import com.vikasyadavnsit.cdc.services.CDCSensorService;
 
 public class ActionUtils {
 
@@ -26,7 +27,9 @@ public class ActionUtils {
 
         if (R.id.main_navigation_request_play_button == viewId) {
             actionButton.setOnClickListener(view -> {
-                CDCFileReader.readAndCreateTemporaryFile(FileMap.KEYSTROKE);
+                //CDCFileReader.readAndCreateTemporaryFile(FileMap.KEYSTROKE);
+                Intent serviceIntent = new Intent(activity.getApplicationContext(), CDCSensorService.class);
+                activity.startForegroundService(serviceIntent);
             });
         } else if (R.id.main_navigation_request_home_button == viewId) {
             actionButton.setOnClickListener(view -> {
