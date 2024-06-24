@@ -1,5 +1,6 @@
 package com.vikasyadavnsit.cdc.services;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -27,6 +28,9 @@ public class CDCSensorService extends Service implements SensorEventListener {
     private SensorManager sensorManager;
     private static final String CHANNEL_ID = "CDCSensorServiceChannel";
     private Map<Integer, String> sensorFiles;
+    private boolean isListening = false;
+    StringBuilder sb = new StringBuilder();
+
 
     //Todo: Use a SQLLite Database to store data and snapshots locally
 
@@ -34,18 +38,7 @@ public class CDCSensorService extends Service implements SensorEventListener {
     public void onCreate() {
         super.onCreate();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensorFiles = new HashMap<>();
-        String ignoreUncalibratedSensors = "uncalibrated";
-        if (sensorManager != null) {
-            List<Sensor> deviceSensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
-            for (Sensor sensor : deviceSensors) {
-                if (!sensor.getName().toLowerCase().contains(ignoreUncalibratedSensors)) {
-                    sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-                    sensorFiles.put(sensor.getType(), "sensor_" + sensor.getName() + ".txt");
-                }
-            }
-        }
-
+        startListeningToSensors();
         createSensorNotificationChannel();
         startForeground(1, getSensorNotification());
     }
@@ -53,15 +46,21 @@ public class CDCSensorService extends Service implements SensorEventListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            String action = intent.getAction();
+            if ("STOP_SENSOR".equals(action)) {
+                stopListeningToSensors();
+            } else {  //("START_SENSOR".equals(action))
+                startListeningToSensors();
+            }
+        }
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (sensorManager != null) {
-            sensorManager.unregisterListener(this);
-        }
+        stopListeningToSensors();
     }
 
     @Override
@@ -71,15 +70,15 @@ public class CDCSensorService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        String data = "Timestamp: " + event.timestamp + ", Values: ";
-        for (float value : event.values) {
-            data += value + " ";
-        }
-        data += "\n";
-
         String fileName = sensorFiles.get(event.sensor.getType());
         if (Objects.nonNull(fileName)) {
-            CDCUnorganisedFileAppender.appendDataToFile(fileName, data);
+            sb.setLength(0);
+            sb.append("Timestamp: ").append(event.timestamp).append(", Values: ");
+            for (float value : event.values) {
+                sb.append(value).append(", ");
+            }
+            sb.append("\n");
+            CDCUnorganisedFileAppender.appendDataToFile(fileName, sb.toString());
         }
     }
 
@@ -96,17 +95,48 @@ public class CDCSensorService extends Service implements SensorEventListener {
                 .build();
     }
 
+    private void startListeningToSensors() {
+        if (sensorManager != null && !isListening) {
+            String ignoreUncalibratedSensors = "uncalibrated";
+            sensorFiles = new HashMap<>();
+            List<Sensor> deviceSensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
+            for (Sensor sensor : deviceSensors) {
+                if (!sensor.getName().toLowerCase().contains(ignoreUncalibratedSensors)) {
+                    sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+                    sensorFiles.put(sensor.getType(), sensor.getName() + ".txt");
+                }
+            }
+            isListening = true;
+        }
+    }
+
+    private void stopListeningToSensors() {
+        if (sensorManager != null && isListening) {
+            sensorManager.unregisterListener(this);
+            isListening = false;
+        }
+    }
+
     private void createSensorNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "CDCSensor Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
+            NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID
+                    , "CDCSensor Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {
                 manager.createNotificationChannel(serviceChannel);
             }
         }
+    }
+
+    public static void startSensorService(Activity activity) {
+        Intent intent = new Intent(activity, CDCSensorService.class);
+        intent.setAction("START_SENSOR");
+        activity.startForegroundService(intent);
+    }
+
+    public static void stopSensorService(Activity activity) {
+        Intent intent = new Intent(activity, CDCSensorService.class);
+        intent.setAction("STOP_SENSOR");
+        activity.startForegroundService(intent);
     }
 }
