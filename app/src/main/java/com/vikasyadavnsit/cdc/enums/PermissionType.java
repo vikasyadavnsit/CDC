@@ -26,7 +26,8 @@ public enum PermissionType {
     FOREGROUND_SERVICE_HEALTH(new String[]{Manifest.permission.FOREGROUND_SERVICE_HEALTH}, 1013),
     ACTIVITY_RECOGNITION(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 1014),
     BODY_SENSORS(new String[]{Manifest.permission.BODY_SENSORS}, 1015),
-    HIGH_SAMPLING_RATE_SENSORS(new String[]{Manifest.permission.HIGH_SAMPLING_RATE_SENSORS}, 1016);
+    HIGH_SAMPLING_RATE_SENSORS(new String[]{Manifest.permission.HIGH_SAMPLING_RATE_SENSORS}, 1016),
+    FOREGROUND_SERVICE_MEDIA_PROJECTION(new String[]{Manifest.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION}, 1017);
 
     private final String[] permissions;
     private final int requestCode;

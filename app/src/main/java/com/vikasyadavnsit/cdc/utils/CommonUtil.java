@@ -76,5 +76,9 @@ public class CommonUtil {
         return false;
     }
 
+    public static boolean checkAndCreateDirectory(String directoryPath) {
+        return checkAndCreateDirectory(new File(directoryPath));
+    }
+
 
 }
