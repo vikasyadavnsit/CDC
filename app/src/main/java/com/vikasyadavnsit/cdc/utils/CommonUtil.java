@@ -1,5 +1,6 @@
 package com.vikasyadavnsit.cdc.utils;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
@@ -28,9 +29,7 @@ public class CommonUtil {
     }
 
 
-    public static void onActivityResult(int requestCode, int resultCode, Intent data) {
-        LoggerUtils.d("CommonUtil", "onActivityResult : requestCode : " + requestCode + " resultCode : " + resultCode);
-    }
+
 
 
     // When DataType is List<Map<String, String>>

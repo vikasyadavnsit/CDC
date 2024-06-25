@@ -29,9 +29,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class ScreenshotService extends Service {
     public static final String EXTRA_RESULT_CODE = "RESULT_CODE";
     public static final String EXTRA_RESULT_DATA = "RESULT_DATA";
+
+    @Getter
+    @Setter
+    private static boolean takeScreenshot = false;
+
+    @Getter
+    @Setter
+    private static boolean stopScreenshotService = false;
 
     private MediaProjection mediaProjection;
     private VirtualDisplay virtualDisplay;
@@ -53,6 +64,7 @@ public class ScreenshotService extends Service {
                 (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, resultData);
         mediaProjection.registerCallback(mediaProjectionCallback, null); // Register the callback
+        takeScreenshot();
     }
 
     private MediaProjection.Callback mediaProjectionCallback = new MediaProjection.Callback() {
@@ -97,28 +109,37 @@ public class ScreenshotService extends Service {
     }
 
     public void takeScreenshot() {
-
-
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         int density = metrics.densityDpi;
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
 
-        imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 1);
+        imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2);
         virtualDisplay = mediaProjection.createVirtualDisplay("Screenshot", width, height, density,
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReader.getSurface(), null, null);
 
-        imageReader.setOnImageAvailableListener(reader -> {
-            Image image = reader.acquireLatestImage();
-            if (image != null) {
-                processImage(image);
-                image.close();
-                // Stop listening for new images
-                imageReader.setOnImageAvailableListener(null, null);
-                releaseResources();
+        imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
+            @Override
+            public void onImageAvailable(ImageReader reader) {
+                Image image = reader.acquireLatestImage();
+                if (image != null) {
+                    if (isTakeScreenshot()) {
+                        processImage(image);
+                        setTakeScreenshot(false);
+                    }
+                    image.close();
+
+                    if (isStopScreenshotService()) {
+                        setTakeScreenshot(false);
+                        setStopScreenshotService(false);
+                        releaseResources();
+                    }
+                }
+
             }
         }, null);
     }
+
 
     private void processImage(Image image) {
         Image.Plane[] planes = image.getPlanes();
