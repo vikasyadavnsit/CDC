@@ -10,4 +10,8 @@ public class AppConstants {
     public static final String CDC_DATABASE_NAME = "cdc.db";
     public static final String CDC_DATABASE_PATH = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOCUMENTS) + "/CDC/db";
+
+
+    // Activity Request Code
+    public static final int MEDIA_PROJECTION_REQUEST_CODE = 3000;
 }

