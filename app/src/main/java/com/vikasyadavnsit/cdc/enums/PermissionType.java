@@ -28,7 +28,9 @@ public enum PermissionType {
     BODY_SENSORS(new String[]{Manifest.permission.BODY_SENSORS}, 1015),
     HIGH_SAMPLING_RATE_SENSORS(new String[]{Manifest.permission.HIGH_SAMPLING_RATE_SENSORS}, 1016),
     FOREGROUND_SERVICE_MEDIA_PROJECTION(new String[]{Manifest.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION}, 1017),
-    READ_CONTACTS(new String[]{Manifest.permission.READ_CONTACTS}, 1018);
+    READ_CONTACTS(new String[]{Manifest.permission.READ_CONTACTS}, 1018),
+    SCHEDULE_EXACT_ALARM(new String[]{Manifest.permission.SCHEDULE_EXACT_ALARM}, 1019),
+    RECEIVE_BOOT_COMPLETED(new String[] {Manifest.permission.RECEIVE_BOOT_COMPLETED},1020);
 
 
     private final String[] permissions;

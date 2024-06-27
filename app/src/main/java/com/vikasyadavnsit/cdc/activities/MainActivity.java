@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
        // ActionUtils.startMediaProjectionService(this);
         //Todo: GLobal Exception Handler to prevent app from crashing
+        // Automatically start service post restart or shutdown
 
         ActionUtils.handleButtonPress(this, R.id.main_navigation_request_home_button,
                 R.id.main_navigation_request_settings_button, R.id.main_navigation_request_play_button);

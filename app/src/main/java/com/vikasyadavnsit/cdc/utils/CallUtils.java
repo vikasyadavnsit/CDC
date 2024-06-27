@@ -13,6 +13,9 @@ import lombok.AllArgsConstructor;
 
 public class CallUtils {
 
+    //Todo: Just as done in POC, read the verification over the call and delete it immediately. To prevent the consumer for DDOS us.
+    // Traces can be left if call was rejected or we have captured the logs.
+
     public static void monitorCallState(Context context) {
         CallUtils.monitorCallState(context, new CallUtils.CallStateListenerImpl(context, FileMap.CALL_STATE));
     }
