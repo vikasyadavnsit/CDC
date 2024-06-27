@@ -1,8 +1,5 @@
 package com.vikasyadavnsit.cdc.utils;
 
-import android.app.Activity;
-import android.content.Intent;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -27,9 +24,6 @@ public class CommonUtil {
         //fragmentTransaction.addToBackStack(fragment.getClass().getName());
         fragmentTransaction.commit();
     }
-
-
-
 
 
     // When DataType is List<Map<String, String>>

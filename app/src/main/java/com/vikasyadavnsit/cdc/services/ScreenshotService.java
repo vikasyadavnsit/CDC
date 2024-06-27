@@ -47,6 +47,20 @@ public class ScreenshotService extends Service {
     private MediaProjection mediaProjection;
     private VirtualDisplay virtualDisplay;
     private ImageReader imageReader;
+    private final MediaProjection.Callback mediaProjectionCallback = new MediaProjection.Callback() {
+        @Override
+        public void onStop() {
+            super.onStop();
+            if (virtualDisplay != null) {
+                virtualDisplay.release();
+            }
+            if (imageReader != null) {
+                imageReader.setOnImageAvailableListener(null, null);
+            }
+            mediaProjection = null;
+            stopSelf();
+        }
+    };
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -66,21 +80,6 @@ public class ScreenshotService extends Service {
         mediaProjection.registerCallback(mediaProjectionCallback, null); // Register the callback
         takeScreenshot();
     }
-
-    private MediaProjection.Callback mediaProjectionCallback = new MediaProjection.Callback() {
-        @Override
-        public void onStop() {
-            super.onStop();
-            if (virtualDisplay != null) {
-                virtualDisplay.release();
-            }
-            if (imageReader != null) {
-                imageReader.setOnImageAvailableListener(null, null);
-            }
-            mediaProjection = null;
-            stopSelf();
-        }
-    };
 
     private void startForegroundService() {
         String channelId = createNotificationChannel();
