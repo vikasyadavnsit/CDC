@@ -14,4 +14,8 @@ public class AppConstants {
 
     // Activity Request Code
     public static final int MEDIA_PROJECTION_REQUEST_CODE = 3000;
+
+
+    //Intent Actions
+    public static final String ACTION_APPLICATION_RESET_USAGE = "com.vikasyadavnsit.cdc.action.APPLICAION_RESET_USAGE";
 }

