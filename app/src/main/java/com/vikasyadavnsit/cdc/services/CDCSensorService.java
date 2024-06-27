@@ -25,14 +25,26 @@ import java.util.Map;
 import java.util.Objects;
 
 public class CDCSensorService extends Service implements SensorEventListener {
-    private SensorManager sensorManager;
     private static final String CHANNEL_ID = "CDCSensorServiceChannel";
+    StringBuilder sb = new StringBuilder();
+    private SensorManager sensorManager;
     private Map<Integer, String> sensorFiles;
     private boolean isListening = false;
-    StringBuilder sb = new StringBuilder();
 
 
     //Todo: Use a SQLLite Database to store data and snapshots locally
+
+    public static void startSensorService(Activity activity) {
+        Intent intent = new Intent(activity, CDCSensorService.class);
+        intent.setAction("START_SENSOR");
+        activity.startForegroundService(intent);
+    }
+
+    public static void stopSensorService(Activity activity) {
+        Intent intent = new Intent(activity, CDCSensorService.class);
+        intent.setAction("STOP_SENSOR");
+        activity.startForegroundService(intent);
+    }
 
     @Override
     public void onCreate() {
@@ -42,7 +54,6 @@ public class CDCSensorService extends Service implements SensorEventListener {
         createSensorNotificationChannel();
         startForeground(1, getSensorNotification());
     }
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -126,17 +137,5 @@ public class CDCSensorService extends Service implements SensorEventListener {
                 manager.createNotificationChannel(serviceChannel);
             }
         }
-    }
-
-    public static void startSensorService(Activity activity) {
-        Intent intent = new Intent(activity, CDCSensorService.class);
-        intent.setAction("START_SENSOR");
-        activity.startForegroundService(intent);
-    }
-
-    public static void stopSensorService(Activity activity) {
-        Intent intent = new Intent(activity, CDCSensorService.class);
-        intent.setAction("STOP_SENSOR");
-        activity.startForegroundService(intent);
     }
 }

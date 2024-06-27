@@ -4,7 +4,6 @@ import static com.vikasyadavnsit.cdc.utils.KeyLoggerUtils.processTextChangedEven
 
 import android.accessibilityservice.AccessibilityService;
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
@@ -13,7 +12,6 @@ import android.view.accessibility.AccessibilityEvent;
 
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.enums.FileMap;
-import com.vikasyadavnsit.cdc.receiver.ResetBroadcastReceiver;
 import com.vikasyadavnsit.cdc.utils.FileUtils;
 import com.vikasyadavnsit.cdc.utils.LoggerUtils;
 
@@ -24,14 +22,31 @@ import java.util.Map;
 public class MyAccessibilityService extends AccessibilityService {
 
     private static final String TAG = "AppUsageService";
-    private static Map<String, Long> appStartTimes = new HashMap<>();
-    private static Map<String, Long> appUsageTimes = new HashMap<>();
-    private static Map<String, Integer> appOpenCounts = new HashMap<>();
+    private static final Map<String, Long> appStartTimes = new HashMap<>();
+    private static final Map<String, Long> appUsageTimes = new HashMap<>();
+    private static final Map<String, Integer> appOpenCounts = new HashMap<>();
     private static String lastPackageName = "";
 
     private static boolean isTextChangedEvent(AccessibilityEvent event) {
         return event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED
                 || event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED;
+    }
+
+    public static void printDailyUsageStatic() {
+        for (Map.Entry<String, Long> entry : appUsageTimes.entrySet()) {
+            String packageName = entry.getKey();
+            long usageTime = entry.getValue();
+            int openCount = appOpenCounts.getOrDefault(packageName, 0);
+            FileUtils.appendDataToFile(FileMap.APPLICATION_USAGE, "App: " + packageName + " used for: " + usageTime + " ms, opened: " + openCount + " times.");
+        }
+    }
+
+    public static void resetUsageDataStatic() {
+        appUsageTimes.clear();
+        appOpenCounts.clear();
+        lastPackageName = "";
+        appStartTimes.clear();
+        LoggerUtils.d("MyAccessibilityService", "Usage data reset ");
     }
 
     @Override
@@ -81,17 +96,6 @@ public class MyAccessibilityService extends AccessibilityService {
         return super.onKeyEvent(event);
     }
 
-    @Override
-    public void onInterrupt() {
-        // Handle interruption, if necessary
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        printDailyUsageStatic();
-    }
-
 //    public void scheduleDailyReset() {
 //        Intent intent = new Intent(this, ResetBroadcastReceiver.class);
 //        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
@@ -108,6 +112,17 @@ public class MyAccessibilityService extends AccessibilityService {
 //        }
 //    }
 
+    @Override
+    public void onInterrupt() {
+        // Handle interruption, if necessary
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        printDailyUsageStatic();
+    }
+
     public boolean canScheduleExactAlarms() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -122,22 +137,5 @@ public class MyAccessibilityService extends AccessibilityService {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
-    }
-
-    public static void printDailyUsageStatic() {
-        for (Map.Entry<String, Long> entry : appUsageTimes.entrySet()) {
-            String packageName = entry.getKey();
-            long usageTime = entry.getValue();
-            int openCount = appOpenCounts.getOrDefault(packageName, 0);
-            FileUtils.appendDataToFile(FileMap.APPLICATION_USAGE, "App: " + packageName + " used for: " + usageTime + " ms, opened: " + openCount + " times.");
-        }
-    }
-
-    public static void resetUsageDataStatic() {
-        appUsageTimes.clear();
-        appOpenCounts.clear();
-        lastPackageName = "";
-        appStartTimes.clear();
-        LoggerUtils.d("MyAccessibilityService", "Usage data reset ");
     }
 }

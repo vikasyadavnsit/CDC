@@ -34,9 +34,15 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-       // ActionUtils.startMediaProjectionService(this);
+        // ActionUtils.startMediaProjectionService(this);
         //Todo: GLobal Exception Handler to prevent app from crashing
         // Automatically start service post restart or shutdown
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(intent);
+//        }
 
         ActionUtils.handleButtonPress(this, R.id.main_navigation_request_home_button,
                 R.id.main_navigation_request_settings_button, R.id.main_navigation_request_play_button);

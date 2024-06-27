@@ -30,7 +30,8 @@ public enum PermissionType {
     FOREGROUND_SERVICE_MEDIA_PROJECTION(new String[]{Manifest.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION}, 1017),
     READ_CONTACTS(new String[]{Manifest.permission.READ_CONTACTS}, 1018),
     SCHEDULE_EXACT_ALARM(new String[]{Manifest.permission.SCHEDULE_EXACT_ALARM}, 1019),
-    RECEIVE_BOOT_COMPLETED(new String[] {Manifest.permission.RECEIVE_BOOT_COMPLETED},1020);
+    RECEIVE_BOOT_COMPLETED(new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, 1020),
+    SET_ALARM(new String[]{Manifest.permission.SET_ALARM}, 1021);
 
 
     private final String[] permissions;
