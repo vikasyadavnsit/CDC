@@ -2,6 +2,11 @@ package com.vikasyadavnsit.cdc.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -11,8 +16,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.vikasyadavnsit.cdc.R;
+import com.vikasyadavnsit.cdc.fragment.HomeFragment;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
 import com.vikasyadavnsit.cdc.utils.ActionUtils;
+import com.vikasyadavnsit.cdc.utils.CommonUtil;
 
 import javax.inject.Inject;
 
@@ -22,6 +29,31 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class MainActivity extends AppCompatActivity {
     @Inject
     PermissionHandler permissionHandler;
+
+    private Handler handler = new Handler();
+    private boolean isLongPress = false;
+    private boolean isCounting = false;
+    private int pressCount = 0;
+    private boolean flag = false;
+    private CountDownTimer countDownTimer;
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            isLongPress = true;
+            pressCount++;
+            // Check if the pressCount reaches 3 within 30 seconds
+            if (pressCount == 3) {
+                flag = true;
+                Toast.makeText(MainActivity.this, "Flag set to true", Toast.LENGTH_SHORT).show();
+            }
+            Toast.makeText(MainActivity.this,"Press count: " + pressCount, Toast.LENGTH_SHORT).show();
+            // If the timer is not running, start the 30-second timer
+            if (!isCounting) {
+                startCountDown();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +76,55 @@ public class MainActivity extends AppCompatActivity {
 //            startActivity(intent);
 //        }
 
+
+        findViewById(R.id.main_navigation_request_home_button).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        isLongPress = false;
+                        handler.postDelayed(runnable, 5000); // 5 seconds
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        if (!isLongPress) {
+                            handler.removeCallbacks(runnable);
+                        }
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        CommonUtil.loadFragment(getSupportFragmentManager(), new HomeFragment());
+
+
         ActionUtils.handleButtonPress(this, R.id.main_navigation_request_home_button,
                 R.id.main_navigation_request_settings_button, R.id.main_navigation_request_play_button);
     }
 
+
+    private void startCountDown() {
+        isCounting = true;
+        countDownTimer = new CountDownTimer(30000, 1000) { // 30 seconds countdown
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // No action needed on each tick
+            }
+
+            @Override
+            public void onFinish() {
+                isCounting = false;
+                if (pressCount < 3) {
+                    flag = false;
+                    Toast.makeText(MainActivity.this, "Flag set to false", Toast.LENGTH_SHORT).show();
+                }
+                pressCount = 0; // Reset press count after 30 seconds
+            }
+        };
+        countDownTimer.start();
+    }
 
     //
 //    private void openCamera() {
