@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "797260610111",
+    "firebase_url" : "https://android-cdc-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "android-cdc",
     "storage_bucket": "android-cdc.appspot.com"
   },
