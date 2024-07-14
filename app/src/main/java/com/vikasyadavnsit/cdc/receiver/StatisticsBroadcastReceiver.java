@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.services.ResetService;
 
 public class StatisticsBroadcastReceiver extends BroadcastReceiver {
@@ -28,10 +27,9 @@ public class StatisticsBroadcastReceiver extends BroadcastReceiver {
                 case Intent.ACTION_POWER_DISCONNECTED:
                 case Intent.ACTION_PACKAGE_ADDED:
                 case Intent.ACTION_USER_PRESENT:
-                    Log.d("ResetBroadcastReceiver", "onReceive:" + AppConstants.ACTION_APPLICATION_RESET_USAGE);
                     // Handle application installed
-                   // String packageName = intent.getData().getSchemeSpecificPart();
-                    //Log.d("TAG", "Installed: " + packageName);
+                    // String packageName = intent.getData().getSchemeSpecificPart();
+                    Log.d("TAG", intent.getAction() + " received update");
                     break;
                 case Intent.ACTION_PACKAGE_REMOVED:
                     // Handle application uninstalled

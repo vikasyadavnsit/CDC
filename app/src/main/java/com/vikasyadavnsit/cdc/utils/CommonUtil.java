@@ -1,10 +1,19 @@
 package com.vikasyadavnsit.cdc.utils;
 
+import static android.content.Context.ALARM_SERVICE;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.vikasyadavnsit.cdc.R;
+import com.vikasyadavnsit.cdc.constants.AppConstants;
+import com.vikasyadavnsit.cdc.receiver.ResetBroadcastReceiver;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,5 +82,22 @@ public class CommonUtil {
         return checkAndCreateDirectory(new File(directoryPath));
     }
 
+
+    public static void scheduleDailyReset(Context context) {
+        Intent intent = new Intent(context, ResetBroadcastReceiver.class);
+        intent.setAction(AppConstants.ACTION_APPLICATION_RESET_USAGE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+
+        long currentTime = System.currentTimeMillis();
+        long clockHours = 24 * 60 * 60 * 1000;
+        long midnight = (currentTime + clockHours) - (currentTime % clockHours);
+
+        try {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, midnight, pendingIntent);
+        } catch (SecurityException e) {
+            LoggerUtils.d("CommonUtil", "Failed to schedule exact alarm: " + e.getMessage());
+        }
+    }
 
 }
