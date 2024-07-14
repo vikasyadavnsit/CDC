@@ -2,6 +2,7 @@ package com.vikasyadavnsit.cdc;
 
 import android.app.Application;
 
+import com.google.firebase.FirebaseApp;
 import com.vikasyadavnsit.cdc.exception.CustomExceptionHandler;
 
 import dagger.hilt.android.HiltAndroidApp;
@@ -18,6 +19,8 @@ public class MyApplication extends Application {
 
         // Set the custom exception handler
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler(this));
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this);
     }
 }
 

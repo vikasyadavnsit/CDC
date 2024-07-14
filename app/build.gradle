@@ -34,6 +34,12 @@ android {
 dependencies {
 
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    // Firebase Realtime Database
+    implementation 'com.google.firebase:firebase-database:20.0.6'  // Check for the latest version
+
+    // Firebase Core
+    implementation 'com.google.firebase:firebase-core:21.0.0'  // Check for the latest version
+
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.dagger:hilt-android:2.39.1'
     implementation libs.work.runtime
