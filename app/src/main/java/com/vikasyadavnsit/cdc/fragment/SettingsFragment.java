@@ -1,6 +1,5 @@
 package com.vikasyadavnsit.cdc.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -17,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.vikasyadavnsit.cdc.R;
+import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.enums.ClickActions;
 
 import java.util.Arrays;
@@ -75,7 +75,7 @@ public class SettingsFragment extends Fragment {
         button.setLayoutParams(createButtonLayoutParams());
         button.setOnClickListener(v -> {
             Toast.makeText(getContext(), "Processing " + clickAction.getActionLabel(), Toast.LENGTH_SHORT).show();
-            clickAction.getConsumer().accept(getActivity());
+            clickAction.getBiConsumer().accept(getActivity(), User.AppTriggerSettingsData.builder().build());
         });
         groupLayout.addView(button);
     }
