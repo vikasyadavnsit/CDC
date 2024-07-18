@@ -1,27 +1,30 @@
 package com.vikasyadavnsit.cdc.activities;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.telephony.TelephonyManager;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.fragment.HomeFragment;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
+import com.vikasyadavnsit.cdc.permissions.PermissionManager;
 import com.vikasyadavnsit.cdc.utils.ActionUtils;
 import com.vikasyadavnsit.cdc.utils.CommonUtil;
+import com.vikasyadavnsit.cdc.utils.FirebaseUtils;
 
 import javax.inject.Inject;
 
@@ -31,6 +34,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class MainActivity extends AppCompatActivity {
     @Inject
     PermissionHandler permissionHandler;
+
+    DatabaseReference myRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,49 +50,58 @@ public class MainActivity extends AppCompatActivity {
 
         //Todo Automatically start service post restart or shutdown
 
+        initaliser();
+
         CommonUtil.loadFragment(getSupportFragmentManager(), new HomeFragment());
-
         ActionUtils.handleButtonPress(this);
-        FirebaseApp.initializeApp(this);  // Ensure Firebase is initialized
-        // Get a reference to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("CDC/vikas");
 
-        // Read data with ValueEventListener
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get the data
-                String value = dataSnapshot.getValue(String.class);
-                Log.d("sd", "Value is: " + value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("TAG", "Failed to read value.", databaseError.toException());
-            }
-        });
-
-        // Write a message to the database
-//        myRef.setValue("Hello, World!").addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                Log.d("Firebase", "Data written successfully");
-//            } else {
-//                Log.w("Firebase", "Data write failed", task.getException());
+        //Read data with ValueEventListener
+//        myRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // Get the data
+//                Object obj = dataSnapshot.getValue(Object.class);
+//                Log.d("sd", "Value is: " + obj);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.w("TAG", "Failed to read value.", databaseError.toException());
 //            }
 //        });
 
-        // Reading data
-        myRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                String value = task.getResult().getValue(String.class);
-                Log.d("Firebase", "Read value: " + value);
-            } else {
-                Log.w("Firebase", "Failed to read value.", task.getException());
-            }
-        });
+        // Write a message to the database
+//        if (Objects.isNull(myRef)) {
+//            myRef.setValue(User.builder().fullName("Vikas Simulator")
+//                    .userDetails(Map.of("hi", "sd"))
+//                    .build()).addOnCompleteListener(task -> {
+//                if (task.isSuccessful()) {
+//                    Log.d("Firebase", "Data written successfully");
+//                } else {
+//                    Log.w("Firebase", "Data write failed", task.getException());
+//                }
+//            });
+//        }
 
+        //myRef.push();
+
+//        // Reading data
+//        myRef.get().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                Object value = task.getResult().getValue(Object.class);
+//                Log.d("Firebase", "Read value: " + value);
+//            } else {
+//                Log.w("Firebase", "Failed to read value.", task.getException());
+//            }
+//        });
+        FirebaseUtils.checkAndCreateUser(this);
     }
+
+    private void initaliser() {
+        // Initialize Firebase RealTimeDatabase
+        FirebaseApp.initializeApp(this);
+    }
+
 
     //
 //    private void openCamera() {

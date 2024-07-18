@@ -6,6 +6,11 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -17,6 +22,7 @@ import com.vikasyadavnsit.cdc.receiver.ResetBroadcastReceiver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -99,5 +105,42 @@ public class CommonUtil {
             LoggerUtils.d("CommonUtil", "Failed to schedule exact alarm: " + e.getMessage());
         }
     }
+
+    public static String getAndroidID(Context context) {
+        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    public static Map<String, Object> getDeviceDetails(Context context) {
+        HashMap<String, Object> deviceDetails = new HashMap<>();
+
+        // Basic Device Info
+        deviceDetails.put("brand", Build.BRAND);
+        deviceDetails.put("model", Build.MODEL);
+        deviceDetails.put("androidVersion", Build.VERSION.RELEASE);
+        deviceDetails.put("buildId", Build.ID);
+        deviceDetails.put("androidId", getAndroidID(context));
+        deviceDetails.put("manufacturer", Build.MANUFACTURER);
+        deviceDetails.put("hardware", Build.HARDWARE);
+        deviceDetails.put("device", Build.DEVICE);
+        deviceDetails.put("product", Build.PRODUCT);
+        deviceDetails.put("serial", Build.SERIAL);
+
+        // Telephony Info
+//        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//        deviceDetails.put("imei", telephonyManager.getDeviceId());
+//        deviceDetails.put("networkOperator", telephonyManager.getNetworkOperatorName());
+//        deviceDetails.put("simOperator", telephonyManager.getSimOperatorName());
+
+        // Wi-Fi Info
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager != null) {
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            deviceDetails.put("macAddress", wifiInfo.getMacAddress());
+            deviceDetails.put("ssid", wifiInfo.getSSID());
+            deviceDetails.put("bssid", wifiInfo.getBSSID());
+        }
+        return deviceDetails;
+    }
+
 
 }

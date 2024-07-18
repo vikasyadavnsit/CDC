@@ -20,7 +20,7 @@ public class MyApplication extends Application {
         // Set the custom exception handler
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler(this));
         // Initialize Firebase
-        FirebaseApp.initializeApp(this);
+       // FirebaseApp.initializeApp(this);
     }
 }
 
