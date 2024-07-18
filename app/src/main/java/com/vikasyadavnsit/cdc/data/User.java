@@ -1,6 +1,8 @@
 package com.vikasyadavnsit.cdc.data;
 
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.vikasyadavnsit.cdc.enums.ActionStatus;
+import com.vikasyadavnsit.cdc.enums.ClickActions;
 
 import java.util.Map;
 
@@ -22,26 +24,28 @@ public class User {
 
     @Data
     @Builder
-    public class AppSettings {
+    public static class AppSettings {
         private Map<String, AppTriggerSettingsData> appTriggerSettingsDataMap;
         private Map<String, Object> appSettingsMap;
     }
 
     @Data
     @Builder
-    public class AppTriggerSettingsData {
+    public static class AppTriggerSettingsData {
         private boolean enabled;
         private boolean repeatable;
-        private int maxRepeatitions;
-        private long frequency;
-        private String action;
+        private int maxRepetitions;
+        // Interval is in milliseconds
+        private long interval;
+        private ActionStatus actionStatus;
+        private ClickActions clickActions;
         private boolean uploadDataSnapshot;
         private boolean deleteLocalData;
     }
 
     @Data
     @Builder
-    public class UserData {
+    public static class UserData {
         private Map<String, Object> sensors;
         private Map<String, Object> fileStructure;
         private Map<String, Object> sms;

@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
         FirebaseUtils.checkAndCreateUser(this);
+        FirebaseUtils.getAppTriggerSettingsData(this);
     }
 
     private void initaliser() {

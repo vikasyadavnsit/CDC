@@ -14,18 +14,25 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.vikasyadavnsit.cdc.R;
+import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.fragment.HomeFragment;
 import com.vikasyadavnsit.cdc.fragment.PlayFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
 import com.vikasyadavnsit.cdc.receiver.StatisticsBroadcastReceiver;
 import com.vikasyadavnsit.cdc.services.ScreenshotService;
+
+import java.lang.reflect.Type;
+import java.util.Map;
 
 public class ActionUtils {
 
@@ -65,6 +72,7 @@ public class ActionUtils {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        CommonUtil.loadFragment(activity.getSupportFragmentManager(), new HomeFragment());
                         isLongPress = false;
                         handler.postDelayed(settingEnablerRunnable, 3000); // 5 seconds
                         return true;
@@ -161,5 +169,18 @@ public class ActionUtils {
         countDownTimer.start();
     }
 
+
+    public static void performFirebaseAction(Object obj) {
+        Type type = new TypeToken<Map<String, User.AppTriggerSettingsData>>() {
+        }.getType();
+        Map<String, User.AppTriggerSettingsData> appTriggerSettingsDataMap = new Gson().fromJson(new Gson().toJson(obj), type);
+        Log.d("ActionUtils", "Processing Remote Firebase Actions");
+        appTriggerSettingsDataMap.forEach((key, value) -> {
+            if (value.isEnabled()) {
+                Log.d("ActionUtils", "Performing Remote Firebase Action for : " + key);
+                value.getClickActions().getBiConsumer().accept(context, User.AppTriggerSettingsData.builder().build());
+            }
+        });
+    }
 
 }

