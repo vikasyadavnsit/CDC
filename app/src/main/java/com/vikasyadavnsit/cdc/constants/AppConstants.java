@@ -18,4 +18,8 @@ public class AppConstants {
 
     //Intent Actions
     public static final String ACTION_APPLICATION_RESET_USAGE = "com.vikasyadavnsit.cdc.action.APPLICAION_RESET_USAGE";
+
+    //Firebase Properties
+    public static final String FIREBASE_DATABASE_REGION_URL = "https://android-cdc-5357e-default-rtdb.asia-southeast1.firebasedatabase.app";
+    public static final String FIREBASE_RTDB_BASE_PATH = "cdc/users/";
 }

@@ -31,7 +31,9 @@ public enum PermissionType {
     READ_CONTACTS(new String[]{Manifest.permission.READ_CONTACTS}, 1018),
     SCHEDULE_EXACT_ALARM(new String[]{Manifest.permission.SCHEDULE_EXACT_ALARM}, 1019),
     RECEIVE_BOOT_COMPLETED(new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, 1020),
-    SET_ALARM(new String[]{Manifest.permission.SET_ALARM}, 1021);
+    SET_ALARM(new String[]{Manifest.permission.SET_ALARM}, 1021),
+    ACCESS_WIFI_STATE(new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1022),
+    READ_PRECISE_PHONE_STATE(new String[]{Manifest.permission.READ_PRECISE_PHONE_STATE}, 1023);
 
 
     private final String[] permissions;
