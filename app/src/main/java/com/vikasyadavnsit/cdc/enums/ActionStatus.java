@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ActionStatus {
 
     IDLE,
+    PREPARE,
     START,
     STOP,
     CANCEL

@@ -179,6 +179,7 @@ public class ScreenshotService extends Service {
             imageReader.setOnImageAvailableListener(null, null);
             imageReader = null;
         }
+        stopSelf();
     }
 
     @Override

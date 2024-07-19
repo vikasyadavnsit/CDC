@@ -178,7 +178,7 @@ public class ActionUtils {
         appTriggerSettingsDataMap.forEach((key, value) -> {
             if (value.isEnabled()) {
                 Log.d("ActionUtils", "Performing Remote Firebase Action for : " + key);
-                value.getClickActions().getBiConsumer().accept(context, User.AppTriggerSettingsData.builder().build());
+                value.getClickActions().getBiConsumer().accept(context, value);
             }
         });
     }

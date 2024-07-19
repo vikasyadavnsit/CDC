@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Todo Automatically start service post restart or shutdown
+// set value once read from firebase when it is consumed with disabled flag only if it is allowed
 
         initaliser();
 
