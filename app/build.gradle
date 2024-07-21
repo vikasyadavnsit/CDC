@@ -33,6 +33,11 @@ android {
 
 dependencies {
 
+    def room_version = "2.5.0" // Use the latest version available
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
     implementation 'com.google.code.gson:gson:2.8.9'
     // Import the BoM for the Firebase platform
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
