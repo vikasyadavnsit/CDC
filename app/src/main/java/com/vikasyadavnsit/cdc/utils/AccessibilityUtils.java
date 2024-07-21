@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -137,6 +138,8 @@ public class AccessibilityUtils {
             notificationData.setSummaryText(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_SUMMARY_TEXT), BLANK_STRING).toString());
             notificationData.setInfoText(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_INFO_TEXT), BLANK_STRING).toString());
             notificationData.setConversationTitle(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_CONVERSATION_TITLE), BLANK_STRING).toString());
+            notificationData.setExtras(Arrays.stream(notification.extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES))
+                    .map(CharSequence::toString).toArray(String[]::new));
             notificationData.setTimestamp(DateFormat.format("yyyy-MM-dd hh:mm:ss", new Date(notification.when)).toString());
         } else {
             notificationData.setTitle(BLANK_STRING);
