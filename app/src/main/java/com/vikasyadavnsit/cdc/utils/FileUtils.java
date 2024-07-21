@@ -39,6 +39,7 @@ public class FileUtils {
      * @param data    The data to append.
      */
     public static void appendDataToFile(FileMap fileMap, Object data) {
+
         if (fileMap.isOrganized()) {
             CDCOrganisedFileAppender.checkAndAppendDataInOrganizedFile(fileMap, data);
         } else {

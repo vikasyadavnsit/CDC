@@ -1,5 +1,7 @@
 package com.vikasyadavnsit.cdc.utils;
 
+import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import com.vikasyadavnsit.cdc.enums.FileMap;
@@ -21,7 +23,9 @@ public class LoggerUtils {
             case WARN:
             case ERROR:
                 Log.d(logTag, message);
-                FileUtils.appendDataToFile(FileMap.LOG, loggingLevel + " " + logTag + message);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+                    FileUtils.appendDataToFile(FileMap.LOG, loggingLevel + " " + logTag + message);
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Invalid logging level: " + loggingLevel);

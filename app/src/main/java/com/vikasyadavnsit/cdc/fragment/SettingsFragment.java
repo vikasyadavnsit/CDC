@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.data.User;
+import com.vikasyadavnsit.cdc.enums.ActionStatus;
 import com.vikasyadavnsit.cdc.enums.ClickActions;
 
 import java.util.Arrays;
@@ -75,7 +76,13 @@ public class SettingsFragment extends Fragment {
         button.setLayoutParams(createButtonLayoutParams());
         button.setOnClickListener(v -> {
             Toast.makeText(getContext(), "Processing " + clickAction.getActionLabel(), Toast.LENGTH_SHORT).show();
-            clickAction.getBiConsumer().accept(getActivity(), User.AppTriggerSettingsData.builder().build());
+            clickAction.getBiConsumer().accept(getActivity(),
+                    User.AppTriggerSettingsData.builder()
+                            .enabled(true)
+                            .saveOnLocalFile(true)
+                            .uploadDataSnapshot(true)
+                            .actionStatus(ActionStatus.IDLE)
+                            .build());
         });
         groupLayout.addView(button);
     }

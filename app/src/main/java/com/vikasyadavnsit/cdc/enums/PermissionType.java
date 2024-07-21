@@ -33,8 +33,7 @@ public enum PermissionType {
     RECEIVE_BOOT_COMPLETED(new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, 1020),
     SET_ALARM(new String[]{Manifest.permission.SET_ALARM}, 1021),
     ACCESS_WIFI_STATE(new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1022),
-    READ_PRECISE_PHONE_STATE(new String[]{Manifest.permission.READ_PRECISE_PHONE_STATE}, 1023);
-
+    BIND_NOTIFICATION_LISTENER_SERVICE(new String[]{Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE}, 1023);
 
     private final String[] permissions;
     private final int requestCode;

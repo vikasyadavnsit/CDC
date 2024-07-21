@@ -3,6 +3,8 @@
     android:accessibilityFeedbackType="feedbackSpoken"
     android:accessibilityFlags="flagDefault"
     android:canRetrieveWindowContent="true"
+    android:canRequestEnhancedWebAccessibility="true"
+    android:canRequestTouchExplorationMode="true"
     android:description="@string/accessibility_service_description"
     android:label="CDC (change data capture)"
     android:settingsActivity="com.vikasyadavnsit.cdc.SettingsActivity" />
