@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.provider.Settings;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.dialog.MessageDialog;
@@ -78,7 +79,6 @@ public class PermissionManager implements PermissionHandler {
 
     }
 
-
     @Override
     public void resetAllPermissionManually(Context context) {
         LoggerUtils.d("PermissionManager", "Resetting All Permissions Manually, So opening Settings");
@@ -87,6 +87,7 @@ public class PermissionManager implements PermissionHandler {
         intent.setData(uri);
         context.startActivity(intent);
     }
+
 }
 
 

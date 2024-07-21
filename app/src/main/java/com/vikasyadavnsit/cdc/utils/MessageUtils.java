@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
+import android.util.Log;
 
 import com.vikasyadavnsit.cdc.enums.FileMap;
 
@@ -39,6 +40,7 @@ public class MessageUtils {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e("MessageUtils", "permission denied for read from contentUri " + contentUri.toString());
         }
         return messages;
     }

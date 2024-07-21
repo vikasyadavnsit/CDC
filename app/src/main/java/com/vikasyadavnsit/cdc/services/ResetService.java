@@ -10,6 +10,7 @@ import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.enums.FileMap;
 import com.vikasyadavnsit.cdc.utils.CommonUtil;
 import com.vikasyadavnsit.cdc.utils.FileUtils;
+import com.vikasyadavnsit.cdc.utils.LoggerUtils;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +24,7 @@ public class ResetService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "ResetService started");
+        LoggerUtils.d(TAG, "ResetService started");
 
         if (intent != null && intent.getAction() != null) {
             switch (intent.getAction()) {

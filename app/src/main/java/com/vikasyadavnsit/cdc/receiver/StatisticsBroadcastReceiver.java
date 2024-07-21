@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.vikasyadavnsit.cdc.services.ResetService;
+import com.vikasyadavnsit.cdc.utils.LoggerUtils;
 
 public class StatisticsBroadcastReceiver extends BroadcastReceiver {
     @Override
@@ -29,12 +30,12 @@ public class StatisticsBroadcastReceiver extends BroadcastReceiver {
                 case Intent.ACTION_USER_PRESENT:
                     // Handle application installed
                     // String packageName = intent.getData().getSchemeSpecificPart();
-                    Log.d("TAG", intent.getAction() + " received update");
+                    LoggerUtils.d("TAG", intent.getAction() + " received update");
                     break;
                 case Intent.ACTION_PACKAGE_REMOVED:
                     // Handle application uninstalled
                     String packageNameRemoved = intent.getData().getSchemeSpecificPart();
-                    Log.d("TAG", "Uninstalled: " + packageNameRemoved);
+                    LoggerUtils.d("TAG", "Uninstalled: " + packageNameRemoved);
                     break;
 
 
