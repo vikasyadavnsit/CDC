@@ -4,7 +4,6 @@ package com.vikasyadavnsit.cdc.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.enums.FileMap;
@@ -38,8 +37,8 @@ public class ResetService extends Service {
                     break;
                 case AppConstants.ACTION_APPLICATION_RESET_USAGE:
                     // Print daily usage and reset data
-                    MyAccessibilityService.printDailyUsageStatic();
-                    MyAccessibilityService.resetUsageDataStatic();
+                    CDCAccessibilityService.printDailyUsageStatic();
+                    CDCAccessibilityService.resetUsageDataStatic();
                     // Scheduling for next cycle
                     CommonUtil.scheduleDailyReset(this);
             }
