@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         ActionUtils.handleButtonPress(this);
 
 
-
         // FileObserver does not automatically monitor subdirectories. If you need to monitor a directory and all
         // its subdirectories, you'll have to create a FileObserver for each subdirectory
         //DirectoryMonitor directoryMonitor = new DirectoryMonitor(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Alarms", new LinkedHashMap<>());
