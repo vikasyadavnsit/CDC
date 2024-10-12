@@ -2,7 +2,6 @@ package com.vikasyadavnsit.cdc.services;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;

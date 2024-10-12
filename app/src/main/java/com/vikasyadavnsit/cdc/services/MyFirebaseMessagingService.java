@@ -28,11 +28,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         // Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
+        LoggerUtils.d(TAG, "From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            LoggerUtils.d(TAG, "Message data payload: " + remoteMessage.getData());
             handleNow();
         }
 
@@ -68,7 +68,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
     private void handleNow() {
-        Log.d(TAG, "Performing a background task.");
+        LoggerUtils.d(TAG, "Performing a background task.");
         // Create a OneTimeWorkRequest for your background task
         OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MyWorker.class).build();
         WorkManager.getInstance(this).enqueue(workRequest);
@@ -76,7 +76,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {
-        Log.d(TAG, "Refreshed token: " + token);
+        LoggerUtils.d(TAG, "Refreshed token: " + token);
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.

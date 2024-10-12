@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingHorizontal="30dp"
+    android:paddingVertical="50dp">
+
+    <TextView
+        android:id="@+id/inputDialogTitleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="6dp"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"
+        android:textStyle="bold" /> <!-- Center title horizontally -->
+
+    <EditText
+        android:id="@+id/inputDialogEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/custom_border"
+        android:ems="20"
+        android:inputType="textMultiLine"
+        android:lineSpacingExtra="3sp"
+        android:maxLength="200"
+        android:maxLines="10"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="12dp"
+        android:singleLine="false"
+        android:textAlignment="viewStart"
+        android:textColor="@color/black"
+        android:textAllCaps="false"
+        android:textSize="15sp" /> <!-- Center EditText horizontally -->
+
+    <Button
+        android:id="@+id/inputDialogSubmitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/custom_border"
+        android:text="Submit"
+        android:textAllCaps="false"
+        android:textSize="15sp" />
+
+    <!-- Center Button horizontally -->
+
+</LinearLayout>

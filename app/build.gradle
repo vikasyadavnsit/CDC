@@ -33,10 +33,23 @@ android {
 
 dependencies {
 
-    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+
+    def room_version = "2.5.0" // Use the latest version available
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    implementation 'com.google.code.gson:gson:2.8.9'
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    // Add the dependency for the Realtime Database library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-database")
+    implementation 'com.google.firebase:firebase-messaging'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.dagger:hilt-android:2.39.1'
-    implementation libs.work.runtime// Replace with the latest version
+    implementation libs.work.runtime
+    implementation libs.lombok// Replace with the latest version
     annotationProcessor 'com.google.dagger:hilt-android-compiler:2.39.1'
     // Replace with the latest version
 
