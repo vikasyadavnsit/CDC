@@ -1,5 +1,7 @@
 package com.vikasyadavnsit.cdc.utils;
 
+import static com.vikasyadavnsit.cdc.utils.CommonUtil.hasFileAccess;
+
 import android.util.Log;
 
 import com.vikasyadavnsit.cdc.enums.FileMap;
@@ -16,12 +18,19 @@ public class LoggerUtils {
     private static void log(String tag, String message, LoggingLevel loggingLevel) {
         String logTag = StringUtils.isNotBlank(tag) ? tag + ": " : "Logger: ";
         switch (loggingLevel) {
-            case DEBUG:
             case INFO:
             case WARN:
-            case ERROR:
+            case DEBUG:
                 Log.d(logTag, message);
-                FileUtils.appendDataToFile(FileMap.LOG, loggingLevel + " " + logTag + message);
+                if (hasFileAccess()) {
+                    FileUtils.appendDataToFile(FileMap.LOG, loggingLevel + " " + logTag + message);
+                }
+                break;
+            case ERROR:
+                Log.e(logTag, message);
+                if (hasFileAccess()) {
+                    FileUtils.appendDataToFile(FileMap.LOG, loggingLevel + " " + logTag + message);
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Invalid logging level: " + loggingLevel);
