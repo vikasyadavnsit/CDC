@@ -11,6 +11,18 @@ import java.io.InputStreamReader;
 
 public class AssetUtils {
 
+    /**
+     * Loads a JSON file bundled in the application's assets folder into a single {@link String}.
+     *
+     * <p>This helper opens the named asset via {@link AssetManager#open(String)}, reads it line-by-line,
+     * concatenates the lines, and returns the resulting string. The stream is closed in a {@code finally}
+     * block.</p>
+     *
+     * @param context  Android {@link Context} used to access the app {@link AssetManager}.
+     * @param fileName Asset file name/path relative to the {@code assets/} directory (for example,
+     *                 {@code "android_version_mappings.json"}).
+     * @return The full JSON contents as a string, or {@code null} if an {@link IOException} occurs.
+     */
     public static String loadJSONFromAsset(Context context, String fileName) {
         String json = null;
         AssetManager assetManager = context.getAssets();

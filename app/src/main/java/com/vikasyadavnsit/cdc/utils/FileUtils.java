@@ -24,6 +24,14 @@ import java.io.File;
  */
 public class FileUtils {
 
+    /**
+     * Opens the system settings UI needed to grant broad file access so the app can read/write external storage.
+     *
+     * <p>On Android 11+ (R+), this opens the "All files access" page for the app. On older versions,
+     * it requests {@link PermissionType#WRITE_EXTERNAL_STORAGE} via {@link PermissionManager}.</p>
+     *
+     * @param context The current {@link Activity}, used to start settings intents and request runtime permissions.
+     */
     public static void startFileAccessSettings(Activity context) {
         // If you have access to the external storage, do whatever you need
         if (!hasFileAccess()) {
@@ -62,6 +70,10 @@ public class FileUtils {
     /**
      * Appends data to an unorganized file.
      *
+     * <p>This delegates to {@link CDCUnorganisedFileAppender} which buffers writes and flushes when
+     * size thresholds are reached.</p>
+     *
+     * @param fileMap File type configuration (used for routing and encryption behavior).
      * @param data The data to append.
      */
     private static void appendDataInUnorganizedFile(FileMap fileMap, Object data) {
