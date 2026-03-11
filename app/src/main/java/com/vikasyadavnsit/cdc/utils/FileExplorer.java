@@ -19,7 +19,14 @@ import java.util.Map;
 
 public class FileExplorer {
 
-    // Method to populate the directory map
+    /**
+     * Recursively enumerates files/directories under {@code directory} and writes the structure into {@code currentMap}.
+     *
+     * <p>Directories are represented as nested {@link LinkedHashMap} values; files are stored with a {@code null} value.</p>
+     *
+     * @param directory  Root directory to enumerate.
+     * @param currentMap Map to populate with the directory tree representation.
+     */
     public static void listFilesAndStoreInMap(File directory, LinkedHashMap<String, Object> currentMap) {
         File[] files = directory.listFiles();
         if (files != null) {
@@ -39,6 +46,19 @@ public class FileExplorer {
         }
     }
 
+    /**
+     * Captures the external storage directory structure and optionally uploads/stores it based on trigger settings.
+     *
+     * <p>Logic summary:</p>
+     * <ul>
+     *   <li>Requires external file access (see {@link CommonUtil#hasFileAccess()}).</li>
+     *   <li>Builds a recursive directory map rooted at {@link Environment#getExternalStorageDirectory()}.</li>
+     *   <li>Reads {@code GET_DIRECTORY_STRUCTURE} trigger settings from {@link ApplicationDataRepository}.</li>
+     *   <li>If enabled, optionally uploads to Firebase and inserts a snapshot into Room.</li>
+     * </ul>
+     *
+     * @return A {@link LinkedHashMap} representing the directory tree (may be empty if permissions are missing).
+     */
     public static LinkedHashMap<String, Object> getDirectoryStructure() {
         LinkedHashMap<String, Object> directoryMap = new LinkedHashMap<>();
 
@@ -68,7 +88,12 @@ public class FileExplorer {
 //    // Print the directory structure
 //    printMap(directoryMap, "");
 
-    // Helper method to print the map for visualization
+    /**
+     * Prints a directory structure map to stdout for debugging/visualization.
+     *
+     * @param map    Directory map produced by {@link #getDirectoryStructure()} or similar.
+     * @param indent Current indentation prefix used for recursive pretty-printing.
+     */
     public static void printMap(Map<String, Object> map, String indent) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof LinkedHashMap) {

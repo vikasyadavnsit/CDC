@@ -41,16 +41,34 @@ import java.util.stream.StreamSupport;
 
 public class CommonUtil {
 
-    // Method to load a fragment into the FrameLayout
+    /**
+     * Replaces the main frame layout with the provided fragment (without adding to back stack).
+     *
+     * @param fragmentManager Fragment manager used to perform the transaction.
+     * @param fragment        Fragment instance to display.
+     */
     public static void loadFragment(FragmentManager fragmentManager, Fragment fragment) {
         loadFragment(R.id.main_frame_layout, fragmentManager, fragment, false);
     }
 
-    // Method to load a fragment with backstatck into the FrameLayout
+    /**
+     * Replaces the main frame layout with the provided fragment and adds the transaction to the back stack.
+     *
+     * @param fragmentManager Fragment manager used to perform the transaction.
+     * @param fragment        Fragment instance to display.
+     */
     public static void loadFragmentWithBackStack(FragmentManager fragmentManager, Fragment fragment) {
         loadFragment(R.id.main_frame_layout, fragmentManager, fragment, true);
     }
 
+    /**
+     * Replaces a frame layout with the provided fragment, optionally adding the transaction to back stack.
+     *
+     * @param frameLayout     Layout resource ID where the fragment should be placed.
+     * @param fragmentManager Fragment manager used to perform the transaction.
+     * @param fragment        Fragment instance to display.
+     * @param loadBackStack   If true, the transaction is added to the back stack.
+     */
     public static void loadFragment(int frameLayout, FragmentManager fragmentManager, Fragment fragment, boolean loadBackStack) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_frame_layout, fragment);
@@ -59,7 +77,12 @@ public class CommonUtil {
         fragmentTransaction.commit();
     }
 
-    // When DataType is List<Map<String, String>>
+    /**
+     * Checks whether the given object is a non-empty {@code List} whose first element is a {@code Map}.
+     *
+     * @param data Arbitrary object to inspect.
+     * @return {@code true} if {@code data} looks like {@code List<Map<...>>}; {@code false} otherwise.
+     */
     public static boolean isDataTypeListOfMap(Object data) {
         if (data instanceof List<?>) {
             List<?> dataList = (List<?>) data;
@@ -68,6 +91,19 @@ public class CommonUtil {
         return false;
     }
 
+    /**
+     * Converts various container types into a human-readable string representation.
+     *
+     * <p>Handles:</p>
+     * <ul>
+     *   <li>{@code CharSequence[]} → {@code List} string</li>
+     *   <li>{@link Iterable} → join elements with {@code ", "}</li>
+     *   <li>Fallback → {@link Object#toString()}</li>
+     * </ul>
+     *
+     * @param data Object to convert.
+     * @return A string-like representation (may be a {@link java.util.List} for {@code CharSequence[]} case).
+     */
     public static Object convertToString(Object data) {
         if (data instanceof CharSequence[]) {
             CharSequence[] charSequences = (CharSequence[]) data;
@@ -115,11 +151,25 @@ public class CommonUtil {
         return false;
     }
 
+    /**
+     * Convenience overload for {@link #checkAndCreateDirectory(File)} using a string path.
+     *
+     * @param directoryPath Directory path string.
+     * @return True if directory creation failed; otherwise false.
+     */
     public static boolean checkAndCreateDirectory(String directoryPath) {
         return checkAndCreateDirectory(new File(directoryPath));
     }
 
 
+    /**
+     * Schedules a daily reset broadcast using an exact alarm (best-effort).
+     *
+     * <p>This sets an exact RTC_WAKEUP alarm intended for the next "midnight" boundary and sends
+     * {@link AppConstants#ACTION_APPLICATION_RESET_USAGE} to {@link ResetBroadcastReceiver}.</p>
+     *
+     * @param context Android {@link Context} used to schedule the alarm.
+     */
     public static void scheduleDailyReset(Context context) {
         Intent intent = new Intent(context, ResetBroadcastReceiver.class);
         intent.setAction(AppConstants.ACTION_APPLICATION_RESET_USAGE);
@@ -137,10 +187,24 @@ public class CommonUtil {
         }
     }
 
+    /**
+     * Returns the device's Android ID (SSAID).
+     *
+     * @param context Android {@link Context} used to access secure settings.
+     * @return Android ID string (may be null on some devices/profiles).
+     */
     public static String getAndroidID(Context context) {
         return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * Collects a set of basic device identifiers and environment fields for reporting/storage.
+     *
+     * <p>Includes build fields (brand/model/version/etc.) and Wi‑Fi identifiers (SSID/BSSID/MAC when available).</p>
+     *
+     * @param context Android {@link Context}.
+     * @return Map of device detail keys to values.
+     */
     public static Map<String, Object> getDeviceDetails(Context context) {
         HashMap<String, Object> deviceDetails = new HashMap<>();
 
@@ -173,6 +237,14 @@ public class CommonUtil {
         return deviceDetails;
     }
 
+    /**
+     * Checks whether the app currently has broad external storage access required by several features.
+     *
+     * <p>On pre-R devices this checks {@code WRITE_EXTERNAL_STORAGE}. On R+ this checks
+     * {@link Environment#isExternalStorageManager()}.</p>
+     *
+     * @return {@code true} if file access is available; {@code false} otherwise.
+     */
     public static boolean hasFileAccess() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             return PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(AppContext.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -182,6 +254,15 @@ public class CommonUtil {
 
     }
 
+    /**
+     * Updates the Home UI with the cached "shayari of the day", refreshing from Firebase when the day changes.
+     *
+     * <p>This reads the cached shayari launcher state from SharedPreferences and compares the cached
+     * date with {@link LocalDate#now()}. If the cached date is stale, it requests the next shayari
+     * from Firebase; otherwise it updates the UI immediately.</p>
+     *
+     * @param context Android {@link Context}.
+     */
     public static void setShayari(Context context) {
         // Get the current shayari data from SharedPreferences
         String currentShayariData = getShayariData(context);
@@ -195,18 +276,29 @@ public class CommonUtil {
         }
     }
 
+    /**
+     * Shows the global progress loader (if present) in {@link com.vikasyadavnsit.cdc.activities.MainActivity}.
+     */
     public static void showLoader() {
         if (progressLoader != null) {
             progressLoader.setVisibility(View.VISIBLE);
         }
     }
 
+    /**
+     * Hides the global progress loader (if present) in {@link com.vikasyadavnsit.cdc.activities.MainActivity}.
+     */
     public static void hideLoader() {
         if (progressLoader != null) {
             progressLoader.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * Returns the current date formatted as {@code yyyy-MM-dd}.
+     *
+     * @return Current date string.
+     */
     public static String getCurrentDate() {
         return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }

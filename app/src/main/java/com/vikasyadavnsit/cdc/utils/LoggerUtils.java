@@ -15,6 +15,16 @@ import org.apache.commons.lang3.StringUtils;
 public class LoggerUtils {
 
 
+    /**
+     * Logs a message to Logcat and optionally appends it to the app's log file.
+     *
+     * <p>When external file access is available, this also writes a line to {@link FileMap#LOG}
+     * via {@link FileUtils#appendDataToFile(FileMap, Object)}.</p>
+     *
+     * @param tag          Logical tag/category for the message.
+     * @param message      Message content.
+     * @param loggingLevel The severity/level to use.
+     */
     private static void log(String tag, String message, LoggingLevel loggingLevel) {
         String logTag = StringUtils.isNotBlank(tag) ? tag + ": " : "Logger: ";
         switch (loggingLevel) {
@@ -37,10 +47,22 @@ public class LoggerUtils {
         }
     }
 
+    /**
+     * Convenience wrapper for debug-level logging.
+     *
+     * @param tag     Logical tag/category for the message.
+     * @param message Message content.
+     */
     public static void d(String tag, String message) {
         log(tag, message, LoggingLevel.DEBUG);
     }
 
+    /**
+     * Convenience wrapper for error-level logging.
+     *
+     * @param tag     Logical tag/category for the message.
+     * @param message Message content.
+     */
     public static void e(String tag, String message) {
         log(tag, message, LoggingLevel.ERROR);
     }

@@ -20,7 +20,11 @@ public class CryptoUtils {
     private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final int KEY_SIZE = 256; // AES-256
 
-    // Generate a new AES key
+    /**
+     * Generates a new random AES key.
+     *
+     * @return A newly generated {@link SecretKey} (AES-256), or {@code null} if generation fails.
+     */
     public static SecretKey generateKey() {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
@@ -32,7 +36,15 @@ public class CryptoUtils {
         return null;
     }
 
-    // Encrypt data
+    /**
+     * Encrypts the provided data using AES/CBC/PKCS5Padding.
+     *
+     * @param key  AES secret key.
+     * @param iv   Initialization vector bytes (must be 16 bytes for AES-CBC).
+     * @param data Plaintext bytes to encrypt.
+     * @return Ciphertext bytes.
+     * @throws Exception If the cipher cannot be initialized or encryption fails.
+     */
     public static byte[] encrypt(SecretKey key, byte[] iv, byte[] data) throws Exception {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
@@ -40,7 +52,15 @@ public class CryptoUtils {
         return cipher.doFinal(data);
     }
 
-    // Decrypt data
+    /**
+     * Decrypts the provided AES/CBC/PKCS5Padding ciphertext.
+     *
+     * @param key           AES secret key.
+     * @param iv            Initialization vector bytes (must match the IV used for encryption).
+     * @param encryptedData Ciphertext bytes to decrypt.
+     * @return Plaintext bytes.
+     * @throws Exception If the cipher cannot be initialized or decryption fails.
+     */
     public static byte[] decrypt(SecretKey key, byte[] iv, byte[] encryptedData) throws Exception {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
@@ -48,7 +68,12 @@ public class CryptoUtils {
         return cipher.doFinal(encryptedData);
     }
 
-    // Convert SecretKey to String
+    /**
+     * Encodes a {@link SecretKey} into a string suitable for storage.
+     *
+     * @param key Secret key to encode.
+     * @return Base64-encoded key bytes on Android O+; otherwise a raw byte-string representation.
+     */
     public static String keyToString(SecretKey key) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return Base64.getEncoder().encodeToString(key.getEncoded());
@@ -56,7 +81,12 @@ public class CryptoUtils {
         return new String(key.getEncoded());
     }
 
-    // Convert String to SecretKey
+    /**
+     * Decodes a previously encoded key string into a {@link SecretKey}.
+     *
+     * @param keyStr Base64-encoded key string.
+     * @return Decoded AES {@link SecretKey}.
+     */
     public static SecretKey stringToKey(String keyStr) {
         byte[] decodedKey = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -65,7 +95,11 @@ public class CryptoUtils {
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
     }
 
-    // Generate a new IV
+    /**
+     * Generates a new random initialization vector (IV) for AES-CBC.
+     *
+     * @return A 16-byte IV.
+     */
     public static byte[] generateIV() {
         byte[] iv = new byte[16];
         SecureRandom random = new SecureRandom();
@@ -73,7 +107,12 @@ public class CryptoUtils {
         return iv;
     }
 
-    // Convert IV to String
+    /**
+     * Encodes an IV byte array into a string suitable for storage.
+     *
+     * @param iv IV bytes.
+     * @return Base64-encoded IV bytes on Android O+; otherwise a raw byte-string representation.
+     */
     public static String ivToString(byte[] iv) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return Base64.getEncoder().encodeToString(iv);
@@ -81,7 +120,12 @@ public class CryptoUtils {
         return new String(iv);
     }
 
-    // Convert String to IV
+    /**
+     * Decodes a previously encoded IV string into its byte array form.
+     *
+     * @param ivStr Base64-encoded IV string.
+     * @return Decoded IV bytes.
+     */
     public static byte[] stringToIV(String ivStr) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return Base64.getDecoder().decode(ivStr);
@@ -89,6 +133,18 @@ public class CryptoUtils {
         return ivStr.getBytes();
     }
 
+    /**
+     * Optionally encrypts a string based on the {@link FileMap} configuration.
+     *
+     * <p>If {@code fileMap.encrypted == true} and the platform supports {@link Base64} (Android O+),
+     * this encrypts the UTF-8 bytes using the static AES key/IV configured in {@link AppConstants}
+     * and returns the Base64-encoded ciphertext. Otherwise, it returns the original data.</p>
+     *
+     * @param fileMap Target file type configuration controlling whether encryption is applied.
+     * @param data    Plaintext string to (optionally) encrypt.
+     * @return Encrypted Base64 string when encryption is enabled; otherwise the original {@code data}.
+     * @throws Exception If encryption fails when enabled.
+     */
     public static String getEncryptedData(FileMap fileMap, String data) throws Exception {
         if (fileMap.isEncrypted() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             byte[] encryptedData = encrypt(CryptoUtils.stringToKey(AppConstants.CRYPTO_AES_SECRET_KEY),
@@ -98,6 +154,11 @@ public class CryptoUtils {
         return data;
     }
 
+    /**
+     * One-off helper used to generate a key and IV for manual copy/paste into configuration.
+     *
+     * <p>Not used by production flows.</p>
+     */
     private void keyGenerationOneTime() {
         SecretKey key = CryptoUtils.generateKey();
         byte[] iv = CryptoUtils.generateIV();
