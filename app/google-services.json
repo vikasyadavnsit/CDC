@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "513321643745",
+    "firebase_url": "https://android-cdc-5357e-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "android-cdc-5357e",
+    "storage_bucket": "android-cdc-5357e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:513321643745:android:20967ee64ef34f332491a0",
+        "android_client_info": {
+          "package_name": "com.vikasyadavnsit.cdc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO8EwzPzVClp2cK8nQg_QoYqYAh9nUNio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
