@@ -9,6 +9,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:7.1.1' // Update to the latest version of AGP
         classpath "com.google.dagger:hilt-android-gradle-plugin:2.39.1"
         // Replace '2.39.1' with the latest version of Hilt
+        classpath 'com.google.gms:google-services:4.3.3'
     }
 }
 

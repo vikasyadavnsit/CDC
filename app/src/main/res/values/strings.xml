@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">CDC</string>
-    <string name="homepage_settings_name">Setting</string>
+    <string name="navigation_settings_button_text">Setting</string>
+    <string name="accessibility_service_description">
+        CDC is a change data capture service for Android. It is designed by Vikas Yadav as a side project to show the relevance of security in our system.
+    </string>
+    <string name="navigation_home_button_text">Home</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment"></string>
+    <!--    <string name="hello_blank_fragment">Hello Sweetheart ! \n\n I hope you always remain in good health !  \n\n\n Stay Cute and Sweet.</string>-->
+    <string name="navigation_play_button_text">Message</string>
+    <string name="hello_play_fragment"></string>
+    <!--    <string name="hello_play_fragment"></string>-->
 </resources>
