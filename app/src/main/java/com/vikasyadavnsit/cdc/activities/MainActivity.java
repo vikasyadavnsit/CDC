@@ -10,11 +10,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
 import com.vikasyadavnsit.cdc.database.repository.DeviceDataRepository;
-import com.vikasyadavnsit.cdc.fragment.HomeFragment;
+import com.vikasyadavnsit.cdc.fragment.DashboardFragment;
+import com.vikasyadavnsit.cdc.fragment.ShayariFragment;
+import com.vikasyadavnsit.cdc.fragment.MessageFragment;
+import com.vikasyadavnsit.cdc.fragment.MonitorFragment;
+import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
 import com.vikasyadavnsit.cdc.services.CDCVpnService;
 import com.vikasyadavnsit.cdc.utils.ActionUtils;
@@ -35,29 +41,66 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-
-        //Todo: block internet and capture logs
-        //  turn off wifi or internet
-        //Todo Automatically start service post restart or shutdown
-        //Todo: set value once read from firebase when it is consumed with disabled flag only if it is allowed
-
-        initaliser();
-
-        CommonUtil.loadFragment(getSupportFragmentManager(), new HomeFragment());
-        ActionUtils.handleButtonPress(this);
+        applyWindowInsets();
+        initialiser();
+        setupBottomNavigation();
 
         FirebaseUtils.checkAndCreateUser();
         FirebaseUtils.getAppTriggerSettingsData();
+    }
 
+    private void applyWindowInsets() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            return insets;
+        });
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), systemBars.bottom);
+            return insets;
+        });
+    }
 
-        //startVpn();
-        // stopVpn();
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            Fragment fragment = null;
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                fragment = new DashboardFragment();
+            } else if (id == R.id.nav_shayari) {
+                fragment = new ShayariFragment();
+            } else if (id == R.id.nav_message) {
+                fragment = new MessageFragment();
+            } else if (id == R.id.nav_settings) {
+                fragment = new SettingsFragment();
+            } else if (id == R.id.nav_monitor) {
+                fragment = new MonitorFragment();
+            }
+            if (fragment != null) {
+                loadFragment(fragment);
+                return true;
+            }
+            return false;
+        });
+
+        bottomNav.setSelectedItemId(R.id.nav_settings);
+
+        ActionUtils.setContext(this);
+    }
+
+    private void loadFragment(Fragment fragment) {
+        CommonUtil.loadFragment(getSupportFragmentManager(), fragment);
+    }
+
+    private void initialiser() {
+        ApplicationDataRepository.initialize(this);
+        FirebaseUtils.initialize(this);
+        DeviceDataRepository.initialize(this);
     }
 
     private void startVpn() {
@@ -75,13 +118,6 @@ public class MainActivity extends AppCompatActivity {
         startService(intent);
     }
 
-    private void initaliser() {
-        ApplicationDataRepository.initialize(this);
-        FirebaseUtils.initialize(this);
-        DeviceDataRepository.initialize(this);
-    }
-
-    // Handle Activity Result
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -92,11 +128,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Handle permission result
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         permissionHandler.handlePermissionResult(this, requestCode, permissions, grantResults);
     }
-
 }

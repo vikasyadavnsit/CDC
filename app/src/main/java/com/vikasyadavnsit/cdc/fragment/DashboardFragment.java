@@ -9,13 +9,11 @@ import androidx.fragment.app.Fragment;
 
 import com.vikasyadavnsit.cdc.R;
 
-
-public class PlayFragment extends Fragment {
+public class DashboardFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_play, container, false);
+        return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 }
