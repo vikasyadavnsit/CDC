@@ -40,48 +40,44 @@ public class SystemAppUsageStatisticsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_system_app_usage_statistics, container, false);
         fragmentLayout = view.findViewById(R.id.system_app_usage_statistics_fragment_layout);
         dropdownSpinner = view.findViewById(R.id.system_app_usage_statistics_fragment_dropdown_spinner);
-
         fragmentLayout.setColumnCount(calculateNoOfColumns());
         FirebaseUtils.getAndroidUserSystemAppUsageStatistics();
-
         return view;
     }
 
     private int calculateNoOfColumns() {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        return Math.max(1, Math.min((int) (dpWidth / 300), 3)); // Minimum 1, maximum 3 columns
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        float dpWidth = dm.widthPixels / dm.density;
+        return Math.max(1, Math.min((int) (dpWidth / 300), 3));
     }
 
-    public static void displaySystemAppUsageStatistics(Activity activity, TreeMap<String, TreeMap<String, AppUsageReportData>> appUsageStatisticsReportDataMap) {
-        initializeSpinner(activity, appUsageStatisticsReportDataMap);
-        setupSpinnerListener(activity, appUsageStatisticsReportDataMap);
+    public static void displaySystemAppUsageStatistics(
+            Activity activity,
+            TreeMap<String, TreeMap<String, AppUsageReportData>> reportMap) {
+        initializeSpinner(activity, reportMap);
+        setupSpinnerListener(activity, reportMap);
     }
 
-    private static void initializeSpinner(Activity activity, TreeMap<String, TreeMap<String, AppUsageReportData>> appUsageStatisticsReportDataMap) {
-        SpinnerItem[] items = new SpinnerItem[appUsageStatisticsReportDataMap.size() + 1];
+    private static void initializeSpinner(Activity activity,
+                                           TreeMap<String, TreeMap<String, AppUsageReportData>> reportMap) {
+        SpinnerItem[] items = new SpinnerItem[reportMap.size() + 1];
         items[0] = new SpinnerItem("Select a date", null);
-
         int index = 1;
-        for (String appPackage : appUsageStatisticsReportDataMap.keySet()) {
-            items[index++] = new SpinnerItem(appPackage, null);
-        }
-
+        for (String date : reportMap.keySet()) items[index++] = new SpinnerItem(date, null);
         spinnerArrayAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, items);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dropdownSpinner.setAdapter(spinnerArrayAdapter);
     }
 
-    private static void setupSpinnerListener(Activity activity, TreeMap<String, TreeMap<String, AppUsageReportData>> appUsageStatisticsReportDataMap) {
+    private static void setupSpinnerListener(Activity activity,
+                                              TreeMap<String, TreeMap<String, AppUsageReportData>> reportMap) {
         dropdownSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 fragmentLayout.removeAllViews();
-
-                if (position == 0) {
-                    // Do nothing for the placeholder
-                } else {
-                    displaySelectedAppData(activity, appUsageStatisticsReportDataMap, (SpinnerItem) parent.getItemAtPosition(position));
+                if (position != 0) {
+                    displayForDate(activity, reportMap,
+                            (SpinnerItem) parent.getItemAtPosition(position));
                 }
             }
 
@@ -91,63 +87,98 @@ public class SystemAppUsageStatisticsFragment extends Fragment {
         });
     }
 
-    private static void displaySelectedAppData(Activity activity, TreeMap<String, TreeMap<String, AppUsageReportData>> appUsageStatisticsReportDataMap, SpinnerItem selectedItem) {
+    private static void displayForDate(Activity activity,
+                                        TreeMap<String, TreeMap<String, AppUsageReportData>> reportMap,
+                                        SpinnerItem selectedItem) {
         String selectedDate = selectedItem.getLabel();
-        TreeMap<String, AppUsageReportData> appUsageData = appUsageStatisticsReportDataMap.get(selectedDate);
-
-        LinearLayout groupLayout = createGroupLayout(activity, "Date : " + selectedDate);
-        for (Map.Entry<String, AppUsageReportData> entry : appUsageData.entrySet()) {
+        TreeMap<String, AppUsageReportData> appData = reportMap.get(selectedDate);
+        LinearLayout group = createGroupLayout(activity, selectedDate);
+        for (Map.Entry<String, AppUsageReportData> entry : appData.entrySet()) {
             if (entry.getValue().getOpenCount() > 0) {
-                addAppUsageDataToGroup(groupLayout, entry.getValue());
+                addUsageRow(group, entry.getKey(), entry.getValue());
             }
         }
-        fragmentLayout.addView(groupLayout);
+        fragmentLayout.addView(group);
     }
-
 
     private static LinearLayout createGroupLayout(Activity activity, String dateText) {
-        LinearLayout groupLayout = new LinearLayout(activity);
-        groupLayout.setOrientation(LinearLayout.VERTICAL);
-        groupLayout.setLayoutParams(createGroupLayoutParams());
-        groupLayout.setPadding(16, 24, 16, 16);
-        groupLayout.setBackgroundResource(R.drawable.group_border);
+        float density = activity.getResources().getDisplayMetrics().density;
+        LinearLayout group = new LinearLayout(activity);
+        group.setOrientation(LinearLayout.VERTICAL);
+        group.setBackgroundResource(R.drawable.group_border);
+        int pad = dp(16, density);
+        group.setPadding(pad, pad, pad, pad);
 
-        TextView dateTextView = new TextView(activity);
-        dateTextView.setText(dateText);
-        dateTextView.setLayoutParams(createLabelLayoutParams());
-        dateTextView.setTextSize(16);
-        dateTextView.setTypeface(null, Typeface.BOLD);
-        groupLayout.addView(dateTextView);
+        GridLayout.LayoutParams p = new GridLayout.LayoutParams();
+        p.width = 0;
+        p.height = GridLayout.LayoutParams.WRAP_CONTENT;
+        p.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+        p.setMargins(dp(8, density), dp(8, density), dp(8, density), dp(8, density));
+        group.setLayoutParams(p);
 
-        return groupLayout;
+        TextView header = new TextView(activity);
+        header.setText(dateText);
+        header.setTextColor(activity.getColor(R.color.text_primary));
+        header.setTextSize(14f);
+        header.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams hp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        hp.setMargins(0, 0, 0, dp(8, density));
+        header.setLayoutParams(hp);
+        group.addView(header);
+
+        View divider = new View(activity);
+        divider.setBackgroundColor(activity.getColor(R.color.divider));
+        LinearLayout.LayoutParams dp2 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        dp2.setMargins(0, 0, 0, dp(8, density));
+        divider.setLayoutParams(dp2);
+        group.addView(divider);
+
+        return group;
     }
 
-    private static void addAppUsageDataToGroup(LinearLayout groupLayout, AppUsageReportData usageReportData) {
-        TextView textView = new TextView(groupLayout.getContext());
-        StringBuilder sb = new StringBuilder();
-        sb.append(usageReportData);
+    private static void addUsageRow(LinearLayout group, String appPackage,
+                                     AppUsageReportData data) {
+        Activity activity = (Activity) group.getContext();
+        float density = activity.getResources().getDisplayMetrics().density;
 
-        textView.setText(sb);
-        textView.setLayoutParams(createLabelLayoutParams());
-        groupLayout.addView(textView);
+        TextView appName = new TextView(activity);
+        appName.setText(appPackage);
+        appName.setTextColor(activity.getColor(R.color.text_secondary));
+        appName.setTextSize(12f);
+        appName.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams np = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        np.setMargins(0, dp(6, density), 0, dp(2, density));
+        appName.setLayoutParams(np);
+        group.addView(appName);
+
+        TextView detail = new TextView(activity);
+        detail.setText("Opens: " + data.getOpenCount()
+                + "  |  Duration: " + formatDuration(data.getTotalTimeUsed()));
+        detail.setTextColor(activity.getColor(R.color.text_hint));
+        detail.setTextSize(11f);
+        detail.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        group.addView(detail);
+
+        View sep = new View(activity);
+        sep.setBackgroundColor(activity.getColor(R.color.divider));
+        LinearLayout.LayoutParams sp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        sp.setMargins(0, dp(6, density), 0, 0);
+        sep.setLayoutParams(sp);
+        group.addView(sep);
     }
 
-
-    private static GridLayout.LayoutParams createGroupLayoutParams() {
-        GridLayout.LayoutParams groupParams = new GridLayout.LayoutParams();
-        groupParams.width = 0;
-        groupParams.height = GridLayout.LayoutParams.WRAP_CONTENT;
-        groupParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-        groupParams.setMargins(8, 16, 8, 16);
-        return groupParams;
+    private static String formatDuration(long millis) {
+        long minutes = millis / 60000;
+        long seconds = (millis % 60000) / 1000;
+        return minutes + "m " + seconds + "s";
     }
 
-    private static LinearLayout.LayoutParams createLabelLayoutParams() {
-        LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        labelParams.setMargins(8, 8, 8, 8);
-        return labelParams;
+    private static int dp(int v, float density) {
+        return (int) (v * density);
     }
 }

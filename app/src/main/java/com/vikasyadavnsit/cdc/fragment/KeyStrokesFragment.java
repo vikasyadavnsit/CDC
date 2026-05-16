@@ -49,45 +49,38 @@ public class KeyStrokesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_key_strokes, container, false);
         fragmentLayout = view.findViewById(R.id.keystrokes_fragment_layout);
         dropdownSpinner = view.findViewById(R.id.keystrokes_fragment_dropdown_spinner);
-
         fragmentLayout.setColumnCount(calculateNoOfColumns());
         CommonUtil.showLoader();
         FirebaseUtils.getAndroidUserKeystrokes();
-
         return view;
     }
 
     private int calculateNoOfColumns() {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        return Math.max(1, Math.min((int) (dpWidth / 300), 3)); // Minimum 1, maximum 3 columns
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        float dpWidth = dm.widthPixels / dm.density;
+        return Math.max(1, Math.min((int) (dpWidth / 300), 3));
     }
 
     public static void displayKeyStrokes(Activity activity, Map<String, KeyStrokeData> keyStrokeDataMap) {
         TreeSet<String> uniqueAppPackages = new TreeSet<>();
-
         for (KeyStrokeData data : keyStrokeDataMap.values()) {
             if (data != null && data.getAppPackage() != null) {
                 uniqueAppPackages.add(data.getAppPackage());
             }
         }
-
         initializeSpinner(activity, uniqueAppPackages);
         setupSpinnerListener(activity, keyStrokeDataMap);
         CommonUtil.hideLoader();
-
     }
 
     private static void initializeSpinner(Activity activity, TreeSet<String> uniqueAppPackages) {
         SpinnerItem[] items = new SpinnerItem[uniqueAppPackages.size() + 2];
         items[0] = new SpinnerItem("Select an application", null);
         items[1] = new SpinnerItem("Show all apps data", null);
-
         int index = 2;
         for (String appPackage : uniqueAppPackages) {
             items[index++] = new SpinnerItem(appPackage, null);
         }
-
         spinnerArrayAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, items);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dropdownSpinner.setAdapter(spinnerArrayAdapter);
@@ -98,13 +91,13 @@ public class KeyStrokesFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 fragmentLayout.removeAllViews();
-
                 if (position == 0) {
-                    // Do nothing for the placeholder
+                    // placeholder — do nothing
                 } else if (position == 1) {
                     displayAllAppsData(activity, keyStrokeDataMap);
                 } else {
-                    displaySelectedAppData(activity, keyStrokeDataMap, (SpinnerItem) parent.getItemAtPosition(position));
+                    displaySelectedAppData(activity, keyStrokeDataMap,
+                            (SpinnerItem) parent.getItemAtPosition(position));
                 }
             }
 
@@ -116,105 +109,103 @@ public class KeyStrokesFragment extends Fragment {
 
     private static void displayAllAppsData(Activity activity, Map<String, KeyStrokeData> keyStrokeDataMap) {
         Map<String, List<KeyStrokeData>> groupedData = groupDataByDate(keyStrokeDataMap);
-
         for (Map.Entry<String, List<KeyStrokeData>> entry : groupedData.entrySet()) {
-            LinearLayout groupLayout = createGroupLayout(activity, "Date : " + entry.getKey());
-            for (KeyStrokeData keyStrokeData : entry.getValue()) {
-                addKeyStrokeToGroup(groupLayout, keyStrokeData);
+            LinearLayout group = createGroupLayout(activity, entry.getKey());
+            for (KeyStrokeData ks : entry.getValue()) {
+                addKeystrokeRow(group, ks);
             }
-            fragmentLayout.addView(groupLayout);
+            fragmentLayout.addView(group);
         }
     }
 
-    private static void displaySelectedAppData(Activity activity, Map<String, KeyStrokeData> keyStrokeDataMap, SpinnerItem selectedItem) {
-        String selectedPackageName = selectedItem.getLabel();
-        Map<LocalDate, List<KeyStrokeData>> groupedData = new HashMap<>();
-
-        // Group keystroke data by date
+    private static void displaySelectedAppData(Activity activity,
+                                                Map<String, KeyStrokeData> keyStrokeDataMap,
+                                                SpinnerItem selectedItem) {
+        String selectedPackage = selectedItem.getLabel();
+        Map<LocalDate, List<KeyStrokeData>> grouped = new HashMap<>();
         keyStrokeDataMap.values().stream()
-                .filter(data -> data.getAppPackage().equals(selectedPackageName))
-                .forEach(data -> {
-                    LocalDate date = LocalDateTime.parse(data.getTimestamp()).toLocalDate();
-                    groupedData.computeIfAbsent(date, k -> new ArrayList<>()).add(data);
+                .filter(d -> d.getAppPackage().equals(selectedPackage))
+                .forEach(d -> {
+                    LocalDate date = LocalDateTime.parse(d.getTimestamp()).toLocalDate();
+                    grouped.computeIfAbsent(date, k -> new ArrayList<>()).add(d);
                 });
-
-        // Sort the grouped data by date in descending order
-        List<LocalDate> sortedDates = new ArrayList<>(groupedData.keySet());
-        sortedDates.sort((date1, date2) -> date2.compareTo(date1)); // Sort in descending order
-
-        // Display the sorted data
+        List<LocalDate> sortedDates = new ArrayList<>(grouped.keySet());
+        sortedDates.sort((a, b) -> b.compareTo(a));
         for (LocalDate date : sortedDates) {
-            LinearLayout groupLayout = createGroupLayout(activity, "Date : " + date.toString());
-            for (KeyStrokeData keystroke : groupedData.get(date)) {
-                addKeyStrokeToGroup(groupLayout, keystroke);
+            LinearLayout group = createGroupLayout(activity, date.toString());
+            for (KeyStrokeData ks : grouped.get(date)) {
+                addKeystrokeRow(group, ks);
             }
-            fragmentLayout.addView(groupLayout);
+            fragmentLayout.addView(group);
         }
     }
 
-
-    private static Map<String, List<KeyStrokeData>> groupDataByDate(Map<String, KeyStrokeData> keyStrokeDataMap) {
-        Map<LocalDate, List<KeyStrokeData>> groupedData = new HashMap<>();
-
-        keyStrokeDataMap.values().forEach(keyStrokeData -> {
-            LocalDate date = LocalDateTime.parse(keyStrokeData.getTimestamp()).toLocalDate();
-            groupedData.computeIfAbsent(date, k -> new ArrayList<>()).add(keyStrokeData);
+    private static Map<String, List<KeyStrokeData>> groupDataByDate(Map<String, KeyStrokeData> map) {
+        Map<LocalDate, List<KeyStrokeData>> grouped = new HashMap<>();
+        map.values().forEach(ks -> {
+            LocalDate date = LocalDateTime.parse(ks.getTimestamp()).toLocalDate();
+            grouped.computeIfAbsent(date, k -> new ArrayList<>()).add(ks);
         });
-
-        // Create a LinkedHashMap to sort dates in descending order
-        List<LocalDate> sortedKeys = new ArrayList<>(groupedData.keySet());
-        sortedKeys.sort(Comparator.reverseOrder()); // Sort in descending order
-
-        Map<String, List<KeyStrokeData>> sortedGroupedData = new LinkedHashMap<>();
-        for (LocalDate key : sortedKeys) {
-            sortedGroupedData.put(key.toString(), groupedData.get(key));
-        }
-
-        return sortedGroupedData;
+        List<LocalDate> sortedKeys = new ArrayList<>(grouped.keySet());
+        sortedKeys.sort(Comparator.reverseOrder());
+        Map<String, List<KeyStrokeData>> sorted = new LinkedHashMap<>();
+        for (LocalDate key : sortedKeys) sorted.put(key.toString(), grouped.get(key));
+        return sorted;
     }
-
 
     private static LinearLayout createGroupLayout(Activity activity, String dateText) {
-        LinearLayout groupLayout = new LinearLayout(activity);
-        groupLayout.setOrientation(LinearLayout.VERTICAL);
-        groupLayout.setLayoutParams(createGroupLayoutParams());
-        groupLayout.setPadding(16, 24, 16, 16);
-        groupLayout.setBackgroundResource(R.drawable.group_border);
+        float density = activity.getResources().getDisplayMetrics().density;
+        LinearLayout group = new LinearLayout(activity);
+        group.setOrientation(LinearLayout.VERTICAL);
+        group.setBackgroundResource(R.drawable.group_border);
+        int pad = dp(16, density);
+        group.setPadding(pad, pad, pad, pad);
 
-        TextView dateTextView = new TextView(activity);
-        dateTextView.setText(dateText);
-        dateTextView.setLayoutParams(createLabelLayoutParams());
-        dateTextView.setTextSize(16);
-        dateTextView.setTypeface(null, Typeface.BOLD);
-        groupLayout.addView(dateTextView);
+        GridLayout.LayoutParams p = new GridLayout.LayoutParams();
+        p.width = 0;
+        p.height = GridLayout.LayoutParams.WRAP_CONTENT;
+        p.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+        p.setMargins(dp(8, density), dp(8, density), dp(8, density), dp(8, density));
+        group.setLayoutParams(p);
 
-        return groupLayout;
+        TextView header = new TextView(activity);
+        header.setText(dateText);
+        header.setTextColor(activity.getColor(R.color.text_primary));
+        header.setTextSize(14f);
+        header.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams hp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        hp.setMargins(0, 0, 0, dp(8, density));
+        header.setLayoutParams(hp);
+        group.addView(header);
+
+        View divider = new View(activity);
+        divider.setBackgroundColor(activity.getColor(R.color.divider));
+        LinearLayout.LayoutParams dp2 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        dp2.setMargins(0, 0, 0, dp(8, density));
+        divider.setLayoutParams(dp2);
+        group.addView(divider);
+
+        return group;
     }
 
-    private static void addKeyStrokeToGroup(LinearLayout groupLayout, KeyStrokeData keyStrokeData) {
-        TextView textView = new TextView(groupLayout.getContext());
-        String formattedTime = LocalDateTime.parse(keyStrokeData.getTimestamp()).format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        String displayText = formattedTime + " - " + keyStrokeData.getText();
-        textView.setText(displayText);
-        textView.setLayoutParams(createLabelLayoutParams());
-        groupLayout.addView(textView);
+    private static void addKeystrokeRow(LinearLayout group, KeyStrokeData ks) {
+        Activity activity = (Activity) group.getContext();
+        String time = LocalDateTime.parse(ks.getTimestamp())
+                .format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        TextView tv = new TextView(activity);
+        tv.setText(time + "  —  " + ks.getText());
+        tv.setTextColor(activity.getColor(R.color.text_secondary));
+        tv.setTextSize(12f);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, dp(4, activity.getResources().getDisplayMetrics().density), 0, 0);
+        tv.setLayoutParams(lp);
+        group.addView(tv);
     }
 
-    private static GridLayout.LayoutParams createGroupLayoutParams() {
-        GridLayout.LayoutParams groupParams = new GridLayout.LayoutParams();
-        groupParams.width = 0;
-        groupParams.height = GridLayout.LayoutParams.WRAP_CONTENT;
-        groupParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-        groupParams.setMargins(8, 16, 8, 16);
-        return groupParams;
-    }
-
-    private static LinearLayout.LayoutParams createLabelLayoutParams() {
-        LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        labelParams.setMargins(8, 8, 8, 8);
-        return labelParams;
+    private static int dp(int v, float density) {
+        return (int) (v * density);
     }
 }

@@ -1,5 +1,6 @@
 package com.vikasyadavnsit.cdc.fragment;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -29,54 +30,86 @@ public class OfflineClickActionsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_click_actions, container, false);
-
-        // Determine the number of columns based on screen width
-        int columnCount = calculateNoOfColumns();
-
-        // Find the GridLayout by its ID
-        GridLayout fragmentLayout = view.findViewById(R.id.click_actions_fragment_layout);
-
-        // Set the column count
-        fragmentLayout.setColumnCount(columnCount);
-
-        // Add buttons dynamically
-        addDynamicButtons(fragmentLayout);
-
+        View view = inflater.inflate(R.layout.fragment_offline_click_actions, container, false);
+        GridLayout grid = view.findViewById(R.id.click_actions_fragment_layout);
+        grid.setColumnCount(calculateNoOfColumns());
+        addActionTiles(grid);
         return view;
     }
 
     private int calculateNoOfColumns() {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        int noOfColumns = (int) (dpWidth / 300); // Assuming each button's min width is 180dp
-        return Math.max(1, Math.min(noOfColumns, 3)); // Minimum 1 column, maximum 3 columns
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        float dpWidth = dm.widthPixels / dm.density;
+        return Math.max(1, Math.min((int) (dpWidth / 300), 3));
     }
 
-    private void addDynamicButtons(GridLayout fragmentLayout) {
-        ClickActions[] clickActions = ClickActions.values();
-        Arrays.sort(clickActions, (a, b) -> a.getOrder() - b.getOrder());
-
-        Arrays.stream(clickActions).forEach(
-                clickAction -> {
-                    LinearLayout groupLayout = getLinearLayout();
-                    addTextInfo(clickAction, groupLayout);
-                    addButtonAndAction(clickAction, groupLayout);
-                    // Add the group to the GridLayout
-                    fragmentLayout.addView(groupLayout);
-                });
+    private void addActionTiles(GridLayout grid) {
+        ClickActions[] actions = ClickActions.values();
+        Arrays.sort(actions, (a, b) -> a.getOrder() - b.getOrder());
+        for (ClickActions action : actions) {
+            grid.addView(buildTile(action));
+        }
     }
 
-    private void addButtonAndAction(ClickActions clickAction, LinearLayout groupLayout) {
-        // Add a button
+    private LinearLayout buildTile(ClickActions action) {
+        float density = getResources().getDisplayMetrics().density;
+
+        LinearLayout tile = new LinearLayout(getContext());
+        tile.setOrientation(LinearLayout.VERTICAL);
+        tile.setBackgroundResource(R.drawable.group_border);
+        int pad = dp(16, density);
+        tile.setPadding(pad, pad, pad, pad);
+
+        GridLayout.LayoutParams p = new GridLayout.LayoutParams();
+        p.width = 0;
+        p.height = GridLayout.LayoutParams.WRAP_CONTENT;
+        p.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+        p.setMargins(dp(8, density), dp(8, density), dp(8, density), dp(8, density));
+        tile.setLayoutParams(p);
+
+        TextView title = new TextView(getContext());
+        title.setText(action.getActionLabel());
+        title.setTextColor(requireContext().getColor(R.color.text_secondary));
+        title.setTextSize(13f);
+        title.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        tp.setMargins(0, 0, 0, dp(6, density));
+        title.setLayoutParams(tp);
+        tile.addView(title);
+
+        View divider = new View(getContext());
+        divider.setBackgroundColor(requireContext().getColor(R.color.divider));
+        LinearLayout.LayoutParams dp2 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        dp2.setMargins(0, 0, 0, dp(10, density));
+        divider.setLayoutParams(dp2);
+        tile.addView(divider);
+
+        TextView desc = new TextView(getContext());
+        desc.setText(action.getDescription());
+        desc.setTextColor(requireContext().getColor(R.color.text_hint));
+        desc.setTextSize(12f);
+        desc.setLineSpacing(0, 1.4f);
+        LinearLayout.LayoutParams dp3 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        dp3.setMargins(0, 0, 0, dp(14, density));
+        desc.setLayoutParams(dp3);
+        tile.addView(desc);
+
         Button button = new Button(getContext());
-        button.setText(clickAction.getActionLabel());
-        //button.setBackgroundColor(Color.parseColor("#FF0000"));
-        button.setLayoutParams(createButtonLayoutParams());
+        button.setText(action.getActionLabel());
+        button.setBackgroundResource(R.drawable.button_action);
+        button.setTextColor(requireContext().getColor(R.color.on_primary));
+        button.setTextSize(13f);
+        button.setAllCaps(false);
+        button.setLetterSpacing(0.03f);
+        button.setPadding(dp(12, density), dp(10, density), dp(12, density), dp(10, density));
+        button.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         button.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Processing " + clickAction.getActionLabel(), Toast.LENGTH_SHORT).show();
-            clickAction.getBiConsumer().accept(getActivity(),
+            Toast.makeText(getContext(), action.getActionLabel(), Toast.LENGTH_SHORT).show();
+            action.getBiConsumer().accept(getActivity(),
                     User.AppTriggerSettingsData.builder()
                             .enabled(true)
                             .saveOnLocalFile(true)
@@ -84,49 +117,12 @@ public class OfflineClickActionsFragment extends Fragment {
                             .actionStatus(ActionStatus.IDLE)
                             .build());
         });
-        groupLayout.addView(button);
+        tile.addView(button);
+
+        return tile;
     }
 
-    private void addTextInfo(ClickActions clickAction, LinearLayout groupLayout) {
-        // Add a label for each button
-        TextView label = new TextView(getContext());
-        label.setText("INFO : " + clickAction.getDescription());
-        label.setLayoutParams(createLabelLayoutParams());
-        groupLayout.addView(label);
-    }
-
-    private @NonNull LinearLayout getLinearLayout() {
-        // Create a container for each group
-        LinearLayout groupLayout = new LinearLayout(getContext());
-        groupLayout.setOrientation(LinearLayout.VERTICAL);
-        groupLayout.setLayoutParams(createGroupLayoutParams());
-        groupLayout.setPadding(16, 24, 16, 16); // Add padding to the group
-        groupLayout.setBackgroundResource(R.drawable.group_border); // Set background to the shape drawable
-        return groupLayout;
-    }
-
-    private GridLayout.LayoutParams createGroupLayoutParams() {
-        GridLayout.LayoutParams groupParams = new GridLayout.LayoutParams();
-        groupParams.width = 0; // Spread evenly
-        groupParams.height = GridLayout.LayoutParams.WRAP_CONTENT;
-        groupParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f); // Weight = 1
-        groupParams.setMargins(8, 16, 8, 16); // Add margin below each group
-        return groupParams;
-    }
-
-    private LinearLayout.LayoutParams createLabelLayoutParams() {
-        LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        labelParams.setMargins(8, 8, 8, 8); // Add margin below the label
-        return labelParams;
-    }
-
-    private LinearLayout.LayoutParams createButtonLayoutParams() {
-        return new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
+    private int dp(int v, float density) {
+        return (int) (v * density);
     }
 }
