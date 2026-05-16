@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.AdapterView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,38 +29,103 @@ import com.vikasyadavnsit.cdc.data.SpinnerItem;
 import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.enums.ActionStatus;
 import com.vikasyadavnsit.cdc.enums.ClickActions;
+import com.vikasyadavnsit.cdc.utils.CommonUtil;
+import com.vikasyadavnsit.cdc.utils.FirebaseUtils;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class SettingsFragment extends Fragment {
 
-
     private static Spinner dropdownSpinner;
     private static ArrayAdapter<SpinnerItem> spinnerArrayAdapter;
+
+    // ── Viewer tile definitions ───────────────────────────
+    private static class ViewerTile {
+        final String icon, title, description;
+        final Supplier<Fragment> factory;
+        final boolean requiresUser;
+
+        ViewerTile(String icon, String title, String description,
+                   Supplier<Fragment> factory, boolean requiresUser) {
+            this.icon = icon;
+            this.title = title;
+            this.description = description;
+            this.factory = factory;
+            this.requiresUser = requiresUser;
+        }
+    }
+
+    private static final ViewerTile[] VIEWER_TILES = {
+            new ViewerTile("📱", "Remote Triggers",
+                    "View and manage trigger settings for the selected device",
+                    ClickActionsFragment::new, true),
+            new ViewerTile("⌨", "Keystrokes",
+                    "Browse captured keystrokes grouped by date and app",
+                    KeyStrokesFragment::new, true),
+            new ViewerTile("🔔", "Notifications",
+                    "View intercepted notifications from the selected device",
+                    AccessibilityNotificationFragment::new, true),
+            new ViewerTile("📊", "App Usage",
+                    "Daily app usage statistics for the selected device",
+                    SystemAppUsageStatisticsFragment::new, true),
+            new ViewerTile("🔌", "Local Actions",
+                    "Execute trigger actions directly on this device",
+                    OfflineClickActionsFragment::new, false),
+    };
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         dropdownSpinner = view.findViewById(R.id.settings_fragment_dropdown_spinner);
+        setupSpinnerListener();
 
-        GridLayout fragmentLayout = view.findViewById(R.id.fragment_layout);
-        fragmentLayout.setColumnCount(calculateNoOfColumns());
-        addDynamicButtons(fragmentLayout);
+        GridLayout adminGrid = view.findViewById(R.id.admin_viewers_grid);
+        adminGrid.setColumnCount(calculateNoOfColumns());
+        addAdminViewerTiles(adminGrid);
+
+        GridLayout actionsGrid = view.findViewById(R.id.fragment_layout);
+        actionsGrid.setColumnCount(calculateNoOfColumns());
+        addDynamicButtons(actionsGrid);
 
         getFlatUserDetails();
 
         return view;
     }
 
+    // ── Spinner ───────────────────────────────────────────
+
+    private void setupSpinnerListener() {
+        dropdownSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    FirebaseUtils.setSelectedUser(null);
+                    return;
+                }
+                SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
+                User user = item.getValue();
+                if (user != null && user.getDeviceDetails() != null) {
+                    String androidId = (String) user.getDeviceDetails().get("androidId");
+                    FirebaseUtils.setSelectedUser(androidId);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                FirebaseUtils.setSelectedUser(null);
+            }
+        });
+    }
+
     public static void populateUserDropdown(Activity activity, Map<String, User> userMap) {
         SpinnerItem[] items = new SpinnerItem[userMap.size() + 1];
-        items[0] = new SpinnerItem("Select a user", null);
+        items[0] = new SpinnerItem("Select a device", null);
         int index = 1;
         for (Map.Entry<String, User> entry : userMap.entrySet()) {
             String label = entry.getValue() != null && entry.getValue().getFullName() != null
@@ -71,12 +137,101 @@ public class SettingsFragment extends Fragment {
         dropdownSpinner.setAdapter(spinnerArrayAdapter);
     }
 
-    private int calculateNoOfColumns() {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        int noOfColumns = (int) (dpWidth / 300); // Assuming each button's min width is 180dp
-        return Math.max(1, Math.min(noOfColumns, 3)); // Minimum 1 column, maximum 3 columns
+    // ── Admin viewer tiles ────────────────────────────────
+
+    private void addAdminViewerTiles(GridLayout grid) {
+        for (ViewerTile viewer : VIEWER_TILES) {
+            grid.addView(buildViewerTile(viewer));
+        }
     }
+
+    private LinearLayout buildViewerTile(ViewerTile viewer) {
+        LinearLayout tile = new LinearLayout(getContext());
+        tile.setOrientation(LinearLayout.VERTICAL);
+        tile.setLayoutParams(createGroupLayoutParams());
+        tile.setPadding(dp(16), dp(16), dp(16), dp(16));
+        tile.setBackgroundResource(R.drawable.group_border);
+
+        // header
+        LinearLayout header = new LinearLayout(getContext());
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        header.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        headerParams.setMargins(0, 0, 0, dp(10));
+        header.setLayoutParams(headerParams);
+
+        GradientDrawable iconBg = new GradientDrawable();
+        iconBg.setShape(GradientDrawable.OVAL);
+        iconBg.setColor(requireContext().getColor(R.color.primary_container));
+
+        TextView icon = new TextView(getContext());
+        icon.setText(viewer.icon);
+        icon.setTextSize(14f);
+        icon.setGravity(Gravity.CENTER);
+        icon.setBackground(iconBg);
+        int iconSize = dp(30);
+        LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(iconSize, iconSize);
+        iconParams.setMarginEnd(dp(10));
+        icon.setLayoutParams(iconParams);
+
+        TextView title = new TextView(getContext());
+        title.setText(viewer.title);
+        title.setTextColor(requireContext().getColor(R.color.text_primary));
+        title.setTextSize(14f);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setLayoutParams(new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        header.addView(icon);
+        header.addView(title);
+        tile.addView(header);
+
+        // divider
+        View divider = new View(getContext());
+        divider.setBackgroundColor(requireContext().getColor(R.color.divider));
+        LinearLayout.LayoutParams divParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
+        divParams.setMargins(0, 0, 0, dp(10));
+        divider.setLayoutParams(divParams);
+        tile.addView(divider);
+
+        // description
+        TextView desc = new TextView(getContext());
+        desc.setText(viewer.description);
+        desc.setTextColor(requireContext().getColor(R.color.text_hint));
+        desc.setTextSize(12f);
+        desc.setLineSpacing(0, 1.4f);
+        LinearLayout.LayoutParams descParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        descParams.setMargins(0, 0, 0, dp(14));
+        desc.setLayoutParams(descParams);
+        tile.addView(desc);
+
+        // open button
+        Button button = new Button(getContext());
+        button.setText("Open");
+        button.setBackgroundResource(R.drawable.button_action);
+        button.setTextColor(requireContext().getColor(R.color.on_primary));
+        button.setTextSize(13f);
+        button.setAllCaps(false);
+        button.setLetterSpacing(0.03f);
+        button.setPadding(dp(12), dp(10), dp(12), dp(10));
+        button.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        button.setOnClickListener(v -> {
+            if (viewer.requiresUser && dropdownSpinner.getSelectedItemPosition() == 0) {
+                Toast.makeText(getContext(), "Please select a device first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            CommonUtil.loadFragmentWithBackStack(getParentFragmentManager(), viewer.factory.get());
+        });
+        tile.addView(button);
+
+        return tile;
+    }
+
+    // ── Action tiles ──────────────────────────────────────
 
     private void addDynamicButtons(GridLayout fragmentLayout) {
         ClickActions[] clickActions = ClickActions.values();
@@ -91,7 +246,7 @@ public class SettingsFragment extends Fragment {
         tile.setPadding(dp(16), dp(16), dp(16), dp(16));
         tile.setBackgroundResource(R.drawable.group_border);
 
-        // ── Icon + title row ──────────────────────────────
+        // header
         LinearLayout header = new LinearLayout(getContext());
         header.setOrientation(LinearLayout.HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
@@ -126,7 +281,7 @@ public class SettingsFragment extends Fragment {
         header.addView(title);
         tile.addView(header);
 
-        // ── Divider ───────────────────────────────────────
+        // divider
         View divider = new View(getContext());
         divider.setBackgroundColor(requireContext().getColor(R.color.divider));
         LinearLayout.LayoutParams divParams = new LinearLayout.LayoutParams(
@@ -135,7 +290,7 @@ public class SettingsFragment extends Fragment {
         divider.setLayoutParams(divParams);
         tile.addView(divider);
 
-        // ── Short description ─────────────────────────────
+        // description
         TextView desc = new TextView(getContext());
         desc.setText(action.getDescription());
         desc.setTextColor(requireContext().getColor(R.color.text_hint));
@@ -147,7 +302,7 @@ public class SettingsFragment extends Fragment {
         desc.setLayoutParams(descParams);
         tile.addView(desc);
 
-        // ── Action button ─────────────────────────────────
+        // action button
         Button button = new Button(getContext());
         button.setText(action.getActionLabel());
         button.setBackgroundResource(R.drawable.button_action);
@@ -173,6 +328,8 @@ public class SettingsFragment extends Fragment {
         return tile;
     }
 
+    // ── Helpers ───────────────────────────────────────────
+
     private String iconFor(ClickActions action) {
         switch (action) {
             case REQUEST_ALL_PERMISSION:          return "🔐";
@@ -193,6 +350,13 @@ public class SettingsFragment extends Fragment {
             case GET_APP_USAGE_STATISTICS_REPORT: return "📈";
             default:                              return "⚙";
         }
+    }
+
+    private int calculateNoOfColumns() {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int noOfColumns = (int) (dpWidth / 300);
+        return Math.max(1, Math.min(noOfColumns, 3));
     }
 
     private GridLayout.LayoutParams createGroupLayoutParams() {

