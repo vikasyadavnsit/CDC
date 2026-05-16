@@ -31,4 +31,13 @@ public class AppConstants {
     //Firebase Properties
     public static final String FIREBASE_DATABASE_REGION_URL = "https://android-cdc-5357e-default-rtdb.asia-southeast1.firebasedatabase.app";
     public static final String FIREBASE_RTDB_BASE_PATH = "cdc/users/";
+    public static final String FIREBASE_RTDB_SHAYARI_PATH = "cdc/shayari/";
+
+    // Shayari defaults
+    public static final String DEFAULT_SHAYARI_TEXT = "वो प्यार जो हकीकत में प्यार होता है\nज़िन्दगी में सिर्फ एक बार होता है\nनिगाहों के मिलते मिलते दिल मिल जाये\nऐसा इत्तेफ़ाक सिर्फ एक बार होता है";
+    // Format: <lastShownIndex>:<totalCount>
+    public static final String DEFAULT_SHAYARI_LAUNCHER_DATA = "0:1";
+
+    // Message defaults
+    public static final String DEFAULT_MESSAGE_TEXT = "Hello Sweetheart!\n\nI hope you always remain in good health!\n\nStay Cute and Sweet.";
 }

@@ -44,6 +44,14 @@ import java.util.stream.StreamSupport;
 
 public class CommonUtil {
 
+    public static void showLoader() {
+        LoggerUtils.d("CommonUtil", "showLoader");
+    }
+
+    public static void hideLoader() {
+        LoggerUtils.d("CommonUtil", "hideLoader");
+    }
+
     /**
      * Replaces the main frame layout with the provided fragment (without adding to back stack).
      *
@@ -161,6 +169,10 @@ public class CommonUtil {
 
     public static String getAndroidID(Context context) {
         return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    public static boolean hasFileAccess() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager();
     }
 
     public static Map<String, Object> getDeviceDetails(Context context) {

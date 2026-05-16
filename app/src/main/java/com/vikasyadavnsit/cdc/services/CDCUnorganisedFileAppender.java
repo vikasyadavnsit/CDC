@@ -128,17 +128,18 @@ public class CDCUnorganisedFileAppender {
                         positionMap.put(getCurrentByteCountName(fileMap), 0);
                         bufferedWriter.write(buffer.toString());
                     }
+                } else {
+                    try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true))) {
+                        StringBuilder buffer = new StringBuilder();
+                        Queue<String> queue = queueMap.get(fileMap.name());
+                        while (!queue.isEmpty()) {
+                            buffer.append(CryptoUtils.getEncryptedData(fileMap,
+                                    LocalDateTime.now() + " :: " + queue.poll())).append("\n");
+                        }
+                        positionMap.put(getCurrentByteCountName(fileMap), 0);
+                        bufferedWriter.write(buffer.toString());
+                    }
                 }
-
-                StringBuilder buffer = new StringBuilder();
-                Queue<String> queue = queueMap.get(fileMap.name());
-                while (!queue.isEmpty()) {
-                    buffer.append(CryptoUtils.getEncryptedData(fileMap,
-                            LocalDateTime.now() + " :: " + queue.poll())).append("\n");
-                }
-                positionMap.put(getCurrentByteCountName(fileMap), 0);
-                bufferedWriter.write(buffer.toString());
-                bufferedWriter.close();
 
             } catch (Exception e) {
                 Log.e("FileUtilsFileWriter", "Error writing to file", e);

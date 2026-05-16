@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public enum ApplicationInputActions {
 
     FIREBASE_CREATE_USER(true, (context, data) -> {
-        FirebaseUtils.checkAndCreateUser(data.toString());
+        FirebaseUtils.checkAndCreateUser();
         FirebaseUtils.getAppTriggerSettingsData();
         SharedPreferenceUtils.setFirstLaunchCompleted(context);
     });

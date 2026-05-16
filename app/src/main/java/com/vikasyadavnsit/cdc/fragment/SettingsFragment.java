@@ -8,9 +8,11 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,16 +21,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.vikasyadavnsit.cdc.R;
+import com.vikasyadavnsit.cdc.data.SpinnerItem;
 import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.enums.ActionStatus;
 import com.vikasyadavnsit.cdc.enums.ClickActions;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class SettingsFragment extends Fragment {
 
 
-    private static TextView userDetailsTextView;
     private static Spinner dropdownSpinner;
     private static ArrayAdapter<SpinnerItem> spinnerArrayAdapter;
 
@@ -40,19 +43,29 @@ public class SettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        // Determine the number of columns based on screen width
-        int columnCount = calculateNoOfColumns();
+        dropdownSpinner = view.findViewById(R.id.settings_fragment_dropdown_spinner);
 
-        // Find the GridLayout by its ID
         GridLayout fragmentLayout = view.findViewById(R.id.fragment_layout);
-
-        // Set the column count
-        fragmentLayout.setColumnCount(columnCount);
-
-        // Add buttons dynamically
+        fragmentLayout.setColumnCount(calculateNoOfColumns());
         addDynamicButtons(fragmentLayout);
 
+        getFlatUserDetails();
+
         return view;
+    }
+
+    public static void populateUserDropdown(Activity activity, Map<String, User> userMap) {
+        SpinnerItem[] items = new SpinnerItem[userMap.size() + 1];
+        items[0] = new SpinnerItem("Select a user", null);
+        int index = 1;
+        for (Map.Entry<String, User> entry : userMap.entrySet()) {
+            String label = entry.getValue() != null && entry.getValue().getFullName() != null
+                    ? entry.getValue().getFullName() : entry.getKey();
+            items[index++] = new SpinnerItem(label, entry.getValue());
+        }
+        spinnerArrayAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, items);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dropdownSpinner.setAdapter(spinnerArrayAdapter);
     }
 
     private int calculateNoOfColumns() {

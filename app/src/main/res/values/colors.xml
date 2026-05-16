@@ -3,4 +3,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="your_color">#FFFFFFFF</color>
+
+    <!-- Shayari screen palette -->
+    <color name="shayari_bg_start">#1A0533</color>
+    <color name="shayari_bg_end">#3D1066</color>
+    <color name="shayari_text_primary">#F5E6FF</color>
+    <color name="shayari_text_secondary">#C9A0DC</color>
+    <color name="shayari_quote_mark">#7B2FBE</color>
+    <color name="shayari_divider">#4A1A7A</color>
+    <color name="shayari_card_bg">#2A0D4A</color>
+    <color name="shayari_card_border">#5C2A8A</color>
+    <color name="shayari_counter_bg">#3D1A6B</color>
 </resources>

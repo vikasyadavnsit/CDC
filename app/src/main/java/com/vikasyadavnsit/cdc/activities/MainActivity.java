@@ -11,7 +11,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.firebase.FirebaseApp;
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
 import com.vikasyadavnsit.cdc.database.repository.DeviceDataRepository;
@@ -77,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initaliser() {
-        FirebaseApp.initializeApp(this);
         ApplicationDataRepository.initialize(this);
         FirebaseUtils.initialize(this);
         DeviceDataRepository.initialize(this);

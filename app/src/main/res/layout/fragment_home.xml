@@ -1,27 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/home_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.HomeFragment">
+    android:background="@color/shayari_bg_start"
+    android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!-- Header -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="✦ Shayari"
+            android:textColor="@color/shayari_text_secondary"
+            android:textSize="13sp"
+            android:letterSpacing="0.15"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:id="@+id/shayari_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shayari_counter_bg"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="#1"
+            android:textColor="@color/shayari_text_secondary"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+
+    <!-- Featured Shayari Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="@color/shayari_card_bg"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Opening quote -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="“"
+                android:textColor="@color/shayari_quote_mark"
+                android:textSize="64sp"
+                android:lineSpacingMultiplier="0.5"
+                android:fontFamily="serif" />
+
+            <!-- Shayari text -->
+            <TextView
+                android:id="@+id/home_fragment_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-12dp"
+                android:text="@string/hello_blank_fragment"
+                android:textColor="@color/shayari_text_primary"
+                android:textSize="18sp"
+                android:lineSpacingMultiplier="1.7"
+                android:textAlignment="center"
+                android:fontFamily="serif"
+                android:letterSpacing="0.02" />
+
+            <!-- Closing quote -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="”"
+                android:textColor="@color/shayari_quote_mark"
+                android:textSize="64sp"
+                android:textAlignment="textEnd"
+                android:lineSpacingMultiplier="0.5"
+                android:fontFamily="serif" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Divider with label -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@color/shayari_divider" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="20sp"
-            android:text="@string/hello_blank_fragment"
-            android:textAlignment="center"
-            android:textSize="25sp" />
+            android:paddingHorizontal="12dp"
+            android:text="Collection"
+            android:textColor="@color/shayari_text_secondary"
+            android:textSize="11sp"
+            android:letterSpacing="0.2"
+            android:fontFamily="sans-serif-medium" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@color/shayari_divider" />
     </LinearLayout>
 
+    <!-- Shayari Collection -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/shayari_collection_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="16dp"
+        android:clipToPadding="false" />
 
-</FrameLayout>
+</LinearLayout>

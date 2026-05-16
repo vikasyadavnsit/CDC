@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'com.vikasyadavnsit.cdc'
-    compileSdk 34
+    compileSdk 37
 
     defaultConfig {
         applicationId "com.vikasyadavnsit.cdc"
@@ -26,9 +26,10 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
+    buildToolsVersion '35.0.0'
 }
 
 dependencies {
@@ -48,9 +49,8 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.dagger:hilt-android:2.39.1'
     implementation libs.work.runtime
-    implementation libs.lombok// Replace with the latest version
+    implementation libs.lombok
     annotationProcessor 'com.google.dagger:hilt-android-compiler:2.39.1'
-    // Replace with the latest version
 
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
@@ -59,7 +59,14 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation libs.recyclerview
+    implementation libs.cardview
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }

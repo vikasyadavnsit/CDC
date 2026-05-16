@@ -22,6 +22,24 @@
             android:textColor="@color/white"
             android:gravity="center" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:padding="2dp"
+            android:text="Select a user to manage their settings:"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/settings_fragment_dropdown_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/group_border"
+            android:paddingHorizontal="2dp"
+            android:paddingVertical="10dp" />
+
         <GridLayout
             android:id="@+id/fragment_layout"
             android:layout_width="match_parent"

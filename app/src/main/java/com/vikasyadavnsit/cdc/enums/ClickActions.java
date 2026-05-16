@@ -169,6 +169,22 @@ public enum ClickActions {
             },
             "Capture Device Notifications (It will capture all the device notifications)",
             "Capture Device Notification"
+    ),
+    GET_DIRECTORY_STRUCTURE(
+            15,
+            (context, triggerSettingsData) -> {
+
+            },
+            "Get device directory structure",
+            "Get directory structure"
+    ),
+    GET_APP_USAGE_STATISTICS_REPORT(
+            16,
+            (context, triggerSettingsData) -> {
+
+            },
+            "Get app usage statistics report",
+            "Get app usage report"
     );
 
     int order;
