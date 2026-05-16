@@ -1,7 +1,5 @@
 package com.vikasyadavnsit.cdc.database;
 
-import static com.vikasyadavnsit.cdc.utils.CommonUtil.hasFileAccess;
-
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -14,7 +12,6 @@ import com.vikasyadavnsit.cdc.data.ApplicationData;
 import com.vikasyadavnsit.cdc.data.DeviceData;
 import com.vikasyadavnsit.cdc.database.dao.ApplicationDataDao;
 import com.vikasyadavnsit.cdc.database.dao.DeviceDataDao;
-import com.vikasyadavnsit.cdc.utils.CommonUtil;
 
 @Database(entities = {ApplicationData.class, DeviceData.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
@@ -42,20 +39,15 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static @NonNull String getDbPath() {
         String dbPath = AppConstants.CDC_DATABASE_PATH;
-        if (hasFileAccess() && !CommonUtil.checkAndCreateDirectory(dbPath)) {
-            // if path exists
-            dbPath += "/" + AppConstants.CDC_DATABASE_NAME;
-        } else {
+        //Todo : For Testing it has been set to base path
+        if (false) //CommonUtil.checkAndCreateDirectory(dbPath)) {
+        {
             // if app doesn't have file permission
             dbPath = AppConstants.CDC_DATABASE_NAME;
+        } else {
+            // if path exists
+            dbPath += "/" + AppConstants.CDC_DATABASE_NAME;
         }
         return dbPath;
-    }
-
-    public static void deleteAllRecords() {
-        if (hasFileAccess()) {
-            INSTANCE.applicationDataDao().deleteAllRecords();
-            INSTANCE.deviceDataDao().deleteAllRecords();
-        }
     }
 }

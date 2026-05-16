@@ -36,7 +36,11 @@ public class ResetService extends Service {
                     FileUtils.appendDataToFile(FileMap.APPLICATION_USAGE, "Device locked at: " + LocalDateTime.now() + ". Total locks: " + lockCount);
                     break;
                 case AppConstants.ACTION_APPLICATION_RESET_USAGE:
-                //  Perform action and schedule next reset
+                    // Print daily usage and reset data
+                    CDCAccessibilityService.printDailyUsageStatic();
+                    CDCAccessibilityService.resetUsageDataStatic();
+                    // Scheduling for next cycle
+                    CommonUtil.scheduleDailyReset(this);
             }
         }
 

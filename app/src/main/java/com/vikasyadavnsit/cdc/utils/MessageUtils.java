@@ -39,7 +39,8 @@ public class MessageUtils {
                 cursor.close();
             }
         } catch (Exception e) {
-            LoggerUtils.d("MessageUtils", "permission denied for read from contentUri " + contentUri.toString());
+            e.printStackTrace();
+            Log.e("MessageUtils", "permission denied for read from contentUri " + contentUri.toString());
         }
         return messages;
     }

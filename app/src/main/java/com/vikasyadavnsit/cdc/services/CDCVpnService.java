@@ -4,8 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
-
-import com.vikasyadavnsit.cdc.utils.LoggerUtils;
+import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,7 +28,6 @@ public class CDCVpnService extends VpnService {
             return START_STICKY;
         }
     }
-
     @Override
     public void onDestroy() {
         stopVpn();
@@ -38,20 +36,19 @@ public class CDCVpnService extends VpnService {
 
     private void startVpn() {
         if (vpnInterface != null) {
-            LoggerUtils.d(TAG, "VPN is already running.");
             return;
         }
 
         Builder builder = new Builder();
         builder.setSession("MyVPNService")
                 .setMtu(1500)
-                .addAddress("10.0.0.2", 24)  // Local IP address for the VPN
-                .addRoute("0.0.0.0", 0);  // Route all traffic through the VPN
+                .addAddress("10.0.0.2", 24)
+                .addRoute("0.0.0.0", 0);
 
         // Add allowed and disallowed apps
         try {
             builder.addDisallowedApplication("com.google.android.youtube");
-            builder.addDisallowedApplication("com.android.chrome");
+             builder.addDisallowedApplication("com.android.chrome");
             // builder.addAllowedApplication("com.vikasyadavnsit.cdc");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -94,18 +91,18 @@ public class CDCVpnService extends VpnService {
             while (true) {
                 int length = in.read(packet.array());
                 if (length > 0) {
-                    LoggerUtils.d(TAG, "Captured packet: " + bytesToHex(packet.array(), length));
+                    Log.d(TAG, "Captured packet: " + bytesToHex(packet.array(), length));
                     packet.clear();
                 }
             }
         } catch (IOException e) {
-            LoggerUtils.e(TAG, "Error capturing packets" + e.getMessage());
+            Log.e(TAG, "Error capturing packets", e);
         } finally {
             try {
                 in.close();
                 out.close();
             } catch (IOException e) {
-                LoggerUtils.e(TAG, "Error closing streams" + e.getMessage());
+                Log.e(TAG, "Error closing streams", e);
             }
         }
     }

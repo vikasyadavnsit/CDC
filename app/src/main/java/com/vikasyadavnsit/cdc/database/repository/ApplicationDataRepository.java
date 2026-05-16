@@ -77,9 +77,9 @@ public class ApplicationDataRepository {
     }
 
     public static void updateAllRecords(Map<String, User.AppTriggerSettingsData> appTriggerSettingsDataMap) {
-        LoggerUtils.d("ApplicationDataRepository", "updating all records");
+        LoggerUtils.d("DatabaseUtil", "updating all records");
         appTriggerSettingsDataMap.forEach((key, value) -> {
-            LoggerUtils.d("ApplicationDataRepository", "upserting a record with key : " + key);
+            LoggerUtils.d("DatabaseUtil", "upserting a record with key : " + key);
             applicationDataDao.upsert(true, key, new Gson().toJson(value));
         });
     }

@@ -33,7 +33,6 @@ android {
 
 dependencies {
 
-
     def room_version = "2.5.0" // Use the latest version available
 
     implementation "androidx.room:room-runtime:$room_version"

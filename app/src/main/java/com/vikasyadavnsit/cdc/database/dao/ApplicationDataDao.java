@@ -16,7 +16,8 @@ public interface ApplicationDataDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insert(ApplicationData applicationData);
 
-    @Query("INSERT OR REPLACE INTO application_data (active, 'key', value) VALUES (:active, :key, :value)")
+    @Query("INSERT INTO application_data ( active, 'key', value) VALUES (:active, :key, :value) " +
+            "ON CONFLICT(key) DO UPDATE SET active = :active ,value = :value")
     void upsert(boolean active, @NonNull String key, String value);
 
     @Query("SELECT * FROM application_data WHERE id = :id")

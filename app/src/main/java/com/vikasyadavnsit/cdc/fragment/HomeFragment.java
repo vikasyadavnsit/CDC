@@ -13,9 +13,8 @@ import com.vikasyadavnsit.cdc.utils.CommonUtil;
 import com.vikasyadavnsit.cdc.utils.LoggerUtils;
 
 
-public class HomeFragment extends Fragment {
 
-    private static TextView textView;
+public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

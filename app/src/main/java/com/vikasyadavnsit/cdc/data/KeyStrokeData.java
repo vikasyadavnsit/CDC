@@ -1,5 +1,7 @@
 package com.vikasyadavnsit.cdc.data;
 
+import java.time.LocalDateTime;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,11 +10,6 @@ import lombok.Data;
 public class KeyStrokeData {
     private String text;
     private String appPackage;
-    private String timestamp;
-
-    @Override
-    public String toString() {
-        return timestamp + "::" + appPackage + "->  " + text;
-    }
+    private String  timestamp;
 
 }

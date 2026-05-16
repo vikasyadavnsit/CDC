@@ -117,11 +117,17 @@ public class CDCUnorganisedFileAppender {
                     return;
                 }
 
-                BufferedWriter bufferedWriter;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                    bufferedWriter = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8, true));
-                } else {
-                    bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8));
+                    try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8, true))) {
+                        StringBuilder buffer = new StringBuilder();
+                        Queue<String> queue = queueMap.get(fileMap.name());
+                        while (!queue.isEmpty()) {
+                            buffer.append(CryptoUtils.getEncryptedData(fileMap,
+                                    LocalDateTime.now() + " :: " + queue.poll())).append("\n");
+                        }
+                        positionMap.put(getCurrentByteCountName(fileMap), 0);
+                        bufferedWriter.write(buffer.toString());
+                    }
                 }
 
                 StringBuilder buffer = new StringBuilder();
@@ -170,7 +176,7 @@ public class CDCUnorganisedFileAppender {
             if (checkAndCreateDirectory(directory) || checkAndCreateFile(file)) {
                 return;
             }
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
                 writer.write(data);
             }
         } catch (Exception e) {

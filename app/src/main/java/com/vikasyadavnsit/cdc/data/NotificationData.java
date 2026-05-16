@@ -16,4 +16,3 @@ public class NotificationData {
     private String timestamp;
 
 }
-

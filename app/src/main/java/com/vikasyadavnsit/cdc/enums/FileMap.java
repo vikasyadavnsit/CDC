@@ -17,8 +17,7 @@ public enum FileMap {
     CONTACTS(Environment.DIRECTORY_DOCUMENTS + "/CDC", "contacts.txt", true, true, "_id", true),
     APPLICATION_USAGE(Environment.DIRECTORY_DOCUMENTS + "/CDC", "application_usage.text", false, false, null, false),
     NOTIFICATION(Environment.DIRECTORY_DOCUMENTS + "/CDC", "notification.txt", false, false, null, false),
-    TEMPORARY_FILE(Environment.DIRECTORY_DOCUMENTS + "/CDC", "temp.txt", false, false, null, false),
-    DIRECTORY_STRUCTURE(Environment.DIRECTORY_DOCUMENTS + "/CDC", "directory_structure.txt", false, false, null, false);
+    TEMPORARY_FILE(Environment.DIRECTORY_DOCUMENTS + "/CDC", "temp.txt", false, false, null, false);
 
     String directoryPath;
     String fileName;

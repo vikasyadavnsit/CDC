@@ -37,6 +37,8 @@ public class StatisticsBroadcastReceiver extends BroadcastReceiver {
                     String packageNameRemoved = intent.getData().getSchemeSpecificPart();
                     LoggerUtils.d("TAG", "Uninstalled: " + packageNameRemoved);
                     break;
+
+
             }
         }
 

@@ -14,12 +14,9 @@ import com.vikasyadavnsit.cdc.utils.LoggerUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -53,7 +50,7 @@ public class CDCOrganisedFileAppender {
                 uniqueIds = getAllUniqueIdsInFile(file, fileMap);
             }
 
-            try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8))) {
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true))) {
                 appendToBufferWriterInOrganizedFile(fileMap, data, uniqueIds, bufferedWriter);
                 bufferedWriter.flush();
             }

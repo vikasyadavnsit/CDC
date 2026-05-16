@@ -1,7 +1,7 @@
 package com.vikasyadavnsit.cdc.utils;
 
-import static com.vikasyadavnsit.cdc.utils.CommonUtil.hasFileAccess;
-
+import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import com.vikasyadavnsit.cdc.enums.FileMap;
@@ -32,13 +32,7 @@ public class LoggerUtils {
             case WARN:
             case DEBUG:
                 Log.d(logTag, message);
-                if (hasFileAccess()) {
-                    FileUtils.appendDataToFile(FileMap.LOG, loggingLevel + " " + logTag + message);
-                }
-                break;
-            case ERROR:
-                Log.e(logTag, message);
-                if (hasFileAccess()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
                     FileUtils.appendDataToFile(FileMap.LOG, loggingLevel + " " + logTag + message);
                 }
                 break;

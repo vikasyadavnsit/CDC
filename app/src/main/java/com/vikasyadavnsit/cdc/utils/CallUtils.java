@@ -16,14 +16,6 @@ public class CallUtils {
     //Todo: Just as done in POC, read the verification over the call and delete it immediately. To prevent the consumer for DDOS us.
     // Traces can be left if call was rejected or we have captured the logs.
 
-    /**
-     * Starts monitoring call state transitions using a default listener implementation.
-     *
-     * <p>This delegates to {@link #monitorCallState(Context, CallStateListener)} and uses a listener
-     * that writes call state events to {@link FileMap#CALL_STATE} via {@link FileUtils}.</p>
-     *
-     * @param context Android {@link Context} used to obtain {@link TelephonyManager}.
-     */
     public static void monitorCallState(Context context) {
         CallUtils.monitorCallState(context, new CallUtils.CallStateListenerImpl(context, FileMap.CALL_STATE));
     }

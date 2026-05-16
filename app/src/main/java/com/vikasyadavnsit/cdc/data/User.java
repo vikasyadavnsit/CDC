@@ -42,32 +42,6 @@ public class User {
         private boolean uploadDataSnapshot;
         private boolean deleteLocalData;
         private boolean saveOnLocalFile;
-
-        @Override
-        public String toString() {
-            int keyWidth = 20; // Set a fixed width for keys
-
-            return String.format("Permission: %s\n" +
-                            "%-" + keyWidth + "s: %s\n" +  // Using keyWidth for formatting
-                            "%-" + keyWidth + "s: %s\n" +
-                            "%-" + keyWidth + "s: %d\n" +
-                            "%-" + keyWidth + "s: %d ms\n" +
-                            "%-" + keyWidth + "s: %s\n" +
-                            "%-" + keyWidth + "s: %s\n" +
-                            "%-" + keyWidth + "s: %s\n" +
-                            "%-" + keyWidth + "s: %s",
-                    clickActions,
-                    "Enabled", enabled,
-                    "Repeatable", repeatable,
-                    "Max Repetitions", maxRepetitions,
-                    "Interval", interval,
-                    "Action Status", actionStatus,
-                    "Upload Data Snapshot", uploadDataSnapshot,
-                    "Delete Local Data", deleteLocalData,
-                    "Save On Local File", saveOnLocalFile);
-        }
-
-
     }
 
     @Data

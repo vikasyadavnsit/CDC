@@ -22,10 +22,6 @@ public class DeviceDataRepository {
         deviceDataDao = db.deviceDataDao();
     }
 
-    public static void deleteAllRecords() {
-        deviceDataDao.deleteAllRecords();
-    }
-
     public static long insert(DeviceData deviceData) {
         return deviceDataDao.insert(deviceData);
     }

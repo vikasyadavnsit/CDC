@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="8dp">
+    android:paddingBottom="8sp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,49 +13,14 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="@color/cardview_dark_background"
-            android:gravity="center"
-            android:padding="8dp"
+            android:layout_height="match_parent"
             android:text="Settings Window"
+            android:background="@color/cardview_dark_background"
+            android:layout_marginBottom="16dp"
+            android:textSize="20sp"
+            android:padding="8dp"
             android:textColor="@color/white"
-            android:textSize="20sp" />
-
-
-        <!-- Label for the Spinner -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:padding="2dp"
-            android:text="You need to select a user before you can perform any below action :-"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <!-- Dropdown (Spinner) element -->
-        <Spinner
-            android:id="@+id/setting_fragment_dropdown_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/group_border"
-            android:paddingHorizontal="2dp"
-            android:paddingVertical="10dp"
-            android:textStyle="bold" />
-
-        <!-- Selected Users Id Details -->
-        <TextView
-            android:id="@+id/setting_fragment_selected_user_details"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:background="@drawable/group_border"
-            android:padding="10dp"
-            android:text=""
-            android:lineSpacingExtra="4dp"
-            android:textSize="16sp" />
+            android:gravity="center" />
 
         <GridLayout
             android:id="@+id/fragment_layout"

@@ -36,9 +36,9 @@ public class CustomExceptionHandler implements Thread.UncaughtExceptionHandler {
         }
 
         // Restart the app
-//        Intent intent = new Intent(context, MainActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.startActivity(intent);
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
 
         // Kill the process
         android.os.Process.killProcess(android.os.Process.myPid());
