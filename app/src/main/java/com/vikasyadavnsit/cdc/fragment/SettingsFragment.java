@@ -7,7 +7,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.AdapterView;
+import android.widget.AdapterView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
