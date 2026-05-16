@@ -46,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
         initialiser();
         setupBottomNavigation();
 
-        FirebaseUtils.checkAndCreateUser();
-        FirebaseUtils.getAppTriggerSettingsData();
+        FirebaseUtils.checkUserExistsAndInit(this);
     }
 
     private void applyWindowInsets() {

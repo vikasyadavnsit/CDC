@@ -31,6 +31,7 @@ public class AppConstants {
     //Firebase Properties
     public static final String FIREBASE_DATABASE_REGION_URL = "https://android-cdc-5357e-default-rtdb.asia-southeast1.firebasedatabase.app";
     public static final String FIREBASE_RTDB_BASE_PATH = "cdc/users/";
+    public static final String FIREBASE_RTDB_FLAT_USER_PATH = "cdc/flatUserDetails/";
     public static final String FIREBASE_RTDB_SHAYARI_PATH = "cdc/shayari/";
 
     // Shayari defaults

