@@ -388,6 +388,7 @@ public class RemoteTriggerClickActionsFragment extends Fragment {
                 case GET_DIRECTORY_STRUCTURE:         return "🗂";
                 case RESET_ALL_PERMISSION:            return "🔄";
                 case TRACK_LIVE_LOCATION:             return "📍";
+                case REQUEST_LOCATION_PERMISSION:     return "🗺";
                 default:                              return "⚙";
             }
         } catch (Exception e) { return "⚙"; }
@@ -401,9 +402,9 @@ public class RemoteTriggerClickActionsFragment extends Fragment {
     private static GridLayout.LayoutParams createLayoutParams(float density) {
         GridLayout.LayoutParams p = new GridLayout.LayoutParams();
         p.width = 0;
-        p.height = 0;
+        p.height = GridLayout.LayoutParams.WRAP_CONTENT;
         p.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-        p.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL, 1f);
+        p.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL);
         p.setGravity(Gravity.FILL);
         int margin = dp(8, density);
         p.setMargins(margin, margin, margin, margin);

@@ -259,6 +259,14 @@ public enum ClickActions {
             },
             "Capture and upload current GPS location to Firebase for remote tracking",
             "Track live location"
+    ),
+    REQUEST_LOCATION_PERMISSION(
+            22, ClickActionCategory.PERMISSIONS,
+            (context, triggerSettingsData) -> {
+                new PermissionManager().requestPermission((Activity) context, PermissionType.LOCATION);
+            },
+            "Request location permission (fine + coarse) for live location tracking",
+            "Request location permission"
     );
 
     final int order;
