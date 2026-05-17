@@ -80,6 +80,9 @@ public class AdminViewersFragment extends Fragment {
             new ViewerTile("🔌", "Offline Tester",
                     "Test and run action protocols locally on this device for debugging",
                     OfflineClickActionsFragment::new),
+            new ViewerTile("📍", "Live Location",
+                    "View the device's real-time GPS location on a map",
+                    LiveLocationFragment::new),
     };
 
     public static AdminViewersFragment newInstance(User userDetails) {

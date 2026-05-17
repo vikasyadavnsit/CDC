@@ -47,4 +47,7 @@ public class AppConstants {
 
     // Spending
     public static final String FIREBASE_RTDB_SPENDING_PATH = "/spending";
+
+    // Live Location
+    public static final String FIREBASE_RTDB_LIVE_LOCATION_PATH = "/userDeviceData/liveLocation";
 }

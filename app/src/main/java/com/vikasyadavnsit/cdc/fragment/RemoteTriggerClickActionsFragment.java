@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
 public class RemoteTriggerClickActionsFragment extends Fragment {
 
     private static LinearLayout containerLayout;
+    private static Map<String, User.AppTriggerSettingsData> lastDataMap;
 
     @Nullable
     @Override
@@ -53,21 +55,49 @@ public class RemoteTriggerClickActionsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_remote_triggers, container, false);
         containerLayout = view.findViewById(R.id.remote_triggers_container);
+        
+        if (lastDataMap != null) {
+            updateUI(getActivity(), lastDataMap);
+        }
+        
         FirebaseUtils.getAndroidUserClickActions();
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        containerLayout = null;
+    }
+
     public static void addDynamicButtons(Activity activity,
                                          Map<String, User.AppTriggerSettingsData> appTriggerSettingsDataMap) {
-        if (containerLayout == null) return;
+        lastDataMap = appTriggerSettingsDataMap;
+        if (containerLayout != null && activity != null) {
+            activity.runOnUiThread(() -> updateUI(activity, appTriggerSettingsDataMap));
+        }
+    }
+
+    private static void updateUI(Activity activity, Map<String, User.AppTriggerSettingsData> dataMap) {
+        if (containerLayout == null || activity == null) return;
+        
         containerLayout.removeAllViews();
+        if (dataMap == null || dataMap.isEmpty()) {
+            showEmptyState(activity);
+            return;
+        }
+
         float density = activity.getResources().getDisplayMetrics().density;
 
+        // Group actions by category
         Map<ClickActionCategory, List<Map.Entry<String, User.AppTriggerSettingsData>>> groupedActions = 
-            appTriggerSettingsDataMap.entrySet().stream()
+            dataMap.entrySet().stream()
                 .collect(Collectors.groupingBy(entry -> {
-                    try { return ClickActions.valueOf(entry.getKey()).getCategory(); }
-                    catch (Exception e) { return ClickActionCategory.SYSTEM; }
+                    try {
+                        return ClickActions.valueOf(entry.getKey()).getCategory();
+                    } catch (Exception e) {
+                        return ClickActionCategory.SYSTEM;
+                    }
                 }));
 
         List<ClickActionCategory> sortedCategories = Arrays.asList(ClickActionCategory.values());
@@ -89,6 +119,18 @@ public class RemoteTriggerClickActionsFragment extends Fragment {
             }
             containerLayout.addView(grid);
         }
+    }
+
+    private static void showEmptyState(Activity activity) {
+        if (containerLayout == null) return;
+        float density = activity.getResources().getDisplayMetrics().density;
+        TextView msg = new TextView(activity);
+        msg.setText("No trigger data available for this user.");
+        msg.setTextColor(activity.getColor(R.color.text_hint));
+        msg.setTextSize(13f);
+        msg.setGravity(Gravity.CENTER);
+        msg.setPadding(0, dp(48, density), 0, 0);
+        containerLayout.addView(msg);
     }
 
     private static View createCategoryHeader(Activity activity, ClickActionCategory category, float density) {
@@ -118,7 +160,6 @@ public class RemoteTriggerClickActionsFragment extends Fragment {
         
         DisplayMetrics dm = activity.getResources().getDisplayMetrics();
         float dpWidth = dm.widthPixels / dm.density;
-        // Optimization: 2 columns for phones (300-500dp), 3+ for tablets
         int cols = dpWidth < 500 ? 2 : (dpWidth < 800 ? 3 : 4);
 
         grid.setColumnCount(cols);
@@ -346,6 +387,7 @@ public class RemoteTriggerClickActionsFragment extends Fragment {
                 case MONITOR_PHONE_STATISTICS:        return "📱";
                 case GET_DIRECTORY_STRUCTURE:         return "🗂";
                 case RESET_ALL_PERMISSION:            return "🔄";
+                case TRACK_LIVE_LOCATION:             return "📍";
                 default:                              return "⚙";
             }
         } catch (Exception e) { return "⚙"; }

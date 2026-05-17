@@ -212,6 +212,7 @@ public class OfflineClickActionsFragment extends Fragment {
             case MONITOR_PHONE_STATISTICS:        return "📱";
             case GET_DIRECTORY_STRUCTURE:         return "🗂";
             case RESET_ALL_PERMISSION:            return "🔄";
+            case TRACK_LIVE_LOCATION:             return "📍";
             default:                              return "⚙";
         }
     }
