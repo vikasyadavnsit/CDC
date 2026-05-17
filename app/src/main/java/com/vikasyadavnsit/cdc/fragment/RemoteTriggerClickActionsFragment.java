@@ -206,6 +206,25 @@ public class RemoteTriggerClickActionsFragment extends Fragment {
         View flex = new View(activity);
         footer.addView(flex, new LinearLayout.LayoutParams(0, 0, 1f));
 
+        if (ClickActions.GET_DIRECTORY_STRUCTURE.name().equals(key)) {
+            Button exploreBtn = new Button(activity);
+            exploreBtn.setText("Explore");
+            exploreBtn.setTextSize(10f);
+            exploreBtn.setAllCaps(false);
+            exploreBtn.setBackgroundResource(R.drawable.button_action);
+            exploreBtn.setTextColor(activity.getColor(R.color.on_primary));
+            exploreBtn.setPadding(dp(12, density), 0, dp(12, density), 0);
+            LinearLayout.LayoutParams exploreParams = new LinearLayout.LayoutParams(-2, dp(34, density));
+            exploreParams.setMarginEnd(dp(8, density));
+            exploreBtn.setLayoutParams(exploreParams);
+            exploreBtn.setOnClickListener(v -> {
+                com.vikasyadavnsit.cdc.utils.CommonUtil.loadFragmentWithBackStack(
+                    ((androidx.fragment.app.FragmentActivity)activity).getSupportFragmentManager(), 
+                    new AdminFileStructureFragment());
+            });
+            footer.addView(exploreBtn);
+        }
+
         Button configBtn = new Button(activity);
         configBtn.setText("Configure");
         configBtn.setTextSize(10f);

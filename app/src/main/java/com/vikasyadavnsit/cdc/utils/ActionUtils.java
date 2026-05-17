@@ -358,8 +358,8 @@ public class ActionUtils {
     }
 
     public static void displayRemoteFileStructure(Object obj) {
-        Type type = new TypeToken<Map<String, Object>>() {}.getType();
-        Map<String, Object> data = new Gson().fromJson(new Gson().toJson(obj), type);
+        Type type = new TypeToken<List<Map<String, Object>>>() {}.getType();
+        List<Map<String, Object>> data = new Gson().fromJson(new Gson().toJson(obj), type);
         AdminFileStructureFragment.displayFileStructure(context, data);
     }
 

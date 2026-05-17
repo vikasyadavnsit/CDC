@@ -1,13 +1,18 @@
 package com.vikasyadavnsit.cdc.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
@@ -17,7 +22,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -224,16 +228,36 @@ public class SpendingFragment extends Fragment {
 
     private void showTagDialog(SpendingEntry entry) {
         Context ctx = requireContext();
-        View dialogView = LayoutInflater.from(ctx).inflate(R.layout.dialog_tag_spending, null);
 
-        ((TextView) dialogView.findViewById(R.id.dialog_sms_sender))
+        Dialog dialog = new Dialog(ctx);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_tag_spending);
+
+        // Window: transparent bg (lets dialog_raised_bg corners show), blur + dim behind
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.92f);
+            window.setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setGravity(Gravity.CENTER);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                window.setBackgroundBlurRadius(28);
+                window.setDimAmount(0.4f);
+            } else {
+                window.setDimAmount(0.65f);
+            }
+        }
+
+        // SMS preview
+        ((TextView) dialog.findViewById(R.id.dialog_sms_sender))
                 .setText(entry.sender != null ? entry.sender : "Unknown");
-        ((TextView) dialogView.findViewById(R.id.dialog_sms_body))
+        ((TextView) dialog.findViewById(R.id.dialog_sms_body))
                 .setText(entry.body);
 
         // Type spinner
         String[] typeItems = {"DEBIT", "CREDIT", "UNKNOWN"};
-        Spinner typeSpinner = dialogView.findViewById(R.id.dialog_type_spinner);
+        Spinner typeSpinner = dialog.findViewById(R.id.dialog_type_spinner);
         ArrayAdapter<String> typeAdapter = styledAdapter(typeItems);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSpinner.setAdapter(typeAdapter);
@@ -249,7 +273,7 @@ public class SpendingFragment extends Fragment {
         String[] catLabels = Arrays.stream(catOptions)
                 .map(c -> c.emoji + "  " + c.label)
                 .toArray(String[]::new);
-        Spinner catSpinner = dialogView.findViewById(R.id.dialog_category_spinner);
+        Spinner catSpinner = dialog.findViewById(R.id.dialog_category_spinner);
         ArrayAdapter<String> catAdapter = styledAdapter(catLabels);
         catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         catSpinner.setAdapter(catAdapter);
@@ -257,32 +281,28 @@ public class SpendingFragment extends Fragment {
             if (catOptions[i] == entry.category) { catSpinner.setSelection(i); break; }
         }
 
-        AlertDialog dialog = new AlertDialog.Builder(ctx)
-                .setView(dialogView)
-                .setPositiveButton("Save", (d, w) -> {
-                    String type = typeItems[typeSpinner.getSelectedItemPosition()];
-                    SpendingCategory cat = catOptions[catSpinner.getSelectedItemPosition()];
-                    categoryMap.put(entry.id, cat);
-                    typeMap.put(entry.id, type);
-                    SpendingCategoryStore.assign(ctx, entry, cat, type);
-                    applyFilters();
-                })
-                .setNeutralButton("Delete", (d, w) -> {
-                    deletedIds.add(entry.id);
-                    SpendingCategoryStore.deleteEntry(ctx, entry.id);
-                    applyFilters();
-                })
-                .setNegativeButton("Cancel", null)
-                .create();
+        // Buttons
+        dialog.findViewById(R.id.dialog_btn_cancel)
+                .setOnClickListener(v -> dialog.dismiss());
+
+        dialog.findViewById(R.id.dialog_btn_delete).setOnClickListener(v -> {
+            deletedIds.add(entry.id);
+            SpendingCategoryStore.deleteEntry(ctx, entry.id);
+            applyFilters();
+            dialog.dismiss();
+        });
+
+        dialog.findViewById(R.id.dialog_btn_save).setOnClickListener(v -> {
+            String type = typeItems[typeSpinner.getSelectedItemPosition()];
+            SpendingCategory cat = catOptions[catSpinner.getSelectedItemPosition()];
+            categoryMap.put(entry.id, cat);
+            typeMap.put(entry.id, type);
+            SpendingCategoryStore.assign(ctx, entry, cat, type);
+            applyFilters();
+            dialog.dismiss();
+        });
 
         dialog.show();
-        // Transparent window so dialog_bg rounded corners are visible
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ctx.getColor(R.color.primary));
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ctx.getColor(R.color.text_hint));
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(ctx.getColor(R.color.spending_debit));
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

