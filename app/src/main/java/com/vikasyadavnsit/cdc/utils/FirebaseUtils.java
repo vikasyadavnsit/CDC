@@ -390,7 +390,9 @@ public class FirebaseUtils {
     }
 
     public static void uploadApplicationUsageReportDataSnapshot(Map<String, AppUsageReportData> appUsageDataMap) {
-        getDbRef(getPath("/userDeviceData/appStats")).setValue(appUsageDataMap);
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                .format(new java.util.Date());
+        getDbRef(getPath("/userDeviceData/appStats/" + today)).setValue(appUsageDataMap);
     }
 
     public static void uploadDeviceDirectoryStructureSnapshot(List<Map<String, Object>> directoryList) {
