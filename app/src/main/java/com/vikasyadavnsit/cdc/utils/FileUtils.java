@@ -51,11 +51,23 @@ public class FileUtils {
      * @param data    The data to append.
      */
     public static void appendDataToFile(FileMap fileMap, Object data) {
-
         if (fileMap.isOrganized()) {
             CDCOrganisedFileAppender.checkAndAppendDataInOrganizedFile(fileMap, data);
         } else {
-            Log.d("FileUtil", "No file access to peform " + fileMap.name() + " operation");
+            CDCUnorganisedFileAppender.add(fileMap, data);
+        }
+    }
+
+    public static void clearFile(FileMap fileMap) {
+        try {
+            File directory = Environment.getExternalStoragePublicDirectory(fileMap.getDirectoryPath());
+            File file = new File(directory, fileMap.getFileName());
+            if (file.exists()) {
+                file.delete();
+                file.createNewFile();
+            }
+        } catch (Exception e) {
+            Log.e("FileUtils", "Error clearing file: " + fileMap.name(), e);
         }
     }
 

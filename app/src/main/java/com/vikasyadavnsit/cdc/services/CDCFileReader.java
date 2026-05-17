@@ -80,7 +80,31 @@ public class CDCFileReader {
         }
     }
 
-    private static void deleteFileIfItExists(FileMap fileMap) {
+    public static java.util.List<String> readAllLines(FileMap fileMap) {
+        java.util.List<String> lines = new java.util.ArrayList<>();
+        try {
+            File directory = Environment.getExternalStoragePublicDirectory(fileMap.getDirectoryPath());
+            File file = new File(directory, fileMap.getFileName());
+            if (!directory.exists() || !file.exists()) {
+                return lines;
+            }
+
+            try (BufferedReader reader = new BufferedReader(new java.io.FileReader(file))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (fileMap.isEncrypted()) {
+                        line = decryptIfNeeded(line);
+                    }
+                    if (line != null) lines.add(line);
+                }
+            }
+        } catch (Exception e) {
+            Log.e("FileReader", "Error while reading all lines", e);
+        }
+        return lines;
+    }
+
+    public static void deleteFileIfItExists(FileMap fileMap) {
         File directory = Environment.getExternalStoragePublicDirectory(fileMap.getDirectoryPath());
         File file = new File(directory, fileMap.getFileName());
         if (directory.exists() && file.exists()) {

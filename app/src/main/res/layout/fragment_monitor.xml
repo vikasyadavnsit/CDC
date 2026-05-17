@@ -10,21 +10,56 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingHorizontal="24dp"
         android:paddingTop="32dp"
-        android:paddingBottom="16dp"
-        android:gravity="center_vertical">
+        android:paddingBottom="16dp">
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="◉ Monitor"
-            android:textColor="@color/text_secondary"
-            android:textSize="13sp"
-            android:letterSpacing="0.15"
-            android:fontFamily="sans-serif-medium" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="◉ Monitor Logs"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:letterSpacing="0.15"
+                android:fontFamily="sans-serif-medium" />
+
+            <ImageView
+                android:id="@+id/monitor_clear_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_delete"
+                android:contentDescription="Clear logs"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_secondary" />
+        </LinearLayout>
+
+        <!-- Search Bar -->
+        <EditText
+            android:id="@+id/monitor_search_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/input_field_bg"
+            android:hint="Search logs..."
+            android:textColorHint="@color/text_hint"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp"
+            android:maxLines="1"
+            android:inputType="text"
+            android:drawableStart="@drawable/ic_nav_monitor"
+            android:drawablePadding="10dp"
+            app:drawableTint="@color/text_hint" />
+
     </LinearLayout>
 
     <!-- Log list -->
@@ -33,7 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingHorizontal="20dp"
+        android:paddingHorizontal="12dp"
         android:paddingBottom="16dp"
         android:clipToPadding="false" />
 
@@ -43,12 +78,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="No logs captured yet.\nActivate a service to start monitoring."
+        android:text="No logs captured yet.\nMonitoring activities will appear here."
         android:textColor="@color/text_hint"
         android:textSize="14sp"
         android:gravity="center"
         android:lineSpacingMultiplier="1.6"
         android:fontFamily="sans-serif-light"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
 </LinearLayout>

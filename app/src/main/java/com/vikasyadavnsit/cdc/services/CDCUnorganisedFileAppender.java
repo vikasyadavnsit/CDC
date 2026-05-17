@@ -103,6 +103,14 @@ public class CDCUnorganisedFileAppender {
     }
 
 
+    public static void flush(FileMap fileMap) {
+        synchronized (lock) {
+            if (!queueMap.get(fileMap.name()).isEmpty()) {
+                writeToFile(fileMap);
+            }
+        }
+    }
+
     /**
      * Writes the buffered data to a file.
      *

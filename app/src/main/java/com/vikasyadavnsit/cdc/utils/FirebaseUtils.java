@@ -277,8 +277,8 @@ public class FirebaseUtils {
     }
 
     public static void updateRemoteUserMessage(String androidId, String message) {
-        String path = AppConstants.FIREBASE_RTDB_BASE_PATH + androidId + "/message";
-        getDatabase().getReference(path).setValue(message);
+        DatabaseReference ref = getDbRef(getPath("/message"));
+        ref.setValue(message);
     }
 
     public static void getMessageData() {
