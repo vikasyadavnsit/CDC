@@ -52,7 +52,21 @@
       "PowerShell(pip install *)",
       "PowerShell(py *)",
       "Bash(Select-Object Name)",
-      "WebFetch(domain:android-cdc-5357e-default-rtdb.asia-southeast1.firebasedatabase.app)"
+      "WebFetch(domain:android-cdc-5357e-default-rtdb.asia-southeast1.firebasedatabase.app)",
+      "WebSearch",
+      "WebFetch(domain:shayariholic.com)",
+      "WebFetch(domain:shayariinhindis.com)",
+      "WebFetch(domain:1loveshayari.in)",
+      "WebFetch(domain:shayaribhandar.in)",
+      "WebFetch(domain:hindishayariweb.com)",
+      "WebFetch(domain:www.shayarimetro.com)",
+      "WebFetch(domain:iqbalshayari.com)",
+      "WebFetch(domain:www.rekhta.org)",
+      "WebFetch(domain:badnamshayar.com)",
+      "WebFetch(domain:love-shayari.com)",
+      "WebFetch(domain:roopvibes.com)",
+      "WebFetch(domain:shayaristory.com)",
+      "WebFetch(domain:shayarispace.com)"
     ]
   }
 }

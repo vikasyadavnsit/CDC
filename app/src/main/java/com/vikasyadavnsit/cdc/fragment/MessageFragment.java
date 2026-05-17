@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import com.vikasyadavnsit.cdc.R;
 import com.vikasyadavnsit.cdc.constants.AppConstants;
 import com.vikasyadavnsit.cdc.utils.FirebaseUtils;
+import com.vikasyadavnsit.cdc.utils.SharedPreferenceUtils;
 
 import java.util.Objects;
 
@@ -23,7 +24,7 @@ public class MessageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
         textView = view.findViewById(R.id.message_fragment_text_view);
-        textView.setText(AppConstants.DEFAULT_MESSAGE_TEXT);
+        textView.setText(SharedPreferenceUtils.getMessageText(getContext()));
         FirebaseUtils.getMessageData();
         return view;
     }

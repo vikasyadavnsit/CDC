@@ -277,7 +277,7 @@ public class FirebaseUtils {
     }
 
     public static void updateRemoteUserMessage(String androidId, String message) {
-        String path = AppConstants.FIREBASE_RTDB_BASE_PATH + androidId + "/appSettings/appSettingsMap/message";
+        String path = AppConstants.FIREBASE_RTDB_BASE_PATH + androidId + "/message";
         getDatabase().getReference(path).setValue(message);
     }
 
