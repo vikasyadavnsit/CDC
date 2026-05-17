@@ -45,8 +45,12 @@ import com.vikasyadavnsit.cdc.fragment.SystemAppUsageStatisticsFragment;
 import com.vikasyadavnsit.cdc.receiver.StatisticsBroadcastReceiver;
 import com.vikasyadavnsit.cdc.services.ScreenshotService;
 
+import com.vikasyadavnsit.cdc.enums.ActionStatus;
+import com.vikasyadavnsit.cdc.enums.ClickActions;
+
 import java.lang.reflect.Type;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -284,6 +288,19 @@ public class ActionUtils {
         Type type = new TypeToken<Map<String, User.AppTriggerSettingsData>>() {
         }.getType();
         Map<String, User.AppTriggerSettingsData> appTriggerSettingsDataMap = new Gson().fromJson(new Gson().toJson(obj), type);
+
+        // Merge any newly added ClickActions not yet stored in Firebase with default settings
+        if (appTriggerSettingsDataMap == null) appTriggerSettingsDataMap = new HashMap<>();
+        for (ClickActions action : ClickActions.values()) {
+            if (!appTriggerSettingsDataMap.containsKey(action.name())) {
+                appTriggerSettingsDataMap.put(action.name(),
+                        User.AppTriggerSettingsData.builder()
+                                .enabled(false).repeatable(false).maxRepetitions(1).interval(0)
+                                .actionStatus(ActionStatus.IDLE).clickActions(action)
+                                .uploadDataSnapshot(true).deleteLocalData(false).build());
+            }
+        }
+
         RemoteTriggerClickActionsFragment.addDynamicButtons(context, appTriggerSettingsDataMap);
     }
 

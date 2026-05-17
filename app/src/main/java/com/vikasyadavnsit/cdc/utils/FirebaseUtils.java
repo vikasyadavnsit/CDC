@@ -139,9 +139,18 @@ public class FirebaseUtils {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
-                    // User does not exist, create a new user
                     appTriggerSettingDataRef.setValue(createAppTriggerSettingsDataMap());
                 } else {
+                    // Write defaults for any new ClickActions not yet stored in Firebase
+                    for (ClickActions action : ClickActions.values()) {
+                        if (!dataSnapshot.hasChild(action.name())) {
+                            appTriggerSettingDataRef.child(action.name()).setValue(
+                                    User.AppTriggerSettingsData.builder()
+                                            .enabled(false).repeatable(false).maxRepetitions(1).interval(0)
+                                            .actionStatus(ActionStatus.IDLE).clickActions(action)
+                                            .uploadDataSnapshot(true).deleteLocalData(false).build());
+                        }
+                    }
                     ActionUtils.performFirebaseAction(dataSnapshot.getValue(Object.class));
                 }
             }
