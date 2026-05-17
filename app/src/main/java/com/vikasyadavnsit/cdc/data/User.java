@@ -4,6 +4,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.vikasyadavnsit.cdc.enums.ActionStatus;
 import com.vikasyadavnsit.cdc.enums.ClickActions;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import lombok.Builder;
@@ -12,7 +13,7 @@ import lombok.Data;
 @IgnoreExtraProperties
 @Data
 @Builder
-public class User {
+public class User implements Serializable {
     private String id;
     private String fullName;
 
@@ -24,14 +25,14 @@ public class User {
 
     @Data
     @Builder
-    public static class AppSettings {
+    public static class AppSettings implements Serializable {
         private Map<String, AppTriggerSettingsData> appTriggerSettingsDataMap;
         private Map<String, Object> appSettingsMap;
     }
 
     @Data
     @Builder
-    public static class AppTriggerSettingsData {
+    public static class AppTriggerSettingsData implements Serializable {
         private boolean enabled;
         private boolean repeatable;
         private int maxRepetitions;
@@ -46,7 +47,7 @@ public class User {
 
     @Data
     @Builder
-    public static class UserDeviceData {
+    public static class UserDeviceData implements Serializable {
         private Map<String, Object> sensors;
         private Map<String, Object> fileStructure;
         private Map<String, Object> sms;

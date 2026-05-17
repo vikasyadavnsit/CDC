@@ -51,7 +51,8 @@
       "PowerShell(Get-Command *)",
       "PowerShell(pip install *)",
       "PowerShell(py *)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "WebFetch(domain:android-cdc-5357e-default-rtdb.asia-southeast1.firebasedatabase.app)"
     ]
   }
 }

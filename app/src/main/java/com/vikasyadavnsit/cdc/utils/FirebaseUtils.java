@@ -36,6 +36,7 @@ public class FirebaseUtils {
 
     private static Context context;
     private static String selectedUserBasePath = null;
+    private static Map<String, User> userCache = null;
 
     public static void initialize(Context context) {
         FirebaseUtils.context = context;
@@ -197,12 +198,23 @@ public class FirebaseUtils {
     }
 
     public static void getFlatUserDetails() {
+        getFlatUserDetails(false);
+    }
+
+    public static void getFlatUserDetails(boolean forceRefresh) {
+        if (!forceRefresh && userCache != null) {
+            ActionUtils.performFlatUserDetailsActions(userCache);
+            return;
+        }
+
         DatabaseReference ref = getDatabase().getReference(AppConstants.FIREBASE_RTDB_FLAT_USER_PATH);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    ActionUtils.performFlatUserDetailsActions(dataSnapshot.getValue(Object.class));
+                    Object value = dataSnapshot.getValue(Object.class);
+                    userCache = ActionUtils.parseFlatUserDetails(value);
+                    ActionUtils.performFlatUserDetailsActions(userCache);
                 }
             }
 
@@ -262,6 +274,11 @@ public class FirebaseUtils {
                 Log.e("FirebaseUtils", "Failed to read value." + databaseError.toException());
             }
         });
+    }
+
+    public static void updateRemoteUserMessage(String androidId, String message) {
+        String path = AppConstants.FIREBASE_RTDB_BASE_PATH + androidId + "/appSettings/appSettingsMap/message";
+        getDatabase().getReference(path).setValue(message);
     }
 
     public static void getMessageData() {

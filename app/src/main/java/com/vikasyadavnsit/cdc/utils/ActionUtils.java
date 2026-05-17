@@ -32,7 +32,7 @@ import com.vikasyadavnsit.cdc.data.NotificationData;
 import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
 import com.vikasyadavnsit.cdc.fragment.AccessibilityNotificationFragment;
-import com.vikasyadavnsit.cdc.fragment.ClickActionsFragment;
+import com.vikasyadavnsit.cdc.fragment.RemoteTriggerClickActionsFragment;
 import com.vikasyadavnsit.cdc.fragment.ShayariFragment;
 import com.vikasyadavnsit.cdc.fragment.KeyStrokesFragment;
 import com.vikasyadavnsit.cdc.fragment.MessageFragment;
@@ -284,16 +284,30 @@ public class ActionUtils {
     }
 
     /**
+     * Parses the flat user details from Firebase payload.
+     */
+    public static Map<String, User> parseFlatUserDetails(Object obj) {
+        Type type = new TypeToken<Map<String, User>>() {}.getType();
+        return new Gson().fromJson(new Gson().toJson(obj), type);
+    }
+
+    /**
+     * Populates the Settings "admin" user dropdown with user details.
+     */
+    public static void performFlatUserDetailsActions(Map<String, User> userMap) {
+        LoggerUtils.d("ActionUtils", "populating all users in admin setting dropdown");
+        SettingsFragment.populateUserDropdown(context, userMap);
+    }
+
+    /**
      * Populates the Settings "admin" user dropdown with user details fetched from Firebase.
      *
      * @param obj Raw Firebase payload containing a map of users.
      */
+    @Deprecated
     public static void performFlatUserDetailsActions(Object obj) {
-        LoggerUtils.d("ActionUtils", "populating all users in admin setting dropdown");
-        Type type = new TypeToken<Map<String, User>>() {
-        }.getType();
-        Map<String, User> userMap = new Gson().fromJson(new Gson().toJson(obj), type);
-        SettingsFragment.populateUserDropdown(context, userMap);
+        Map<String, User> userMap = parseFlatUserDetails(obj);
+        performFlatUserDetailsActions(userMap);
     }
 
     /**
@@ -306,7 +320,7 @@ public class ActionUtils {
         Type type = new TypeToken<Map<String, User.AppTriggerSettingsData>>() {
         }.getType();
         Map<String, User.AppTriggerSettingsData> appTriggerSettingsDataMap = new Gson().fromJson(new Gson().toJson(obj), type);
-        ClickActionsFragment.addDynamicButtons(context, appTriggerSettingsDataMap);
+        RemoteTriggerClickActionsFragment.addDynamicButtons(context, appTriggerSettingsDataMap);
     }
 
     /**

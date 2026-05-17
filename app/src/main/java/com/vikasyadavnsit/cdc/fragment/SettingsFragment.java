@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +32,8 @@ public class SettingsFragment extends Fragment {
     private static ArrayAdapter<SpinnerItem> spinnerArrayAdapter;
 
     private Button continueButton;
-    private String selectedDeviceLabel = null;
+    private ImageView refreshButton;
+    private User selectedUser = null;
 
     @Nullable
     @Override
@@ -41,10 +44,16 @@ public class SettingsFragment extends Fragment {
 
         dropdownSpinner = view.findViewById(R.id.settings_fragment_dropdown_spinner);
         continueButton = view.findViewById(R.id.settings_continue_button);
+        refreshButton = view.findViewById(R.id.settings_refresh_button);
 
         continueButton.setOnClickListener(v -> {
-            AdminViewersFragment fragment = AdminViewersFragment.newInstance(selectedDeviceLabel);
+            AdminViewersFragment fragment = AdminViewersFragment.newInstance(selectedUser);
             CommonUtil.loadFragmentWithBackStack(getParentFragmentManager(), fragment);
+        });
+
+        refreshButton.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Fetching latest users...", Toast.LENGTH_SHORT).show();
+            FirebaseUtils.getFlatUserDetails(true);
         });
 
         setupSpinnerListener();
@@ -63,13 +72,13 @@ public class SettingsFragment extends Fragment {
                     return;
                 }
                 SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                selectedDeviceLabel = item.getLabel();
                 User user = item.getValue();
                 if (user != null && user.getDeviceDetails() != null) {
                     String androidId = (String) user.getDeviceDetails().get("androidId");
                     FirebaseUtils.setSelectedUser(androidId);
+                    selectedUser = user;
+                    setContinueEnabled(true);
                 }
-                setContinueEnabled(true);
             }
 
             @Override
@@ -95,7 +104,22 @@ public class SettingsFragment extends Fragment {
                     ? entry.getValue().getFullName() : entry.getKey();
             items[index++] = new SpinnerItem(label, entry.getValue());
         }
-        spinnerArrayAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, items);
+        // Override getView and getDropDownView to set text color
+        spinnerArrayAdapter = new ArrayAdapter<SpinnerItem>(activity, android.R.layout.simple_spinner_item, items) {
+            @Override
+            public android.view.View getView(int position, android.view.View convertView, android.view.ViewGroup parent) {
+                android.widget.TextView view = (android.widget.TextView) super.getView(position, convertView, parent);
+                view.setTextColor(activity.getResources().getColor(R.color.text_primary));
+                return view;
+            }
+
+            @Override
+            public android.view.View getDropDownView(int position, android.view.View convertView, android.view.ViewGroup parent) {
+                android.widget.TextView view = (android.widget.TextView) super.getDropDownView(position, convertView, parent);
+                view.setTextColor(activity.getResources().getColor(R.color.text_primary));
+                return view;
+            }
+        };
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dropdownSpinner.setAdapter(spinnerArrayAdapter);
     }

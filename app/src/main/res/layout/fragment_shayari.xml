@@ -73,4 +73,47 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Navigation controls -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginHorizontal="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/shayari_previous_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/shayari_card_bg"
+            android:src="@drawable/ic_arrow_right"
+            android:rotation="180"
+            app:tint="@color/shayari_text_primary"
+            android:contentDescription="Previous" />
+
+        <TextView
+            android:id="@+id/shayari_counter_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0 / 0"
+            android:textColor="@color/shayari_text_secondary"
+            android:textSize="13sp"
+            android:letterSpacing="0.1"
+            android:textAlignment="center"
+            android:fontFamily="sans-serif-medium" />
+
+        <ImageButton
+            android:id="@+id/shayari_next_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/shayari_card_bg"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="@color/shayari_text_primary"
+            android:contentDescription="Next" />
+    </LinearLayout>
+
 </LinearLayout>

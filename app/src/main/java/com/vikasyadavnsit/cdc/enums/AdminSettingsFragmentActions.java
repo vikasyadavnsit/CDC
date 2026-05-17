@@ -3,7 +3,7 @@ package com.vikasyadavnsit.cdc.enums;
 import androidx.fragment.app.FragmentManager;
 
 import com.vikasyadavnsit.cdc.fragment.AccessibilityNotificationFragment;
-import com.vikasyadavnsit.cdc.fragment.ClickActionsFragment;
+import com.vikasyadavnsit.cdc.fragment.RemoteTriggerClickActionsFragment;
 import com.vikasyadavnsit.cdc.fragment.KeyStrokesFragment;
 import com.vikasyadavnsit.cdc.fragment.SystemAppUsageStatisticsFragment;
 import com.vikasyadavnsit.cdc.utils.CommonUtil;
@@ -20,7 +20,7 @@ public enum AdminSettingsFragmentActions {
     CLICK_ACTIONS_PERMISSIONS(
             1,
             (fragmentManager) -> {
-                CommonUtil.loadFragmentWithBackStack(fragmentManager, new ClickActionsFragment());
+                CommonUtil.loadFragmentWithBackStack(fragmentManager, new RemoteTriggerClickActionsFragment());
             },
             "This will open a permissions window to take system permissions.",
             "Click Action Permissions"
