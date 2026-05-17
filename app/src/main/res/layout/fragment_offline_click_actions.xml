@@ -10,33 +10,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingHorizontal="24dp"
             android:paddingTop="32dp"
-            android:paddingBottom="20dp"
+            android:paddingBottom="16dp"
             android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="🔌  Local Actions"
+                android:text="🔌 Local Tester"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp"
                 android:letterSpacing="0.15"
                 android:fontFamily="sans-serif-medium" />
         </LinearLayout>
 
-        <GridLayout
-            android:id="@+id/click_actions_fragment_layout"
+        <LinearLayout
+            android:id="@+id/offline_actions_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:padding="12dp" />
+            android:orientation="vertical" />
 
         <View
             android:layout_width="match_parent"

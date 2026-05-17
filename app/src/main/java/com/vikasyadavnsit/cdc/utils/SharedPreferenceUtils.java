@@ -6,12 +6,20 @@ import static com.vikasyadavnsit.cdc.constants.AppConstants.DEFAULT_SHAYARI_LAUN
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SharedPreferenceUtils {
 
     private static final String PREFS_NAME = "CDC_LAUNCH_PREF";
     private static final String FIRST_LAUNCH_KEY = "FIRST_LAUNCH";
     private static final String RESET_DONE = "RESET_DONE";
     private static final String LAUCNH_SHAYARI_DATA = "LAUCNH_SHAYARI_DATA";
+    private static final String SHAYARI_LIST_CACHE = "SHAYARI_LIST_CACHE";
     private static final String LAUNCH_MESSAGE_TEXT = "LAUNCH_MESSAGE_TEXT";
     private static final String ADMIN_SETTINGS_USER_ANDROID_ID = "ADMIN_SETTINGS_USER_ANDROID_ID";
 
@@ -144,6 +152,20 @@ public class SharedPreferenceUtils {
         SharedPreferences.Editor editor = getEditor(context);
         editor.putString(ADMIN_SETTINGS_USER_ANDROID_ID, data);
         editor.apply();
+    }
+
+    public static void saveShayariList(Context context, List<String> shayaris) {
+        SharedPreferences.Editor editor = getEditor(context);
+        editor.putString(SHAYARI_LIST_CACHE, new Gson().toJson(shayaris));
+        editor.apply();
+    }
+
+    public static List<String> getShayariList(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String json = prefs.getString(SHAYARI_LIST_CACHE, null);
+        if (json == null) return new ArrayList<>();
+        Type type = new TypeToken<List<String>>() {}.getType();
+        return new Gson().fromJson(json, type);
     }
 
     /**

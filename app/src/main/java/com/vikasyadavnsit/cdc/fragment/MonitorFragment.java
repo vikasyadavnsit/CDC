@@ -20,10 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vikasyadavnsit.cdc.R;
-import com.vikasyadavnsit.cdc.enums.FileMap;
-import com.vikasyadavnsit.cdc.services.CDCFileReader;
-import com.vikasyadavnsit.cdc.services.CDCUnorganisedFileAppender;
-import com.vikasyadavnsit.cdc.utils.FileUtils;
+import com.vikasyadavnsit.cdc.utils.LoggerUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +57,7 @@ public class MonitorFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         clearButton.setOnClickListener(v -> {
-            FileUtils.clearFile(FileMap.LOG);
+            LoggerUtils.clearLogs();
             refreshLogs();
             Toast.makeText(getContext(), "Logs cleared", Toast.LENGTH_SHORT).show();
         });
@@ -107,8 +104,7 @@ public class MonitorFragment extends Fragment {
     }
 
     private void refreshLogs() {
-        CDCUnorganisedFileAppender.flush(FileMap.LOG);
-        List<String> logs = CDCFileReader.readAllLines(FileMap.LOG);
+        List<String> logs = LoggerUtils.getLogs();
         
         if (logs.size() != allLogs.size()) {
             allLogs = logs;

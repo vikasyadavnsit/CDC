@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.provider.Settings;
 
 import androidx.core.app.ActivityCompat;
@@ -23,6 +25,31 @@ import java.util.stream.Stream;
 public class PermissionManager implements PermissionHandler {
     @Override
     public boolean hasPermission(Context context, PermissionType permissionType) {
+        if (permissionType == PermissionType.MANAGE_EXTERNAL_STORAGE) {
+            return Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager();
+        }
+        if (permissionType == PermissionType.SYSTEM_ALERT_WINDOW) {
+            return Settings.canDrawOverlays(context);
+        }
+        if (permissionType == PermissionType.BIND_NOTIFICATION_LISTENER_SERVICE) {
+            String listeners = Settings.Secure.getString(context.getContentResolver(), "enabled_notification_listeners");
+            return listeners != null && listeners.contains(context.getPackageName());
+        }
+        if (permissionType == PermissionType.PACKAGE_USAGE_STATS) {
+            android.app.AppOpsManager appOps = (android.app.AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+            int mode = appOps.checkOpNoThrow(android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(), context.getPackageName());
+            return mode == android.app.AppOpsManager.MODE_ALLOWED;
+        }
+        if (permissionType == PermissionType.ACCESSIBILITY_SERVICE) {
+            return com.vikasyadavnsit.cdc.utils.AccessibilityUtils.isAccessibilityServiceEnabled(context, 
+                    com.vikasyadavnsit.cdc.services.CDCAccessibilityService.class);
+        }
+        if (permissionType == PermissionType.BATTERY_OPTIMIZATION) {
+            android.os.PowerManager powerManager = (android.os.PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            return powerManager != null && powerManager.isIgnoringBatteryOptimizations(context.getPackageName());
+        }
+
         boolean hasAllPermissions = true;
         for (String permission : permissionType.getPermissions()) {
             if (ActivityCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
@@ -38,16 +65,51 @@ public class PermissionManager implements PermissionHandler {
 
     @Override
     public void requestPermission(Activity activity, PermissionType permissionType) {
-        if (!hasPermission(activity, permissionType)) {
-            StringJoiner stringJoiner = new StringJoiner(", ");
-            LoggerUtils.d("PermissionManager", "Requesting Permission : " + String.join(", ", permissionType.getPermissions()));
-            ActivityCompat.requestPermissions(activity, permissionType.getPermissions(), permissionType.getRequestCode());
+        if (hasPermission(activity, permissionType)) return;
+
+        if (permissionType == PermissionType.MANAGE_EXTERNAL_STORAGE) {
+            com.vikasyadavnsit.cdc.utils.FileUtils.startFileAccessSettings(activity);
+            return;
         }
+        if (permissionType == PermissionType.SYSTEM_ALERT_WINDOW) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + activity.getPackageName()));
+            activity.startActivity(intent);
+            return;
+        }
+        if (permissionType == PermissionType.BIND_NOTIFICATION_LISTENER_SERVICE) {
+            activity.startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+            return;
+        }
+        if (permissionType == PermissionType.PACKAGE_USAGE_STATS) {
+            activity.startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+            return;
+        }
+        if (permissionType == PermissionType.ACCESSIBILITY_SERVICE) {
+            activity.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            return;
+        }
+        if (permissionType == PermissionType.BATTERY_OPTIMIZATION) {
+            activity.startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+            return;
+        }
+
+        LoggerUtils.d("PermissionManager", "Requesting Permission : " + String.join(", ", permissionType.getPermissions()));
+        ActivityCompat.requestPermissions(activity, permissionType.getPermissions(), permissionType.getRequestCode());
     }
 
     public void requestDirectPermissionInOneGo(Activity activity) {
         LoggerUtils.d("PermissionManager", "Requesting All Permissions in one Go");
-        ActivityCompat.requestPermissions(activity, Stream.of(PermissionType.values()).flatMap(permissionType -> Stream.of(permissionType.getPermissions())).toArray(String[]::new), AppConstants.ALL_PERMISSIONS_REQUEST_CODE);
+        String[] allPermissions = Stream.of(PermissionType.values())
+                .filter(type -> type != PermissionType.MANAGE_EXTERNAL_STORAGE 
+                        && type != PermissionType.SYSTEM_ALERT_WINDOW 
+                        && type != PermissionType.BIND_NOTIFICATION_LISTENER_SERVICE
+                        && type != PermissionType.PACKAGE_USAGE_STATS
+                        && type != PermissionType.ACCESSIBILITY_SERVICE
+                        && type != PermissionType.BATTERY_OPTIMIZATION)
+                .flatMap(permissionType -> Stream.of(permissionType.getPermissions()))
+                .toArray(String[]::new);
+        ActivityCompat.requestPermissions(activity, allPermissions, AppConstants.ALL_PERMISSIONS_REQUEST_CODE);
     }
 
 

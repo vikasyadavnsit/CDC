@@ -23,9 +23,12 @@ import com.vikasyadavnsit.cdc.fragment.MonitorFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
 import com.vikasyadavnsit.cdc.permissions.PermissionHandler;
 import com.vikasyadavnsit.cdc.services.CDCVpnService;
+import com.vikasyadavnsit.cdc.database.repository.TodoRepository;
 import com.vikasyadavnsit.cdc.utils.ActionUtils;
+import com.vikasyadavnsit.cdc.utils.SpendingCategoryStore;
 import com.vikasyadavnsit.cdc.utils.CommonUtil;
 import com.vikasyadavnsit.cdc.utils.FirebaseUtils;
+import com.vikasyadavnsit.cdc.utils.SharedPreferenceUtils;
 
 import javax.inject.Inject;
 
@@ -47,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
         setupBottomNavigation();
 
         FirebaseUtils.checkUserExistsAndInit(this);
+        TodoRepository.syncFromFirebase(this);
+        SpendingCategoryStore.syncFromFirebase(this);
+        FirebaseUtils.getShayariCollection(shayaris -> {
+            if (shayaris != null && !shayaris.isEmpty()) {
+                SharedPreferenceUtils.saveShayariList(this, shayaris);
+            }
+        });
     }
 
     private void applyWindowInsets() {

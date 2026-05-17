@@ -27,6 +27,10 @@
     <color name="shayari_card_border">#5C2A8A</color>
     <color name="shayari_counter_bg">#3D1A6B</color>
 
+    <!-- Spending type colors -->
+    <color name="spending_debit">#EF5350</color>
+    <color name="spending_credit">#66BB6A</color>
+
     <!-- Bottom navigation -->
     <color name="nav_bg">#130328</color>
     <color name="nav_selected">#C9A0DC</color>

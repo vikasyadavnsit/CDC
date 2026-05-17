@@ -30,13 +30,11 @@
                 android:fontFamily="sans-serif-medium" />
         </LinearLayout>
 
-        <GridLayout
-            android:id="@+id/click_actions_fragment_layout"
+        <LinearLayout
+            android:id="@+id/remote_triggers_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:padding="12dp" />
+            android:orientation="vertical" />
 
         <View
             android:layout_width="match_parent"

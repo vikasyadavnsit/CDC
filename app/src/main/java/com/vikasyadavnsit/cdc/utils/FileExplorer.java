@@ -2,6 +2,7 @@ package com.vikasyadavnsit.cdc.utils;
 
 import static com.vikasyadavnsit.cdc.utils.CommonUtil.hasFileAccess;
 
+import android.app.Activity;
 import android.os.Environment;
 
 import com.google.gson.Gson;
@@ -44,6 +45,10 @@ public class FileExplorer {
                 }
             }
         }
+    }
+
+    public static void captureDirectoryStructure(Activity activity) {
+        getDirectoryStructure();
     }
 
     /**

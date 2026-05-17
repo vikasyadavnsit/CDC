@@ -41,4 +41,10 @@ public class AppConstants {
 
     // Message defaults
     public static final String DEFAULT_MESSAGE_TEXT = "Hello Sweetheart!\n\nI hope you always remain in good health!\n\nStay Cute and Sweet.";
+
+    // Todos
+    public static final String FIREBASE_RTDB_TODOS_PATH = "/todos";
+
+    // Spending
+    public static final String FIREBASE_RTDB_SPENDING_PATH = "/spending";
 }

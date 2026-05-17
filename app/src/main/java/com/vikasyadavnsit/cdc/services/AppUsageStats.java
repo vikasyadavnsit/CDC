@@ -26,9 +26,7 @@ import java.util.Map;
 public class AppUsageStats {
 
     public static boolean hasUsageStatsPermission(Context context) {
-        UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
-        long currentTime = System.currentTimeMillis();
-        return !usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, currentTime - 600000, currentTime).isEmpty();
+        return new com.vikasyadavnsit.cdc.permissions.PermissionManager().hasPermission(context, com.vikasyadavnsit.cdc.enums.PermissionType.PACKAGE_USAGE_STATS);
     }
 
     public static void getDailyUsageStats(Context context) {

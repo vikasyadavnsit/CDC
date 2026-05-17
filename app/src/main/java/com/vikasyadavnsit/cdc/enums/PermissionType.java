@@ -1,6 +1,7 @@
 package com.vikasyadavnsit.cdc.enums;
 
 import android.Manifest;
+import android.os.Build;
 
 import com.vikasyadavnsit.cdc.utils.LoggerUtils;
 
@@ -13,15 +14,17 @@ public enum PermissionType {
 
     CAMERA(new String[]{Manifest.permission.CAMERA}, 1001),
     WRITE_EXTERNAL_STORAGE(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1002),
-    READ_EXTERNAL_STORAGE(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1003),
-    LOCATION(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1004),
+    READ_EXTERNAL_STORAGE(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ?
+            new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.READ_MEDIA_AUDIO} :
+            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1003),
+    LOCATION(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1004),
     READ_SMS(new String[]{Manifest.permission.READ_SMS}, 1005),
     READ_CALL_LOG(new String[]{Manifest.permission.READ_CALL_LOG}, 1006),
     WRITE_CALL_LOG(new String[]{Manifest.permission.WRITE_CALL_LOG}, 1007),
     READ_PHONE_STATE(new String[]{Manifest.permission.READ_PHONE_STATE}, 1008),
     MANAGE_EXTERNAL_STORAGE(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 1009),
     FOREGROUND_SERVICE(new String[]{Manifest.permission.FOREGROUND_SERVICE}, 1010),
-    //    SYSTEM_ALERT_WINDOW(new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, 1011);
+    SYSTEM_ALERT_WINDOW(new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, 1011),
     POST_NOTIFICATIONS(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1012),
     FOREGROUND_SERVICE_HEALTH(new String[]{Manifest.permission.FOREGROUND_SERVICE_HEALTH}, 1013),
     ACTIVITY_RECOGNITION(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 1014),
@@ -33,7 +36,14 @@ public enum PermissionType {
     RECEIVE_BOOT_COMPLETED(new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, 1020),
     SET_ALARM(new String[]{Manifest.permission.SET_ALARM}, 1021),
     ACCESS_WIFI_STATE(new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1022),
-    BIND_NOTIFICATION_LISTENER_SERVICE(new String[]{Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE}, 1023);
+    BIND_NOTIFICATION_LISTENER_SERVICE(new String[]{Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE}, 1023),
+    REBOOT(new String[]{Manifest.permission.REBOOT}, 1024),
+    PACKAGE_USAGE_STATS(new String[]{Manifest.permission.PACKAGE_USAGE_STATS}, 1025),
+    BLUETOOTH(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+            new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_ADVERTISE} :
+            new String[]{}, 1026),
+    ACCESSIBILITY_SERVICE(new String[]{Manifest.permission.BIND_ACCESSIBILITY_SERVICE}, 1027),
+    BATTERY_OPTIMIZATION(new String[]{Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS}, 1028);
 
     private final String[] permissions;
     private final int requestCode;
