@@ -17,69 +17,33 @@ CDC (Covert Data Capture) is an Android surveillance and data-collection app. It
 
 ## Module Map
 
-```
-com.vikasyadavnsit.cdc
-├── activities/
-│   ├── MainActivity           — single-activity host, bottom navigation, Firebase init
-│   └── PasswordActivity       — gate screen before MainActivity
-├── fragment/
-│   ├── DashboardFragment      — home tab (placeholder)
-│   ├── ShayariFragment        — romantic shayari display (Firebase-backed)
-│   ├── MessageFragment        — personalized message display (Firebase-backed)
-│   ├── MonitorFragment        — live-monitoring view (placeholder)
-│   ├── SettingsFragment       — admin hub: device selector + action tiles + viewer tiles
-│   ├── ClickActionsFragment   — shows/edits remote trigger settings for a selected device
-│   ├── KeyStrokesFragment     — displays captured keystrokes from Firebase
-│   ├── AccessibilityNotificationFragment — displays captured notifications from Firebase
-│   ├── SystemAppUsageStatisticsFragment  — displays app-usage report from Firebase
-│   └── OfflineClickActionsFragment       — runs trigger actions locally (no remote user needed)
-├── services/
-│   ├── CDCAccessibilityService — AccessibilityService; keystroke + notification + app-usage tracking
-│   ├── CDCSensorService        — foreground service; streams all device sensors to local files
-│   ├── ScreenshotService       — MediaProjection-based screen capture service
-│   ├── CDCVpnService           — VPN stub; captures raw IP packets (logs to logcat)
-│   ├── AppUsageStats           — UsageStatsManager query; uploads daily app-usage report
-│   ├── ResetService            — handles screen-on/off logging and daily usage reset
-│   ├── CDCNotificationListenerService — NotificationListenerService (supplementary)
-│   ├── CDCFileReader           — reads / decrypts local capture files
-│   ├── CDCOrganisedFileAppender — deduplication-aware file writer for structured data
-│   ├── CDCUnorganisedFileAppender — buffered file writer for streaming/sensor data
-│   ├── AppContext              — Application-level context holder
-│   ├── MyFirebaseMessagingService — FCM push token handler
-│   ├── MyWorker / ScheduledWorker — WorkManager workers for periodic tasks
-├── utils/
-│   ├── FirebaseUtils           — all Firebase RTDB reads and writes (god node, 26 edges)
-│   ├── ActionUtils             — dispatches Firebase-driven and UI-driven actions (18 edges)
-│   ├── AccessibilityUtils      — batches keystroke events; processes notification events
-│   ├── MessageUtils            — reads SMS, call logs, contacts via ContentResolver
-│   ├── CryptoUtils             — AES-256/CBC encrypt/decrypt for file storage
-│   ├── FileUtils               — high-level file append dispatcher (routes to Organised/Unorganised)
-│   ├── CallUtils               — phone-state listener (IDLE/RINGING/OFFHOOK)
-│   ├── CommonUtil              — shared helpers (fragment loading, Android ID, device details)
-│   ├── SharedPreferenceUtils   — persists shayari index, message text, etc.
-│   ├── LoggerUtils             — centralised logging wrapper
-│   ├── SchedulerUtils          — AlarmManager scheduling helpers
-│   ├── DirectoryMonitor        — file-system tree walker for directory-structure capture
-│   ├── FileExplorer            — file browser utility
-│   ├── DatabaseUtil            — Room DB helpers
-│   └── ExecutorUtils           — shared ExecutorService pool
-├── data/                       — POJOs / Lombok-generated data classes
-├── enums/
-│   ├── ClickActions            — 16 trigger actions, each carrying a BiConsumer handler
-│   └── FileMap                 — maps logical data types to file paths and encryption flags
-├── database/                   — Room database, DAOs, repositories
-├── receiver/
-│   ├── ResetBroadcastReceiver  — routes reset alarms to ResetService
-│   ├── StatisticsBroadcastReceiver — listens for system events (screen, boot, power, BT…)
-│   └── DeviceAdminReceiver     — device-admin policy receiver
-├── permissions/
-│   ├── PermissionHandler       — interface; implemented by PermissionManager
-│   └── PermissionManager       — requests and resets all runtime permissions
-├── module/
-│   └── MyModule                — Hilt DI module; provides PermissionHandler + ActionUtils
-└── constants/
-    ├── AppConstants            — RTDB URLs, crypto keys, file buffer size, request codes
-    └── DBConstants             — Room DB column/table name constants
+```mermaid
+mindmap
+  root((CDC Project))
+    Activities
+      MainActivity
+      PasswordActivity
+    Fragments
+      Home/Shayari
+      Message
+      Settings (Admin Hub)
+      Viewers
+    Services
+      CDCAccessibilityService
+      CDCSensorService
+      ScreenshotService
+      CDCVpnService
+      ResetService
+    Core Logic
+      FirebaseUtils
+      ActionUtils
+      AccessibilityUtils
+      MessageUtils
+    Storage
+      Room Database
+      Organised Appender
+      Unorganised Appender
+      Crypto (AES)
 ```
 
 ## God Nodes (most connected classes)

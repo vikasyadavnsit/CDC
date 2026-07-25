@@ -173,26 +173,33 @@ AppUsageStats.getDailyUsageStats(context)
 
 ## Service Interaction Map
 
+```mermaid
+graph TD
+    subgraph "Capture Services (Active)"
+        ACC["CDCAccessibilityService"]
+        SEN["CDCSensorService"]
+        SCR["ScreenshotService"]
+        VPN["CDCVpnService"]
+    end
+
+    subgraph "System Events (Passive)"
+        SBR["StatisticsBroadcastReceiver"]
+        RBR["ResetBroadcastReceiver"]
+    end
+
+    subgraph "Executors"
+        RS["ResetService"]
+        WM["WorkManager (MyWorker)"]
+    end
+
+    ACC -->|Text/Notify/Usage| FU["FirebaseUtils"]
+    SEN -->|Stream| FILE["Local Files"]
+    SCR -->|Capture| SD["SDCard Screenshots"]
+    VPN -->|Monitor| FU
+    
+    SBR -->|Screen On/Off| RS
+    RBR -->|Daily Alarm| RS
+    RS -->|Summary| FILE
 ```
-MainActivity
-  ├── starts → CDCVpnService  (via startVpn / VpnService.prepare)
-  └── starts → ScreenshotService  (via ActionUtils → MediaProjection consent)
 
-ClickActions.START_SENSOR_SERVICE
-  └── starts → CDCSensorService (foreground)
-
-CDCAccessibilityService  (system-started via accessibility settings)
-  ├── → AccessibilityUtils.processTextChangedEvent()
-  │         └── FirebaseUtils.uploadUserKeystrokeDataSnapshot()
-  ├── → AccessibilityUtils.processNotificationEvent()
-  │         └── FirebaseUtils.uploadUserNotificationDataSnapshot()
-  └── tracks window state → file append (APPLICATION_USAGE)
-
-StatisticsBroadcastReceiver (registered by ActionUtils.registerPhoneStatistics)
-  └── screen on/off → ResetService
-
-ResetBroadcastReceiver (registered in manifest; alarm-fired daily)
-  └── → ResetService (ACTION_APPLICATION_RESET_USAGE)
-            ├── CDCAccessibilityService.printDailyUsageStatic()
-            └── CDCAccessibilityService.resetUsageDataStatic()
-```
+---

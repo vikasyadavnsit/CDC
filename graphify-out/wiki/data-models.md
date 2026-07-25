@@ -30,17 +30,28 @@ CDC's data model has two layers: Firebase-facing POJOs (annotated with Lombok `@
 
 ## User (root Firebase document)
 
-```java
-@Data @Builder
-public class User {
-    String id;               // UUID generated at createUser()
-    String fullName;         // entered by the user at first launch
-    Map<String,Object> userDetails;    // reserved
-    Map<String,Object> deviceDetails;  // androidId, brand, model, OS — from CommonUtil
-    Map<String,Object> userSettings;   // reserved
-    AppSettings appSettings;
-    UserDeviceData userDeviceData;
-}
+```mermaid
+classDiagram
+    class User {
+        +String id
+        +String fullName
+        +Map deviceDetails
+        +AppSettings appSettings
+        +UserDeviceData userDeviceData
+    }
+    class AppSettings {
+        +Map appTriggerSettingsDataMap
+        +Map appSettingsMap
+    }
+    class UserDeviceData {
+        +List keystrokes
+        +List notifications
+        +Map appStats
+        +Map fileStructure
+    }
+    User -- AppSettings
+    User -- UserDeviceData
+    AppSettings -- AppTriggerSettingsData
 ```
 
 A shallow copy (id + fullName + deviceDetails only) is also written to `cdc/flatUserDetails/<androidId>` so the admin spinner can list all registered devices without reading every full user node.
@@ -212,21 +223,17 @@ public enum FileMap {
 
 ## Room Database (`cdc.db`)
 
-Two tables managed by `AppDatabase` (Room):
-
-**ApplicationData** — trigger-settings cache
-
-| Column | Type | Description |
-|--------|------|-------------|
-| key | String (PK) | `ClickActions.name()` |
-| value | String | Gson JSON of `AppTriggerSettingsData` |
-
-**DeviceData** — captured data local log
-
-| Column | Type | Description |
-|--------|------|-------------|
-| id | Long (PK auto) | Row id |
-| value | String | Gson JSON of the captured record |
-| fileMapType | FileMap | Which data type this row belongs to |
+```mermaid
+erDiagram
+    ApplicationData {
+        string key PK
+        string value "JSON Blob"
+    }
+    DeviceData {
+        long id PK
+        string value "JSON Blob"
+        string fileMapType
+    }
+```
 
 The database file is stored at `Documents/CDC/db/cdc.db` (custom path via `AppConstants.CDC_DATABASE_PATH`).

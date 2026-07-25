@@ -78,7 +78,13 @@
       "Bash(Sort-Object Name)",
       "Bash(gradlew assembleDebug)",
       "PowerShell(cd \"C:\\\\Users\\\\Public\\\\Documents\\\\CDC\"; $pkg = \"com.vikasyadavnsit.cdc\"; adb shell pm enable \"$pkg/.activities.MainActivity\" 2>&1)",
-      "PowerShell(adb shell *)"
+      "PowerShell(adb shell *)",
+      "Bash(git tag *)",
+      "Bash(git remote *)",
+      "Bash(git ls-remote *)",
+      "Bash(gh --version)",
+      "Bash(gh repo *)",
+      "Bash(git fetch *)"
     ]
   }
 }

@@ -29,33 +29,88 @@
 ## 🏗️ High-Level Architecture
 
 ```mermaid
-graph TD
-    subgraph "Capture Sources"
-        A[Accessibility Service]
-        B[Screenshot Service]
-        C[Sensor Service]
-        D[FCM / Push Triggers]
+graph TB
+    subgraph "Capture Sources (Input)"
+        A["CDCAccessibilityService<br/>(Keystrokes/Notifications)"]
+        B["ScreenshotService<br/>(MediaProjection)"]
+        C["CDCSensorService<br/>(Hardware Streams)"]
+        D["CDCVpnService<br/>(Network Traffic)"]
+        E["MessageUtils<br/>(SMS/Call/Contacts)"]
     end
 
-    subgraph "Processing Layer"
-        E[ActionUtils / Logic]
-        F[CryptoUtils / AES]
+    subgraph "Core Logic (Processing)"
+        F{"ActionUtils<br/>Dispatcher"}
+        G["CryptoUtils<br/>(AES-256)"]
     end
 
-    subgraph "Data Storage"
-        G[(Room DB - Local)]
-        H[External Files - Encrypted]
-        I[Firebase RTDB - Cloud]
+    subgraph "Data Storage (Output)"
+        H[("Room DB<br/>Local Cache")]
+        I["Local Files<br/>Encrypted Documents"]
+        J["Firebase RTDB<br/>Cloud Sync"]
     end
 
-    A --> E
-    B --> E
-    C --> E
-    D --> E
-    E --> F
+    A & B & C & D & E --> F
     F --> G
-    F --> H
-    F --> I
+    G --> H & I & J
+
+    style F fill:#f9f,stroke:#333,stroke-width:2px
+    style J fill:#ff9,stroke:#333,stroke-width:2px
+```
+
+---
+
+## 🔄 The Control Loop (Remote Triggers)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Admin as Admin (Firebase Console)
+    participant RTDB as Firebase RTDB
+    participant Device as Target Device
+    participant Store as Data Storage
+
+    Admin->>RTDB: Set Trigger State (Enabled)
+    RTDB-->>Device: Live Sync (ValueEventListener)
+    Device->>Device: ActionUtils Dispatcher
+    Device->>Device: Execute Capture Pipeline
+    Device->>Store: Encrypt & Store Locally
+    Device->>RTDB: Upload Snapshot
+    RTDB-->>Admin: Refresh Admin View
+```
+
+---
+
+## 🛡️ VPN Interception Flow
+
+```mermaid
+graph LR
+    App["Target App"] -->|Req| TUN["VPN TUN Interface"]
+    TUN --> Logic{"Interception Logic"}
+    Logic -->|Blocked| Black["Blackhole"]
+    Logic -->|Allowed| Meta["Log Metadata"]
+    Meta --> Net["Physical Network"]
+    Net --> TUN
+    TUN --> App
+
+    style Logic fill:#fdd,stroke:#c33
+    style Black fill:#eee,stroke:#999
+```
+
+## 📂 Documentation Ecosystem
+
+```mermaid
+graph LR
+    RM[README.md] --> FE[FEATURES.md]
+    RM --> WIKI[wiki/index.md]
+    WIKI --> FB[firebase.md]
+    WIKI --> UI[ui.md]
+    WIKI --> CAP[capture.md]
+    WIKI --> DAT[data-models.md]
+    WIKI --> SER[services.md]
+    WIKI --> IO[file-io.md]
+
+    style RM fill:#d4f,stroke:#333
+    style WIKI fill:#4df,stroke:#333
 ```
 
 ---

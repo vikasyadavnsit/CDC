@@ -9,6 +9,22 @@
 
 ## Top-level structure
 
+```mermaid
+erDiagram
+    CDC ||--o{ FlatUserDetails : "flatUserDetails"
+    CDC ||--o{ User : "users"
+    CDC ||--o{ Shayari : "shayari"
+    User ||--|| AppSettings : "appSettings"
+    User ||--|| UserDeviceData : "userDeviceData"
+    AppSettings ||--o{ AppTriggerSettingsData : "appTriggerSettingsDataMap"
+    AppSettings ||--|| VpnConfig : "vpnConfig"
+    UserDeviceData ||--o{ KeyStrokeData : "keystrokes"
+    UserDeviceData ||--o{ NotificationData : "notifications"
+    UserDeviceData ||--o{ SmsData : "sms"
+    UserDeviceData ||--o{ ContactData : "contacts"
+    UserDeviceData ||--o{ CallLogData : "callLogs"
+```
+
 ```
 cdc/
 ├── users/

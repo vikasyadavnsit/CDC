@@ -14,6 +14,21 @@
 
 ## Firebase RTDB Path Structure
 
+```mermaid
+erDiagram
+    CDC {
+        string users
+        string flatUserDetails
+        string shayari
+    }
+    users ||--o{ User : "androidId"
+    User ||--|| AppSettings : "appSettings"
+    User ||--|| UserDeviceData : "userDeviceData"
+    AppSettings ||--o{ AppTriggerSettingsData : "appTriggerSettingsDataMap"
+    UserDeviceData ||--o{ KeyStrokeData : "keystrokes"
+    UserDeviceData ||--o{ NotificationData : "notifications"
+```
+
 ```
 cdc/
 ├── users/
@@ -115,45 +130,47 @@ FIREBASE_RTDB_SHAYARI_PATH   = "cdc/shayari/"
 
 ### On-Device Upload Flow
 
-```
-AccessibilityUtils.processTextChanges()
-        │  (batch of KeyStrokeData)
-        └──> FirebaseUtils.uploadUserKeystrokeDataSnapshot()
-                    │
-                    └──> RTDB: cdc/users/<id>/userDeviceData/keystrokes/<pushId>
+```mermaid
+sequenceDiagram
+    participant AU as AccessibilityUtils
+    participant FU as FirebaseUtils
+    participant RTDB as Firebase RTDB
+
+    AU->>FU: uploadUserKeystrokeDataSnapshot(batch)
+    loop for each record
+        FU->>RTDB: push().setValue(data)
+    end
+    RTDB-->>FU: Success Ack
 ```
 
 ### Remote Trigger Flow
 
-```
-Operator sets appTriggerSettingsDataMap in RTDB console
-        │
-        ▼ (live listener fires)
-FirebaseUtils.getAppTriggerSettingsData() → ActionUtils.performFirebaseAction()
-        │
-        ├── ApplicationDataRepository.updateAllRecords()   (local Room cache)
-        └── ClickActions.getBiConsumer().accept(context, settings)
-                    │
-                    ├── CAPTURE_ALL_SMS → MessageUtils + FirebaseUtils.uploadUserSmsDataSnapshot()
-                    ├── START_SENSOR_SERVICE → CDCSensorService.startSensorService()
-                    ├── START_SCREENSHOT_SERVICE → ActionUtils.startMediaProjectionService()
-                    └── ...
+```mermaid
+sequenceDiagram
+    participant Admin as Admin Operator
+    participant RTDB as Firebase RTDB
+    participant FU as FirebaseUtils
+    participant AU as ActionUtils
+    participant Svc as Capture Services
+
+    Admin->>RTDB: Update appTriggerSettingsDataMap
+    RTDB-->>FU: onDataChange()
+    FU->>AU: performFirebaseAction(settings)
+    AU->>Svc: Invoke BiConsumer (START/STOP)
 ```
 
 ### Admin Read-Back Flow
 
-```
-SettingsFragment spinner selects a device
-        │
-        └──> FirebaseUtils.setSelectedUser(androidId)
-                    │
-        Admin clicks "Keystrokes" tile
-                    │
-        KeyStrokesFragment.onCreateView()
-                    │
-        FirebaseUtils.getAndroidUserKeystrokes()
-                    │
-        ActionUtils.displayAndroidUserKeystrokes()  (sorts by timestamp desc)
-                    │
-        KeyStrokesFragment.displayKeyStrokes()      (renders cards in GridLayout)
+```mermaid
+sequenceDiagram
+    participant UI as Admin Fragment
+    participant FU as FirebaseUtils
+    participant RTDB as Firebase RTDB
+    participant AU as ActionUtils
+
+    UI->>FU: getAndroidUserKeystrokes(androidId)
+    FU->>RTDB: getReference().addListenerForSingleValueEvent()
+    RTDB-->>FU: DataSnapshot
+    FU->>AU: displayAndroidUserKeystrokes(data)
+    AU->>UI: displayKeyStrokes(sortedList)
 ```

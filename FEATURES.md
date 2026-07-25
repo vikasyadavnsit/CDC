@@ -17,11 +17,37 @@ This document lists **user-facing features** implemented in the app, the **concr
 
 ### Identity + multi-user “admin” model
 
+```mermaid
+graph TD
+    Device["Target Device<br/>(Android ID)"] -->|Register| RTDB["Firebase RTDB<br/>(cdc/users/...)"]
+    Device -->|Sync| Flat["Flat Index<br/>(cdc/flatUserDetails/...)"]
+    Admin["Admin View<br/>(SettingsFragment)"] -->|Fetch Index| Flat
+    Admin -->|Select User| Prefs["SharedPreferences<br/>(ADMIN_USER_ID)"]
+    Admin -->|View Data| RTDB
+```
+
 - **Device identity**: the device is keyed by `Settings.Secure.ANDROID_ID` (`CommonUtil.getAndroidID`).
 - **Device self-path** in RTDB: `cdc/users/<androidId>/...` (`AppConstants.FIREBASE_RTDB_BASE_PATH`, `FirebaseUtils.getBasePath`).
 - **Admin selection**: Settings downloads a flat index of users (`cdc/flatUserDetails/*`) and stores the selected user Android ID in SharedPreferences (`SharedPreferenceUtils.ADMIN_SETTINGS_USER_ANDROID_ID`). Subsequent admin-view fetches use that selected Android ID.
 
 ### Trigger settings (remote-controlled capture switches)
+
+```mermaid
+graph LR
+    subgraph "Cloud (Admin)"
+        T1["RTDB Trigger Map"]
+    end
+    subgraph "Device (Client)"
+        T2["FirebaseUtils Listener"]
+        T3["Room DB Cache"]
+        T4["ActionUtils Dispatcher"]
+    end
+
+    T1 -->|ValueChangeEvent| T2
+    T2 --> T3
+    T2 --> T4
+    T4 --> Actions["Capture Services"]
+```
 
 - The device maintains an `appSettings/appTriggerSettingsDataMap` in RTDB (one entry per `ClickActions` enum value).
 - On startup, the app subscribes to changes (`FirebaseUtils.getAppTriggerSettingsData`) and runs `ActionUtils.performFirebaseAction`:
@@ -39,7 +65,40 @@ This document lists **user-facing features** implemented in the app, the **concr
     - `CDCUnorganisedFileAppender` for buffered “unorganized” log-like files.
   - **Encryption**: `CryptoUtils.getEncryptedData` AES-encrypts entries for `FileMap`s with `encrypted=true` (e.g., SMS/CALL/KEYSTROKE/CONTACTS/CALL_STATE).
 
-## Feature catalog
+## Feature Catalog
+
+```mermaid
+mindmap
+  root((CDC Features))
+    Initialization
+      Launch Sync
+      User Registration
+    Core Navigation
+      Home (Shayari)
+      Messaging
+      Hidden Settings
+    Admin Viewer
+      User Selection
+      Keystroke Viewer
+      Notification Viewer
+      Usage Stats
+    Capture Pipelines
+      Accessibility
+        Keystrokes
+        Notifications
+        App Usage
+      Hardware
+        Sensors
+        Screenshots
+      Communication
+        SMS
+        Calls
+        Contacts
+    Advanced
+      VPN Blocking
+      Location Tracking
+      OTA Updates
+```
 
 ### Launch & initialization
 

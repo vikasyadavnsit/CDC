@@ -41,13 +41,17 @@ The Room database (`cdc.db`) is stored at `Documents/CDC/db/cdc.db`.
 
 ## FileUtils (routing layer)
 
-`FileUtils.appendDataToFile(FileMap fileMap, Object data)` dispatches:
-
-```
-if fileMap.isOrganized()
-    → CDCOrganisedFileAppender.checkAndAppendDataInOrganizedFile(fileMap, data)
-else
-    → CDCUnorganisedFileAppender.add(fileMap, data)
+```mermaid
+flowchart TD
+    Input([appendDataToFile]) --> Map{fileMap.isOrganized?}
+    Map -- Yes --> Org[CDCOrganisedFileAppender]
+    Map -- No --> Unorg[CDCUnorganisedFileAppender]
+    Org --> Dedup{Deduplication Required?}
+    Dedup -- Yes --> Check[Check Existing IDs]
+    Check --> Write[Encrypted Write]
+    Unorg --> Buffer[Memory Queue]
+    Buffer --> Limit{Limit Reached?}
+    Limit -- Yes --> Flush[Flush to Disk]
 ```
 
 `FileUtils.startFileAccessSettings(Activity)` opens the system "All files access" settings screen so the user can grant `MANAGE_EXTERNAL_STORAGE`.
@@ -133,23 +137,22 @@ Uses `BufferedWriter` with UTF-8 charset (Android 13+) or default charset (older
 
 ## CDCFileReader
 
-Reads a `FileMap` file back from disk, optionally decrypting each line and/or writing decrypted content to `FileMap.TEMPORARY_FILE`.
+```mermaid
+sequenceDiagram
+    participant User as Caller
+    participant Reader as CDCFileReader
+    participant Crypto as CryptoUtils
+    participant FS as FileSystem
 
-### Read modes
-
-| Method | print to log | write to temp |
-|--------|-------------|---------------|
-| `readAndCreateTemporaryFile(fileMap)` | no | yes |
-| `readAndPrint(fileMap)` | yes | no |
-| `readAndPrintAndWrite(fileMap)` | yes | yes |
-
-### Decryption
-
-```java
-decryptIfNeeded(String line)
-  // Base64 decode → AES-256/CBC decrypt → UTF-8 string
-  // Uses AppConstants.CRYPTO_AES_SECRET_KEY and CRYTPO_AES_IV
-  // Returns original line on any exception
+    User->>Reader: readAndCreateTemporaryFile(FileMap)
+    Reader->>FS: open(file.txt)
+    loop for each line
+        FS-->>Reader: Line Data
+        Reader->>Crypto: decrypt(Line)
+        Crypto-->>Reader: Plaintext
+        Reader->>FS: append to temp.txt
+    end
+    Reader-->>User: Success
 ```
 
 Before reading, `readAndProcess()` deletes any existing `TEMPORARY_FILE` to avoid stale data accumulation.

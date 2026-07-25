@@ -4,6 +4,31 @@ This document provides a technical deep-dive into the architecture of the Compre
 
 ## 🏛️ Core Components
 
+```mermaid
+graph TD
+    subgraph "Capture Layer"
+        ACC["Accessibility Service"]
+        SCR["Screenshot Service"]
+        SEN["Sensor Service"]
+        VPN["VPN Service"]
+    end
+
+    subgraph "Logic Layer"
+        ACT["ActionUtils Dispatcher"]
+        CRY["CryptoUtils (AES)"]
+    end
+
+    subgraph "Storage Layer"
+        RTDB["Firebase RTDB"]
+        ROOM["Room SQLite"]
+        FILE["Local Files"]
+    end
+
+    ACC & SCR & SEN & VPN --> ACT
+    ACT --> CRY
+    CRY --> RTDB & ROOM & FILE
+```
+
 The application is structured into four primary layers, ensuring modularity and resilience even in offline scenarios.
 
 ### 1. Capture Layer (Services)

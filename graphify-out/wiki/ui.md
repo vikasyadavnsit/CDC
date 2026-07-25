@@ -24,21 +24,23 @@ CDC uses a single-Activity architecture. `MainActivity` hosts a `BottomNavigatio
 
 ## Navigation Structure
 
-```
-PasswordActivity
-        │  (success)
-        ▼
-MainActivity  (bottom nav default: SettingsFragment)
-    ├── [nav_home]      → DashboardFragment
-    ├── [nav_shayari]   → ShayariFragment
-    ├── [nav_message]   → MessageFragment
-    ├── [nav_monitor]   → MonitorFragment
-    └── [nav_settings]  → SettingsFragment ──(Open button)──> back-stack fragments:
-                                                  ├── ClickActionsFragment
-                                                  ├── KeyStrokesFragment
-                                                  ├── AccessibilityNotificationFragment
-                                                  ├── SystemAppUsageStatisticsFragment
-                                                  └── OfflineClickActionsFragment
+```mermaid
+stateDiagram-v2
+    [*] --> PasswordActivity
+    PasswordActivity --> MainActivity: "Success (1234)"
+    
+    state MainActivity {
+        [*] --> SettingsFragment: Default
+        SettingsFragment --> ClickActionsFragment: "Remote Triggers"
+        SettingsFragment --> KeyStrokesFragment: "Keystrokes"
+        SettingsFragment --> AccessibilityNotificationFragment: "Notifications"
+        SettingsFragment --> SystemAppUsageStatisticsFragment: "App Usage"
+        
+        SettingsFragment --> DashboardFragment: "Home Tab"
+        SettingsFragment --> ShayariFragment: "Shayari Tab"
+        SettingsFragment --> MessageFragment: "Message Tab"
+        SettingsFragment --> MonitorFragment: "Monitor Tab"
+    }
 ```
 
 Bottom-nav selection calls `CommonUtil.loadFragment(getSupportFragmentManager(), fragment)`, which replaces the fragment container without adding to the back stack. Viewer tiles in `SettingsFragment` use `CommonUtil.loadFragmentWithBackStack()` so the back button returns to Settings.
@@ -47,19 +49,16 @@ Bottom-nav selection calls `CommonUtil.loadFragment(getSupportFragmentManager(),
 
 ## MainActivity Lifecycle
 
-```
-onCreate()
-  ├── EdgeToEdge.enable()
-  ├── applyWindowInsets()         — adjusts padding for system bars / bottom nav
-  ├── initialiser()
-  │     ├── ApplicationDataRepository.initialize()  (Room DB for trigger settings)
-  │     ├── FirebaseUtils.initialize()               (stores Context)
-  │     └── DeviceDataRepository.initialize()        (Room DB for captured device data)
-  ├── setupBottomNavigation()
-  │     └── ActionUtils.setContext(this)             (stores Activity ref for action dispatch)
-  └── FirebaseUtils.checkUserExistsAndInit()
-        ├── if user missing → MessageDialog (name entry) → FirebaseUtils.createUser()
-        └── if user exists  → FirebaseUtils.getAppTriggerSettingsData()  (live listener)
+```mermaid
+flowchart TD
+    Start([onCreate]) --> Edge[EdgeToEdge / WindowInsets]
+    Edge --> Init[initialiser]
+    Init --> Repo[Init Repositories & Firebase]
+    Repo --> Nav[Setup Bottom Navigation]
+    Nav --> Check{User Exists?}
+    Check -- No --> Dialog[MessageDialog Prompt]
+    Dialog --> Create[FirebaseUtils.createUser]
+    Check -- Yes --> Sync[FirebaseUtils.getAppTriggerSettingsData]
 ```
 
 `onActivityResult()` is forwarded to `ActionUtils.onActivityResult()`, which handles the MediaProjection consent result (request code `3000`) and starts `ScreenshotService`.

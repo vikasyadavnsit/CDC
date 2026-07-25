@@ -24,42 +24,26 @@ CDC captures data through four parallel channels: the Accessibility Service (key
 
 ### 1. Keystroke / Text Change Events
 
-```
-AccessibilityEvent (TYPE_VIEW_TEXT_CHANGED | TYPE_VIEW_TEXT_SELECTION_CHANGED)
-        │
-CDCAccessibilityService.onAccessibilityEvent()
-        │
-AccessibilityUtils.processTextChangedEvent(event)
-        │
-        ├── builds KeyStrokeData(appPackage, text, timestamp)
-        ├── adds to in-memory List<KeyStrokeData> (textChanges)
-        └── flush condition:
-              ├── size >= 30  → immediate flush via Handler.post()
-              └── otherwise   → delayed flush after 15 000 ms
-                         │
-              AccessibilityUtils.processTextChanges(batch)
-                         │
-                         ├── checks ClickActions.CAPTURE_KEY_STROKES setting in Room
-                         ├── if saveOnLocalFile  → FileUtils.appendDataToFile(FileMap.KEYSTROKE, text)
-                         ├── if uploadDataSnapshot → FirebaseUtils.uploadUserKeystrokeDataSnapshot(data)
-                         └── always → DeviceDataRepository.insert(DeviceData)
+```mermaid
+flowchart TD
+    Event["AccessibilityEvent<br/>(TEXT_CHANGED)"] --> Utils["AccessibilityUtils.processTextChangedEvent"]
+    Utils --> Batch{"Batch Full?<br/>(30 chars / 15s)"}
+    Batch -- No --> Wait["Wait/Buffer"]
+    Batch -- Yes --> Flush["Flush Batch"]
+    Flush --> Check{"Trigger Enabled?<br/>(Room DB)"}
+    Check -- Yes --> Actions["Local File + Firebase Upload"]
+    Check -- No --> Discard["Discard Data"]
 ```
 
 ### 2. Notification Events
 
-```
-AccessibilityEvent (TYPE_NOTIFICATION_STATE_CHANGED)
-        │
-AccessibilityUtils.processNotificationEvent(event)
-        │
-        ├── extracts Notification.extras into Map<String,Object>
-        ├── builds NotificationData(packageName, extras, timestamp)
-        └── collectNotificationData()
-                  │
-                  ├── checks ClickActions.CAPTURE_NOTIFICATIONS setting in Room
-                  ├── if saveOnLocalFile  → FileUtils.appendDataToFile(FileMap.NOTIFICATION, text)
-                  ├── if uploadDataSnapshot → FirebaseUtils.uploadUserNotificationDataSnapshot(data)
-                  └── always → DeviceDataRepository.insert(DeviceData)
+```mermaid
+flowchart LR
+    Event["AccessibilityEvent<br/>(NOTIFICATION)"] --> Extract["Extract Extras & Payload"]
+    Extract --> Data["NotificationData POJO"]
+    Data --> Check{"Trigger Enabled?"}
+    Check -- Yes --> Dest["File / Firebase / Room"]
+    Check -- No --> End([End])
 ```
 
 ### 3. Window State / App Session Tracking
@@ -82,21 +66,20 @@ ResetService (ACTION_APPLICATION_RESET_USAGE)
 
 ## Sensor Capture Channel
 
-```
-ClickActions.START_SENSOR_SERVICE (ActionStatus.START)
-        │
-CDCSensorService.startSensorService(activity)
-        │
-CDCSensorService.onCreate()
-        ├── sensorManager.getSensorList(TYPE_ALL)  — all sensors except "uncalibrated"
-        ├── sensorManager.registerListener(this, sensor, SENSOR_DELAY_NORMAL)
-        └── startForeground(notification)    — keeps service alive
+```mermaid
+sequenceDiagram
+    participant FU as Firebase/ActionUtils
+    participant Svc as CDCSensorService
+    participant SM as SensorManager
+    participant App as CDCUnorganisedFileAppender
 
-CDCSensorService.onSensorChanged(event)
-        └── CDCUnorganisedFileAppender.appendDataToFile(
-                 "<SensorName>.txt",
-                 "Timestamp: <ns>, Values: <f1>, <f2>, ...")
-            → file location: Documents/CDC/Sensors/<SensorName>.txt
+    FU->>Svc: Start Service (Intent)
+    Svc->>SM: getSensorList(TYPE_ALL)
+    Svc->>SM: registerListener(NORMAL_DELAY)
+    loop for each sensor event
+        SM->>Svc: onSensorChanged()
+        Svc->>App: appendDataToFile(SensorName.txt)
+    end
 ```
 
 Sensor data is written directly to individual sensor files without batching or Firebase upload. There is a TODO comment noting that a SQLite local store is planned.
@@ -105,28 +88,17 @@ Sensor data is written directly to individual sensor files without batching or F
 
 ## Screenshot Capture Channel
 
-```
-ClickActions.START_SCREENSHOT_SERVICE (ActionStatus.PREPARE)
-        │
-ActionUtils.startMediaProjectionService()
-        │ (system consent dialog)
-        │
-MainActivity.onActivityResult(MEDIA_PROJECTION_REQUEST_CODE, RESULT_OK, data)
-        │
-ActionUtils.onActivityResult() → createMediaProjectionScreenshotServiceIntent()
-        │
-Intent → ScreenshotService (EXTRA_RESULT_CODE, EXTRA_RESULT_DATA)
-
-
-ClickActions.START_SCREENSHOT_SERVICE (ActionStatus.START)
-        │
-ScreenshotService.setTakeScreenshot(true)
-        │ (ImageReader callback fires)
-        │
-ScreenshotService.processImage(image)
-        │
-ScreenshotService.saveBitmap()
-        └── saves "screenshot_<timestamp>.png" to /sdcard/Screenshots/
+```mermaid
+flowchart TD
+    Start([Action Trigger]) --> Consent[MediaProjection Consent]
+    Consent -->|OK| Service[ScreenshotService]
+    Service --> Virtual[VirtualDisplay / ImageReader]
+    Virtual --> Capture{Take Screenshot?}
+    Capture -- Yes --> Process[Bitmap Processing]
+    Process --> Save[Save to /sdcard/Screenshots/]
+    Save --> Loop{Repeat?}
+    Loop -- Yes --> Capture
+    Loop -- No --> End([End])
 ```
 
 `ScreenshotService` creates a `VirtualDisplay` backed by an `ImageReader`. The static flag `takeScreenshot` is polled inside the `onImageAvailable` callback. Multiple screenshots can be triggered in a loop using `maxRepetitions` and `interval` from `AppTriggerSettingsData`.
