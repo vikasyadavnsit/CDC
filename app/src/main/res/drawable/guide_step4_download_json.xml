@@ -1,0 +1,40 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="180dp"
+    android:viewportWidth="200"
+    android:viewportHeight="180">
+    <!-- Header with Gear -->
+    <path
+        android:fillColor="#1A237E"
+        android:pathData="M0,0h200v30h-200z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M180,15m-5,0a5,5 0,1 1,10 0a5,5 0,1 1,-10 0" />
+    <path
+        android:strokeColor="#FF0000"
+        android:strokeWidth="1.5"
+        android:pathData="M180,15m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0" />
+    <!-- App info card -->
+    <path
+        android:fillColor="#F8F9FA"
+        android:pathData="M0,30h200v150h-200z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,50h160v110h-160z" />
+    <!-- Download button icon -->
+    <path
+        android:fillColor="#1A73E8"
+        android:pathData="M140,80h30v30h-30z" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:pathData="M155,85v15M150,95l5,5l5,-5" />
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M40,90h80v8h-80zM40,105h60v8h-60z" />
+    <!-- Highlight Circle around download button -->
+    <path
+        android:strokeColor="#FF0000"
+        android:strokeWidth="2"
+        android:pathData="M155,95m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0" />
+</vector>

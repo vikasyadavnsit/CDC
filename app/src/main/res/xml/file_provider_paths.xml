@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Exposes getCacheDir() so the APK downloaded for self-update can be shared
+         with the system installer via a content:// URI on API < 31. -->
+    <cache-path name="apk_updates" path="." />
+</paths>

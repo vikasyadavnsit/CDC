@@ -1,0 +1,138 @@
+{
+  "34": {
+    "version_code": "Build.VERSION_CODES.UPSIDE_DOWN_CAKE",
+    "android_version": "14"
+  },
+  "33": {
+    "version_code": "Build.VERSION_CODES.TIRAMISU",
+    "android_version": "13"
+  },
+  "32": {
+    "version_code": "Build.VERSION_CODES.S_V2",
+    "android_version": "12L"
+  },
+  "31": {
+    "version_code": "Build.VERSION_CODES.S",
+    "android_version": "12"
+  },
+  "30": {
+    "version_code": "Build.VERSION_CODES.R",
+    "android_version": "11"
+  },
+  "29": {
+    "version_code": "Build.VERSION_CODES.Q",
+    "android_version": "10"
+  },
+  "28": {
+    "version_code": "Build.VERSION_CODES.P",
+    "android_version": "9"
+  },
+  "27": {
+    "version_code": "Build.VERSION_CODES.O_MR1",
+    "android_version": "8.1"
+  },
+  "26": {
+    "version_code": "Build.VERSION_CODES.O",
+    "android_version": "8.0"
+  },
+  "25": {
+    "version_code": "Build.VERSION_CODES.N_MR1",
+    "android_version": "7.1"
+  },
+  "24": {
+    "version_code": "Build.VERSION_CODES.N",
+    "android_version": "7.0"
+  },
+  "23": {
+    "version_code": "Build.VERSION_CODES.M",
+    "android_version": "6.0"
+  },
+  "22": {
+    "version_code": "Build.VERSION_CODES.LOLLIPOP_MR1",
+    "android_version": "5.1"
+  },
+  "21": {
+    "version_code": "Build.VERSION_CODES.LOLLIPOP",
+    "android_version": "5.0"
+  },
+  "20": {
+    "version_code": "Build.VERSION_CODES.KITKAT_WATCH",
+    "android_version": "4.4W"
+  },
+  "19": {
+    "version_code": "Build.VERSION_CODES.KITKAT",
+    "android_version": "4.4"
+  },
+  "18": {
+    "version_code": "Build.VERSION_CODES.JELLY_BEAN_MR2",
+    "android_version": "4.3"
+  },
+  "17": {
+    "version_code": "Build.VERSION_CODES.JELLY_BEAN_MR1",
+    "android_version": "4.2"
+  },
+  "16": {
+    "version_code": "Build.VERSION_CODES.JELLY_BEAN",
+    "android_version": "4.1"
+  },
+  "15": {
+    "version_code": "Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1",
+    "android_version": "4.0.3"
+  },
+  "14": {
+    "version_code": "Build.VERSION_CODES.ICE_CREAM_SANDWICH",
+    "android_version": "4.0"
+  },
+  "13": {
+    "version_code": "Build.VERSION_CODES.HONEYCOMB_MR2",
+    "android_version": "3.2"
+  },
+  "12": {
+    "version_code": "Build.VERSION_CODES.HONEYCOMB_MR1",
+    "android_version": "3.1"
+  },
+  "11": {
+    "version_code": "Build.VERSION_CODES.HONEYCOMB",
+    "android_version": "3.0"
+  },
+  "10": {
+    "version_code": "Build.VERSION_CODES.GINGERBREAD_MR1",
+    "android_version": "2.3.3"
+  },
+  "9": {
+    "version_code": "Build.VERSION_CODES.GINGERBREAD",
+    "android_version": "2.3"
+  },
+  "8": {
+    "version_code": "Build.VERSION_CODES.FROYO",
+    "android_version": "2.2"
+  },
+  "7": {
+    "version_code": "Build.VERSION_CODES.ECLAIR_MR1",
+    "android_version": "2.1"
+  },
+  "6": {
+    "version_code": "Build.VERSION_CODES.ECLAIR_0_1",
+    "android_version": "2.0.1"
+  },
+  "5": {
+    "version_code": "Build.VERSION_CODES.ECLAIR",
+    "android_version": "2.0"
+  },
+  "4": {
+    "version_code": "Build.VERSION_CODES.DONUT",
+    "android_version": "1.6"
+  },
+  "3": {
+    "version_code": "Build.VERSION_CODES.CUPCAKE",
+    "android_version": "1.5"
+  },
+  "2": {
+    "version_code": "Build.VERSION_CODES.BASE_1_1",
+    "android_version": "1.1"
+  },
+  "1": {
+    "version_code": "Build.VERSION_CODES.BASE",
+    "android_version": "1.0"
+  }
+}

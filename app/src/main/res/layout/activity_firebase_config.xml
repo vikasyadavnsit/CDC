@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Firebase Configuration"
+            android:textColor="@color/text_primary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Provide your google-services.json to sync data to your private Firebase project."
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:layout_marginBottom="32dp"
+            android:gravity="center" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/surface"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_select_file"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select JSON File"
+                    app:icon="@drawable/ic_sync" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OR PASTE CONTENT"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="12dp"
+                    android:textColor="@color/text_hint"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/et_config_json"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:hint="Paste JSON content here..."
+                    android:textColorHint="@color/text_hint"
+                    android:textColor="@color/text_primary"
+                    android:gravity="top"
+                    android:padding="12dp"
+                    android:background="@drawable/input_field_bg"
+                    android:fontFamily="monospace"
+                    android:textSize="13sp"
+                    android:inputType="textMultiLine"
+                    android:scrollbars="vertical" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status: Waiting for input"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone"
+            android:background="@drawable/spinner_bg"
+            android:padding="12dp"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_validate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Validate JSON"
+            android:paddingVertical="12dp"
+            app:cornerRadius="12dp"
+            android:backgroundTint="@color/primary"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Testing Section -->
+        <LinearLayout
+            android:id="@+id/layout_testing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Verification Steps"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_test_connection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Step 1: Test Connection"
+                android:paddingVertical="12dp"
+                app:cornerRadius="12dp"
+                android:backgroundTint="@color/surface_variant"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_test_write"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Step 2: Test Write Permissions"
+                android:paddingVertical="12dp"
+                app:cornerRadius="12dp"
+                android:backgroundTint="@color/surface_variant"
+                android:textColor="@color/text_primary"
+                android:enabled="false"
+                android:layout_marginBottom="12dp" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_proceed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Everything Ready, Proceed"
+            android:paddingVertical="14dp"
+            app:cornerRadius="12dp"
+            android:backgroundTint="@color/spending_credit"
+            android:visibility="gone"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

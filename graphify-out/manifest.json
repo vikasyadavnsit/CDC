@@ -1,0 +1,527 @@
+{
+  "C:\\Users\\Public\\Documents\\CDC\\build.gradle": {
+    "mtime": 1778955747.8308904,
+    "ast_hash": "67d8f3c3d35b1f8c04b0f5b2ac4b69a6",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\gradlew": {
+    "mtime": 1778940757.1962,
+    "ast_hash": "c6ea21dea2d500b277296894708cf792",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\settings.gradle": {
+    "mtime": 1778951408.6999574,
+    "ast_hash": "094f37ce06d8ef561003ea1537399f49",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\.claude\\settings.json": {
+    "mtime": 1778964719.394068,
+    "ast_hash": "5d6ecd96cf065b16e8bb9fbf5d7d8f0d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\.claude\\settings.local.json": {
+    "mtime": 1778965750.4146383,
+    "ast_hash": "e6a973922b5a5f4eea32650d83955f83",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\.gradle\\8.6\\dependencies-accessors\\4c5b35e16e9bfbb088aed62217a0be3d2825e0c1\\sources\\org\\gradle\\accessors\\dm\\LibrariesForLibs.java": {
+    "mtime": 1728756239.8834832,
+    "ast_hash": "05cfc805606d67f05d1210957e730890",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\.gradle\\8.6\\dependencies-accessors\\4c5b35e16e9bfbb088aed62217a0be3d2825e0c1\\sources\\org\\gradle\\accessors\\dm\\LibrariesForLibsInPluginsBlock.java": {
+    "mtime": 1728756239.886144,
+    "ast_hash": "b8d157a500e4a03e2a48e7fb0ad01021",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\build.gradle": {
+    "mtime": 1778955654.6853333,
+    "ast_hash": "af4ea28f733aef49d434be32ba367de6",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\google-services.json": {
+    "mtime": 1778940757.0300279,
+    "ast_hash": "2152fa286f47145b3083d9abb1d33fcf",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\release\\output-metadata.json": {
+    "mtime": 1778940757.1101208,
+    "ast_hash": "00e08b144be3e306110979521348c97f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\androidTest\\java\\com\\vikasyadavnsit\\cdc\\ExampleInstrumentedTest.java": {
+    "mtime": 1778940757.113355,
+    "ast_hash": "98d4bba5f1c79a41392a7164f92866d5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\assets\\android_version_mappings.json": {
+    "mtime": 1778940757.1144204,
+    "ast_hash": "093d5965850f3f1e0910e33313926f1a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\MyApplication.java": {
+    "mtime": 1778955733.7907097,
+    "ast_hash": "37e85fe4f2f55d1ff4473e9a4d375412",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\activities\\MainActivity.java": {
+    "mtime": 1778962168.8334274,
+    "ast_hash": "5fae225dcfe6b7b6879d8a21d182b390",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\activities\\PasswordActivity.java": {
+    "mtime": 1778940757.11762,
+    "ast_hash": "abfcb33e02ca2f822a08d08c568cab1a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\constants\\AppConstants.java": {
+    "mtime": 1778963017.7260501,
+    "ast_hash": "a1da92ce7f7b85923e1b239296dcbff9",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\constants\\DBConstants.java": {
+    "mtime": 1778940757.118685,
+    "ast_hash": "b26d2501f60e435411bd4b8c8817029c",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\data\\ApplicationData.java": {
+    "mtime": 1778940757.1218626,
+    "ast_hash": "3f8b5d60b2d59749abb907ef5e8ef045",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\data\\AppSession.java": {
+    "mtime": 1778940757.1196904,
+    "ast_hash": "e0c53954db5e1539f3842a6f5078541d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\data\\AppUsageData.java": {
+    "mtime": 1778940757.1196904,
+    "ast_hash": "dc34f515ac0c4a20623be89c474f575b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\data\\AppUsageReportData.java": {
+    "mtime": 1778940757.1208,
+    "ast_hash": "2c83f52f9360b5bc133347772edc7e12",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\data\\DeviceData.java": {
+    "mtime": 1778940757.1218626,
+    "ast_hash": "1fa04eadf8b27f9d2294713a325ed88e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\data\\KeyStrokeData.java": {
+    "mtime": 1778940757.1218626,
+    "ast_hash": "727d8b06a5923b5fb484b2e432ee91cb",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\data\\NotificationData.java": {
+    "mtime": 1778940757.1229215,
+    "ast_hash": "5ac3580c563bce35dca10be798ec0cce",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\data\\SpinnerItem.java": {
+    "mtime": 1778940757.1229215,
+    "ast_hash": "0a3f8b00d61f20383917b88ea95a17e0",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\data\\User.java": {
+    "mtime": 1778940757.1239922,
+    "ast_hash": "f285232974fbb9d63d014b05c168f634",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\database\\AppDatabase.java": {
+    "mtime": 1778940757.1239922,
+    "ast_hash": "da13970d6436e6684b3b5e7ac1676ac7",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\database\\dao\\ApplicationDataDao.java": {
+    "mtime": 1778940757.1249967,
+    "ast_hash": "1d02257624b0751df8511ba5ec9f010a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\database\\dao\\DeviceDataDao.java": {
+    "mtime": 1778940757.1249967,
+    "ast_hash": "e8c36ce8e89c833a2e70afc47dde5d3e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\database\\repository\\ApplicationDataRepository.java": {
+    "mtime": 1778940757.1260993,
+    "ast_hash": "36d62678bed99655cb94c9ef9a0a438a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\database\\repository\\DeviceDataRepository.java": {
+    "mtime": 1778940757.1260993,
+    "ast_hash": "4aaae50fe9575316ffa6154951b142b6",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\dialog\\MessageDialog.java": {
+    "mtime": 1778962517.148931,
+    "ast_hash": "238d1552b421dcca80db9b42cb7a3451",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\enums\\ActionStatus.java": {
+    "mtime": 1778940757.1281478,
+    "ast_hash": "b3fbb58f7e80924610d0fc950b71224f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\enums\\AdminSettingsFragmentActions.java": {
+    "mtime": 1778940757.1291506,
+    "ast_hash": "b0285fe1ca704a1be280efcff148fe4f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\enums\\ApplicationInputActions.java": {
+    "mtime": 1778962501.5417883,
+    "ast_hash": "8201171e64ab6492d457d25330ca7d77",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\enums\\AppStatus.java": {
+    "mtime": 1778940757.1291506,
+    "ast_hash": "ed73b4cde68c0744908396d77c0e1232",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\enums\\ClickActions.java": {
+    "mtime": 1778952002.6403718,
+    "ast_hash": "161302b207df166c2b2208016351ca23",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\enums\\FileMap.java": {
+    "mtime": 1778951978.884848,
+    "ast_hash": "75c5d1221737c129a35f145da7a88e0b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\enums\\LoggingLevel.java": {
+    "mtime": 1778940757.1313186,
+    "ast_hash": "ab804968c0d5cf344f5cfb451a62c353",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\enums\\PermissionType.java": {
+    "mtime": 1778940757.1323874,
+    "ast_hash": "7710ad7c6ed2892a5354bf3d5045dc7e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\exception\\CustomExceptionHandler.java": {
+    "mtime": 1778940757.133458,
+    "ast_hash": "df600e6a8a0c851a68ff4b6849bbfb7b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\filter\\RegexInputFilter.java": {
+    "mtime": 1778940757.1344626,
+    "ast_hash": "63eedd0df4b4928d534f7de919d33663",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\AccessibilityNotificationFragment.java": {
+    "mtime": 1778964653.4344335,
+    "ast_hash": "b3e602d4f7a898a7507244876a06c14b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\ClickActionsFragment.java": {
+    "mtime": 1778964601.3344772,
+    "ast_hash": "b38641a9d4448cfd759563532136db1d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\DashboardFragment.java": {
+    "mtime": 1778956964.238581,
+    "ast_hash": "6aa49565aabcdd76c3492c5fda7395b8",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\KeyStrokesFragment.java": {
+    "mtime": 1778964628.75645,
+    "ast_hash": "f8473f86390e87e7fb13cbef39b74721",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\MessageFragment.java": {
+    "mtime": 1778957002.5862136,
+    "ast_hash": "49a2bff1c6c1c4f63d64640ad49c2875",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\MonitorFragment.java": {
+    "mtime": 1778957006.9571192,
+    "ast_hash": "9700f22b02378ba9d9a25161e89e8d98",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\OfflineClickActionsFragment.java": {
+    "mtime": 1778964689.7257943,
+    "ast_hash": "e2ea4120bb790607a704496e5358912e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\SettingsFragment.java": {
+    "mtime": 1778965007.1167064,
+    "ast_hash": "5f70e8d210cc5934b3c51706779bce94",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\ShayariFragment.java": {
+    "mtime": 1778959103.8525188,
+    "ast_hash": "cfc407803c8296a032ab4f6972a6def4",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\fragment\\SystemAppUsageStatisticsFragment.java": {
+    "mtime": 1778964710.596516,
+    "ast_hash": "d0f238a9ea53acc99937f2828ca00618",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\module\\MyModule.java": {
+    "mtime": 1778940757.140861,
+    "ast_hash": "c2b3cf4369b092801487ef035223db4e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\permissions\\PermissionHandler.java": {
+    "mtime": 1778940757.1418636,
+    "ast_hash": "837bcfa00d2e8237e9071c4608b743ed",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\permissions\\PermissionManager.java": {
+    "mtime": 1778940757.1429584,
+    "ast_hash": "2e03b0676d23efa7b3ccead2649291e6",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\receiver\\DeviceAdminReceiver.java": {
+    "mtime": 1778940757.1429584,
+    "ast_hash": "7b9c73365fece692a4d9b52c5cb21a75",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\receiver\\ResetBroadcastReceiver.java": {
+    "mtime": 1778940757.1440234,
+    "ast_hash": "6ab2d085d7eb4400a3ae317a9066ccb1",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\receiver\\StatisticsBroadcastReceiver.java": {
+    "mtime": 1778940757.1440234,
+    "ast_hash": "7ec1224d66037ceecbb2a3b2d328b2e5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\AppContext.java": {
+    "mtime": 1778940757.1450875,
+    "ast_hash": "920b498d59dc8fd6b847de58d0ac65a0",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\AppUsageStats.java": {
+    "mtime": 1778940757.146164,
+    "ast_hash": "e6b072316dfcd77fd61727e89ff2ad3b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\CDCAccessibilityService.java": {
+    "mtime": 1778940757.146164,
+    "ast_hash": "8e729773d9690a8fe18f86c848f659ed",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\CDCFileReader.java": {
+    "mtime": 1778940757.1471684,
+    "ast_hash": "c031e1a1af8005d9b07c52f59a26df1f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\CDCNotificationListenerService.java": {
+    "mtime": 1778940757.1471684,
+    "ast_hash": "17c75738da4c0e6841c57d1a7012fb0d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\CDCOrganisedFileAppender.java": {
+    "mtime": 1778940757.1471684,
+    "ast_hash": "14be304d692c481cb0288e3e729150cf",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\CDCSensorService.java": {
+    "mtime": 1778940757.1482813,
+    "ast_hash": "0c621da4ff24234a6962631f336b80d2",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\CDCUnorganisedFileAppender.java": {
+    "mtime": 1778952020.4898539,
+    "ast_hash": "fabaa635ff66984a63d3541bcfed7348",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\CDCVpnService.java": {
+    "mtime": 1778940757.149343,
+    "ast_hash": "bdc9dab41ab2fe4bf15c784e8729e856",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\MyFirebaseMessagingService.java": {
+    "mtime": 1778940757.1504078,
+    "ast_hash": "58a8f357114014f5ee0e892d141543ab",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\MyWorker.java": {
+    "mtime": 1778940757.1504078,
+    "ast_hash": "4f1e50fff9a4131b9000bf001ff0369d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\ResetService.java": {
+    "mtime": 1778940757.1514132,
+    "ast_hash": "c3e3259bb90882de86df667f2a571228",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\ScheduledWorker.java": {
+    "mtime": 1778940757.1514132,
+    "ast_hash": "025dddb8563e39116864bdd0cb6dc4c4",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\services\\ScreenshotService.java": {
+    "mtime": 1778940757.1524622,
+    "ast_hash": "16088a64277fe279f66b6c64e341eadb",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\AccessibilityUtils.java": {
+    "mtime": 1778940757.1535628,
+    "ast_hash": "f29c352d05df87a3463e90a37cb1e718",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\ActionUtils.java": {
+    "mtime": 1778958824.6345239,
+    "ast_hash": "a9565bbddfba9c00defb4de1019d8be6",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\AssetUtils.java": {
+    "mtime": 1778940757.1546302,
+    "ast_hash": "2d2c43b17345775a5e5aba7bab6facdd",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\CallUtils.java": {
+    "mtime": 1778940757.1557379,
+    "ast_hash": "cf6ce2ad68d46632f97b878548824882",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\CommonUtil.java": {
+    "mtime": 1778952037.0661397,
+    "ast_hash": "2a8d8ac76738752f746381c05b67230e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\CryptoUtils.java": {
+    "mtime": 1778940757.1568124,
+    "ast_hash": "4c9b500ca9dc71dc8c104ca11e8b52ef",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\DatabaseUtil.java": {
+    "mtime": 1778940757.1578124,
+    "ast_hash": "5968b48fe216d99c85a6cfb70b74ffd1",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\DirectoryMonitor.java": {
+    "mtime": 1778940757.1578124,
+    "ast_hash": "769ed4c2ca20fe512b06e5a2ed519b7e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\ExecutorUtils.java": {
+    "mtime": 1778940757.1588826,
+    "ast_hash": "6813921085a3e15e86ecaa2189af4bd7",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\FileExplorer.java": {
+    "mtime": 1778940757.1588826,
+    "ast_hash": "016ca2068a1fbf5b41ac6b3d967ebf98",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\FileUtils.java": {
+    "mtime": 1778940757.1599476,
+    "ast_hash": "f1d61f112a544e324b292cdedf3fdb2d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\FirebaseUtils.java": {
+    "mtime": 1778963922.0642657,
+    "ast_hash": "f9f9dc5df432fda6d3e0bb12e6fcbefe",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\LoggerUtils.java": {
+    "mtime": 1778940757.1610055,
+    "ast_hash": "b9c9c798dda5f2104ca588496fae9044",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\MessageUtils.java": {
+    "mtime": 1778946397.6218812,
+    "ast_hash": "6488adc4d4686e980c34fa2559c6199a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\SchedulerUtils.java": {
+    "mtime": 1778940757.1620102,
+    "ast_hash": "03cc6858e5009c52849de3e33b18a3a0",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\java\\com\\vikasyadavnsit\\cdc\\utils\\SharedPreferenceUtils.java": {
+    "mtime": 1778940757.1620102,
+    "ast_hash": "67b04e489cecac6fb779fb7aa43ba8f3",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\test\\java\\com\\vikasyadavnsit\\cdc\\ExampleUnitTest.java": {
+    "mtime": 1778940757.1919768,
+    "ast_hash": "8af02840dfc7489f3f2425f28f1929d1",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\scripts\\adb.ps1": {
+    "mtime": 1778951200.7384,
+    "ast_hash": "c301999b1ab1d75fb4d996638c2eb119",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\CLAUDE.md": {
+    "mtime": 1778964858.5495849,
+    "ast_hash": "f9789fe12d641befe6e2f25ddf600aab",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\FEATURES.md": {
+    "mtime": 1778940757.0289679,
+    "ast_hash": "14e979659c8abd093712ce42801d39a7",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\README.md": {
+    "mtime": 1778946397.6218812,
+    "ast_hash": "868dc6ae6e1878025f0ca3700feec746",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\.claude\\commands\\graphify.md": {
+    "mtime": 1778964903.6843865,
+    "ast_hash": "9e5bcf86fec2b20a0b36108844a8f801",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\docs\\firebase-schema.md": {
+    "mtime": 1778945812.0123248,
+    "ast_hash": "43e6209e5704770b726878e15db4b619",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.webp": {
+    "mtime": 1778940757.1781237,
+    "ast_hash": "39d9bb21eb48f128a71c3f01ad3cd427",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_round.webp": {
+    "mtime": 1778940757.1781237,
+    "ast_hash": "70d6f58af3c76ee221c829b1ce9daa04",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.webp": {
+    "mtime": 1778940757.1792073,
+    "ast_hash": "d2acce71c7b46e5e9540d23a9f7b2166",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_round.webp": {
+    "mtime": 1778940757.1792073,
+    "ast_hash": "6376acb48f96a855ee95c113cd7fd616",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.webp": {
+    "mtime": 1778940757.1802847,
+    "ast_hash": "bd087d80b70bec05a43c745f29dc3ffc",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_round.webp": {
+    "mtime": 1778940757.1813545,
+    "ast_hash": "7479edd56ab712609f030054bffd7263",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.webp": {
+    "mtime": 1778940757.1813545,
+    "ast_hash": "ea180e8d1a2e8300cc998b987266b736",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round.webp": {
+    "mtime": 1778940757.182423,
+    "ast_hash": "947842742b29eeda80ee0805e1600366",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.webp": {
+    "mtime": 1778940757.1834779,
+    "ast_hash": "54ab624970c86c2146e76b93f27586f7",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Public\\Documents\\CDC\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round.webp": {
+    "mtime": 1778940757.1834779,
+    "ast_hash": "9ee591be72fb336861a8044086054daa",
+    "semantic_hash": ""
+  }
+}

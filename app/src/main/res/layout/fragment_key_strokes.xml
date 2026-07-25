@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="8dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/keystrokes_back_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_arrow_right"
+            android:rotation="180"
+            app:tint="@color/text_secondary"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="⌨  Keystrokes"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:letterSpacing="0.15"
+            android:fontFamily="sans-serif-medium" />
+
+        <ImageView
+            android:id="@+id/keystrokes_refresh_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_sync"
+            app:tint="@color/text_secondary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Refresh" />
+    </LinearLayout>
+
+    <!-- Date Picker Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="@color/surface_variant"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date:"
+                android:textColor="@color/text_hint"
+                android:textSize="12sp"
+                android:layout_marginEnd="12dp" />
+
+            <Spinner
+                android:id="@+id/keystrokes_date_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_bg"
+                android:paddingVertical="8dp"
+                android:popupBackground="@color/surface_variant" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Apps Section -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="APPLICATIONS"
+        android:textColor="@color/text_hint"
+        android:textSize="11sp"
+        android:letterSpacing="0.1"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="10dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/keystrokes_apps_rv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false"
+        android:orientation="horizontal" />
+
+    <!-- Keystrokes Section -->
+    <TextView
+        android:id="@+id/keystrokes_list_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KEYSTROKE LOGS"
+        android:textColor="@color/text_hint"
+        android:textSize="11sp"
+        android:letterSpacing="0.1"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/keystrokes_logs_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false" />
+
+    <TextView
+        android:id="@+id/keystrokes_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="No keystrokes found for this selection"
+        android:textColor="@color/text_hint"
+        android:visibility="gone" />
+
+</LinearLayout>

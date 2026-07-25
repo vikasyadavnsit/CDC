@@ -1,0 +1,43 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="300dp"
+    android:height="150dp"
+    android:viewportWidth="300"
+    android:viewportHeight="150">
+    <!-- Background -->
+    <path
+        android:fillColor="#F8F9FA"
+        android:pathData="M0,0h300v150h-300z" />
+    <!-- Header -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M0,0h300v30h-300z" />
+    <path
+        android:fillColor="#FFCA28"
+        android:pathData="M10,8h14v14h-14z" />
+    <!-- Project Card -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,50h80v70h-80z" />
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M30,65h60v10h-60z" />
+    <!-- Add Project Button Card -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M110,50h80v70h-80z" />
+    <path
+        android:fillColor="#1A73E8"
+        android:pathData="M140,75h20v20h-20z" />
+    <path
+        android:strokeColor="#1A73E8"
+        android:strokeWidth="1"
+        android:pathData="M140,85h20M150,75v20" />
+    <path
+        android:fillColor="#1A73E8"
+        android:pathData="M125,105h50v5h-50z" />
+    <!-- Highlight Circle -->
+    <path
+        android:strokeColor="#FF0000"
+        android:strokeWidth="2"
+        android:pathData="M150,85m-35,0a35,35 0,1 1,70 0a35,35 0,1 1,-70 0" />
+</vector>

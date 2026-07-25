@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!--
+        Adaptive icon safe zone: 72×72dp centered (18dp to 90dp on each axis).
+        All content is kept within that zone.
+
+        Design: bold "C" monogram arc on a dark-purple background.
+          • Outer decorative ring  — radius 33, stroke 1dp, muted purple
+          • Bold C arc             — radius 25, stroke 10dp, light lavender, rounded caps
+            Arc spans 300° (gap of 60° opening to the right).
+            Start angle −30° → point (75.7, 41.5)
+            End   angle +30° → point (75.7, 66.5)
+            SVG arc: large-arc=1, sweep=0 (counter-clockwise in screen coords)
+    -->
+
+    <!-- Subtle outer frame ring -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M 21,54 A 33,33 0 1,0 87,54 A 33,33 0 1,0 21,54"
+        android:strokeWidth="1"
+        android:strokeColor="#5C2A8A" />
+
+    <!-- Bold C arc with rounded ends -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M 75.7,41.5 A 25,25 0 1,0 75.7,66.5"
+        android:strokeWidth="10"
+        android:strokeColor="#F5E6FF"
+        android:strokeLineCap="round" />
+
+    <!-- Small accent dot centred in the gap — reads as a "capture point" -->
+    <path
+        android:fillColor="#7B2FBE"
+        android:pathData="M 76,54 A 3.5,3.5 0 1,0 83,54 A 3.5,3.5 0 1,0 76,54" />
+</vector>

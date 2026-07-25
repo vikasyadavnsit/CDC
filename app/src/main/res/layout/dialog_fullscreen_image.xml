@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <ImageView
+        android:id="@+id/fullscreen_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_gravity="bottom"
+        android:padding="24dp"
+        android:background="#80000000">
+
+        <Button
+            android:id="@+id/btn_download_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Download PNG"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/primary"
+            android:layout_marginEnd="16dp" />
+
+        <Button
+            android:id="@+id/btn_close_fullscreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Close"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/surface_variant"
+            android:textColor="@color/text_primary" />
+
+    </LinearLayout>
+
+</FrameLayout>

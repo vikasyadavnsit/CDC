@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="150dp"
+    android:viewportWidth="200"
+    android:viewportHeight="150">
+    <!-- Content Header -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M0,0h200v40h-200z" />
+    <!-- Tabs -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M20,25h30v5h-30z" />
+    <path
+        android:fillColor="#1A73E8"
+        android:pathData="M60,25h30v5h-30z" />
+    <path
+        android:fillColor="#1A73E8"
+        android:pathData="M60,32h30v2h-30z" />
+    <!-- Rules text -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M100,25h30v5h-30z" />
+    <!-- Code Editor area -->
+    <path
+        android:fillColor="#ECEFF1"
+        android:pathData="M10,50h180v90h-180z" />
+    <path
+        android:fillColor="#546E7A"
+        android:pathData="M20,60h100v4h-100zM20,70h140v4h-140zM30,80h80v4h-80zM30,90h110v4h-110z" />
+    <!-- Highlight Circle around Rules tab -->
+    <path
+        android:strokeColor="#FF0000"
+        android:strokeWidth="2"
+        android:pathData="M75,28m-18,0a18,18 0,1 1,36 0a18,18 0,1 1,-36 0" />
+</vector>

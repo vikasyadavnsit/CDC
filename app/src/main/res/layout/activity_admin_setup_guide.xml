@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/app_bg"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/app_bg"
+            app:title="Admin Setup Guide"
+            app:titleTextColor="@color/text_primary"
+            app:navigationIcon="@drawable/ic_back_arrow"
+            app:navigationIconTint="@color/text_primary"
+            app:subtitle="Infrastructure Deployment"
+            app:subtitleTextColor="@color/text_secondary"
+            app:titleCentered="false" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Private Backend"
+                android:textColor="@color/primary"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Host your personal Firebase infrastructure. This ensures complete data privacy and 100% ownership."
+                android:textColor="@color/text_secondary"
+                android:textSize="15sp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Step 1: Firebase Project -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/divider"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/avatar_circle_bg"
+                            android:backgroundTint="@color/primary"
+                            android:text="1"
+                            android:textColor="@color/on_primary"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="12dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Create Firebase Project"
+                            android:textColor="@color/text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container_step1_subpoints"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub1_1"/>
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub1_2"/>
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub1_3"/>
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub1_4"/>
+                    </LinearLayout>
+
+                    <include layout="@layout/item_copyable_field" android:id="@+id/field_project_name"/>
+                    <include layout="@layout/item_copyable_field" android:id="@+id/field_package_name"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="12dp"
+                        android:src="@drawable/guide_step1_firebase_home"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Firebase Home" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Step 2: Realtime Database -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/divider"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/avatar_circle_bg"
+                            android:backgroundTint="@color/primary"
+                            android:text="2"
+                            android:textColor="@color/on_primary"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="12dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Setup Realtime Database"
+                            android:textColor="@color/text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container_step2_subpoints"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub2_1"/>
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub2_2"/>
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub2_3"/>
+                    </LinearLayout>
+
+                    <include layout="@layout/item_copyable_field" android:id="@+id/field_db_name"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="12dp"
+                        android:src="@drawable/guide_step2_rt_database"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Realtime Database" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Step 3: Security Rules -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/primary"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/avatar_circle_bg"
+                            android:backgroundTint="@color/primary"
+                            android:text="3"
+                            android:textColor="@color/on_primary"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="12dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Configure Security Rules"
+                            android:textColor="@color/text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <include layout="@layout/item_setup_subpoint" android:id="@+id/sub3_1" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/input_field_bg">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="8dp"
+                            android:background="@color/surface_variant"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="SECURITY RULES (JSON)"
+                                android:textColor="@color/text_hint"
+                                android:textSize="11sp"
+                                android:textStyle="bold"/>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_copy_rules"
+                                style="@style/Widget.MaterialComponents.Button.TextButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="COPY ALL"
+                                android:textSize="12sp"
+                                app:icon="@drawable/ic_content_copy"
+                                android:textColor="@color/primary"
+                                app:iconTint="@color/primary"
+                                android:minHeight="0dp"
+                                android:padding="4dp"/>
+                        </LinearLayout>
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/tv_rules_code"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text='{\n  "rules": {\n    ".read": "now &lt; 4930351200000",\n    ".write": "now &lt; 4930351200000"\n  }\n}'
+                                android:textColor="@color/primary"
+                                android:fontFamily="monospace"
+                                android:textSize="13sp" />
+                        </HorizontalScrollView>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="12dp"
+                        android:src="@drawable/guide_step3_rules_tab"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Database Rules" />
+
+                    <include layout="@layout/item_setup_subpoint" android:id="@+id/sub3_2" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Step 4: Config File -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                app:cardCornerRadius="16dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/divider"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/avatar_circle_bg"
+                            android:backgroundTint="@color/primary"
+                            android:text="4"
+                            android:textColor="@color/on_primary"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="12dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Get Config File"
+                            android:textColor="@color/text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container_step4_subpoints"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub4_1"/>
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub4_2"/>
+                        <include layout="@layout/item_setup_subpoint" android:id="@+id/sub4_3"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="12dp"
+                        android:src="@drawable/guide_step4_download_json"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Project Settings" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_proceed_to_config"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="I have the file, Proceed"
+                android:paddingVertical="14dp"
+                android:textAllCaps="false"
+                app:cornerRadius="12dp"
+                android:backgroundTint="@color/primary"
+                android:textColor="@color/on_primary"
+                android:textSize="16sp"
+                app:elevation="4dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

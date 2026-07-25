@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Dark Inner Shadow (Top Left) -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#0D0120" />
+        </shape>
+    </item>
+
+    <!-- Light Inner Shadow (Bottom Right) -->
+    <item
+        android:bottom="1dp"
+        android:left="1dp"
+        android:right="0dp"
+        android:top="1dp">
+        <shape android:shape="oval">
+            <solid android:color="#2A0D4A" />
+        </shape>
+    </item>
+
+    <!-- Inner Content Area -->
+    <item
+        android:bottom="2dp"
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp">
+        <shape android:shape="oval">
+            <solid android:color="#1A0533" />
+        </shape>
+    </item>
+</layer-list>
